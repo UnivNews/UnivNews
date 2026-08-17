@@ -32,3 +32,18 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Account Request Routes (UI placeholder)
+Route::get('/account-request', function () {
+    return view('auth.account-request');
+})->middleware('guest')->name('account-request');
+
+Route::post('/account-request', function (\Illuminate\Http\Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'department' => 'required|string',
+    ]);
+    
+    return back()->with('status', 'Your account request has been submitted successfully.');
+})->middleware('guest')->name('account-request.store');
