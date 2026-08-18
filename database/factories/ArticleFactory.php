@@ -22,6 +22,7 @@ class ArticleFactory extends Factory
             'views_count' => $this->faker->numberBetween(0, 10000),
             'user_id' => User::factory(),
             'category_id' => Category::factory(),
+            'featured_image_path' => 'https://picsum.photos/seed/' . $this->faker->uuid() . '/800/600',
         ];
     }
 }

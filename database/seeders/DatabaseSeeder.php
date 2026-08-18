@@ -63,6 +63,7 @@ class DatabaseSeeder extends Seeder
                 'category_id' => $categories->where('name', 'Research & Innovation')->first()->id,
                 'status' => 'published',
                 'published_at' => now()->subDays(2),
+                'featured_image_path' => 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=800&auto=format&fit=crop',
             ],
             [
                 'title' => 'Breakthrough in Renewable Energy Storage',
@@ -71,6 +72,7 @@ class DatabaseSeeder extends Seeder
                 'category_id' => $categories->where('name', 'Research & Innovation')->first()->id,
                 'status' => 'published',
                 'published_at' => now()->subDays(5),
+                'featured_image_path' => 'https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop',
             ],
             [
                 'title' => 'Students Win National Robotics Competition',
@@ -79,6 +81,7 @@ class DatabaseSeeder extends Seeder
                 'category_id' => $categories->where('name', 'Achievements')->first()->id,
                 'status' => 'published',
                 'published_at' => now()->subDays(10),
+                'featured_image_path' => 'https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?q=80&w=800&auto=format&fit=crop',
             ],
             [
                 'title' => 'Annual Spring Festival Dates Announced',
@@ -87,6 +90,7 @@ class DatabaseSeeder extends Seeder
                 'category_id' => $categories->where('name', 'Campus Life')->first()->id,
                 'status' => 'published',
                 'published_at' => now()->subDays(1),
+                'featured_image_path' => 'articles/Annual_Spring_Festival_Dates_Announced.jpg',
             ],
             [
                 'title' => 'Draft: Upcoming Library Renovations',
@@ -95,6 +99,7 @@ class DatabaseSeeder extends Seeder
                 'category_id' => $categories->where('name', 'Campus Life')->first()->id,
                 'status' => 'draft',
                 'published_at' => null,
+                'featured_image_path' => 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=800&auto=format&fit=crop',
             ],
         ];
 
@@ -109,6 +114,7 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $author->id,
                 'category_id' => $data['category_id'],
                 'views_count' => rand(100, 5000),
+                'featured_image_path' => $data['featured_image_path'] ?? null,
             ]);
 
             // Attach 1-3 random tags

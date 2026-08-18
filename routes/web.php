@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicController;
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
+Route::get('/events', [PublicController::class, 'events'])->name('events');
 Route::get('/category/{category:slug}', [PublicController::class, 'category'])->name('category');
 Route::get('/research', [PublicController::class, 'research'])->name('research');
 Route::get('/article/{article:slug}', [PublicController::class, 'article'])->name('article');
