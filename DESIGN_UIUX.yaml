@@ -358,2265 +358,251 @@ responsive:
 # Shares tokens with: design-spec.yaml (Research & Innovation page)
 # =========================================================
 
-metadata:
-  name: PSP
-  components: {}
-  componentSets: {}
-nodes:
-  - id: '2025:246'
-    name: Html → Body
-    type: FRAME
-    layout: layout_S4D0Y2
-    fills: color_FFFFFF
-    children:
-      - id: '2025:247'
-        name: Events Section
-        type: FRAME
-        layout: layout_2373XZ
-        children:
-          - id: '2025:248'
-            name: HorizontalBorder
-            type: FRAME
-            layout: layout_ZJ0QU5
-            strokes: stroke_C5C6CF
-            children:
-              - id: '2025:249'
-                name: Heading 1
-                type: FRAME
-                layout: layout_M1G27R
-                children:
-                  - id: '2025:250'
-                    name: Text
-                    type: TEXT
-                    layout: layout_CM9XR5
-                    fills: color_00081E
-                    text: EVENTS
-                    textStyle: style_DC04L1
-          - id: '2025:251'
-            name: Container
-            type: FRAME
-            layout: layout_P731U4
-            children:
-              - id: '2025:252'
-                name: Container
-                type: FRAME
-                layout: layout_ZJVYGN
-                children:
-                  - id: '2025:253'
-                    name: Article - Featured Event
-                    type: FRAME
-                    layout: layout_00DEFQ
-                    fills: color_FFFFFF
-                    strokes: stroke_C5C6CF
-                    strokeWeight: 1px
-                    children:
-                      - id: '2025:254'
-                        name: Container
-                        type: FRAME
-                        layout: layout_7JWUXO
-                        children:
-                          - id: '2025:255'
-                            name: University Symphony Orchestra Autumn Gala
-                            type: FRAME
-                            layout: layout_B3L69E
-                          - id: '2025:256'
-                            name: Gradient
-                            type: RECTANGLE
-                            layout: layout_E26JMJ
-                          - id: '2025:257'
-                            name: Container
-                            type: FRAME
-                            layout: layout_AQR0EP
-                            children:
-                              - id: '2025:258'
-                                name: Container
-                                type: FRAME
-                                layout: layout_Y2O3LE
-                                children:
-                                  - id: '2025:259'
-                                    name: SENI & BUDAYA
-                                    type: TEXT
-                                    layout: layout_SZ314T
-                                    fills: color_B71032
-                                    text: SENI & BUDAYA
-                                    textStyle: style_519DZB
-                              - id: '2025:260'
-                                name: Heading 2
-                                type: FRAME
-                                layout: layout_AN8TO2
-                                children:
-                                  - id: '2025:261'
-                                    name: Konser Orkestra Simfoni Universitas Musim Gugur
-                                    type: TEXT
-                                    layout: layout_JYRIKP
-                                    fills: color_FFFFFF
-                                    text: |-
-                                      Konser Orkestra Simfoni Universitas
-                                      Musim Gugur
-                                    textStyle: style_XL0HHP
-                              - id: '2025:262'
-                                name: Container
-                                type: FRAME
-                                layout: layout_9JND3G
-                                children:
-                                  - id: '2025:263'
-                                    name: >-
-                                      Pertunjukan istimewa menampilkan karya-karya klasik dan kontemporer oleh mahasiswa
-                                      fakultas seni pertunjukan.
-                                    type: TEXT
-                                    layout: layout_F1TQNP
-                                    fills: color_7687B2
-                                    text: |-
-                                      Pertunjukan istimewa menampilkan karya-karya klasik dan kontemporer oleh
-                                      mahasiswa fakultas seni pertunjukan.
-                                    textStyle: style_PPS292
-                      - id: '2025:264'
-                        name: Background
-                        type: FRAME
-                        layout: layout_WFOISQ
-                        fills: color_B71032
-                        children:
-                          - id: '2025:265'
-                            name: Text
-                            type: TEXT
-                            layout: layout_DUGN3P
-                            fills: color_FFFFFF
-                            text: FEATURED
-                            textStyle: style_DHVJOG
-                      - id: '2025:266'
-                        name: Background
-                        type: FRAME
-                        layout: layout_S5YBWG
-                        fills: color_B71032
-                        borderRadius: 2px
-                        children:
-                          - id: '2025:267'
-                            name: Overlay+Shadow
-                            type: RECTANGLE
-                            layout: layout_YMXOCU
-                            fills: color_FFFFFF
-                            borderRadius: 2px
-                          - id: '2025:268'
-                            name: Container
-                            type: FRAME
-                            layout: layout_UUJFMU
-                            children:
-                              - id: '2025:269'
-                                name: Text
-                                type: TEXT
-                                layout: layout_PRQ46R
-                                fills: color_FFFFFF
-                                text: '15'
-                                textStyle: style_5JYXS9
-                          - id: '2025:270'
-                            name: Container
-                            type: FRAME
-                            layout: layout_9NIU4K
-                            children:
-                              - id: '2025:271'
-                                name: Text
-                                type: TEXT
-                                layout: layout_AXZ700
-                                fills: color_FFFFFF
-                                text: NOV
-                                textStyle: style_ATHY3W
-                  - id: '2025:272'
-                    name: Container
-                    type: FRAME
-                    layout: layout_0USZKO
-                    children:
-                      - id: '2025:273'
-                        name: Article
-                        type: FRAME
-                        layout: layout_053OIQ
-                        fills: color_FFFFFF
-                        strokes: stroke_C5C6CF
-                        strokeWeight: 1px
-                        children:
-                          - id: '2025:274'
-                            name: Container
-                            type: FRAME
-                            layout: layout_G81Z4T
-                            children:
-                              - id: '2025:275'
-                                name: >-
-                                  AB6AXuCKKhT-Dta9WUX4RRJjLV0HfFuv6T-Ouz7JCWSZpaoAFP1ssZgGoehR7mjufH0L31qs-R5OwmYXjkOZSECg-w2grkMb1E4mwIVIYrT_FlzopfOKSUl3WG7Omda2vctWdMKoqk_zLP11W39aBIdIuyco39nZfElQ5NF4SsMp2rzrb49f2wjcEKye9kXzS-G1BwUGBgt08FYJAbVJXzgCDzi1QC-AOmofHirqDyrvnTFIvrwyEhT5ZTdH
-                                type: FRAME
-                                layout: layout_FX2QDA
-                          - id: '2025:276'
-                            name: Container
-                            type: FRAME
-                            layout: layout_QS7C3X
-                            children:
-                              - id: '2025:277'
-                                name: Margin
-                                type: FRAME
-                                layout: layout_Z60PLX
-                                children:
-                                  - id: '2025:278'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_UWIEXU
-                                    children:
-                                      - id: '2025:279'
-                                        name: Container
-                                        type: FRAME
-                                        layout: layout_S8ENTR
-                                        children:
-                                          - id: '2025:280'
-                                            name: PAMERAN
-                                            type: TEXT
-                                            layout: layout_QNIDTV
-                                            fills: color_B71032
-                                            text: PAMERAN
-                                            textStyle: style_5Z4G6F
-                              - id: '2025:281'
-                                name: Heading 3:margin
-                                type: FRAME
-                                layout: layout_R4P2BF
-                                children:
-                                  - id: '2025:282'
-                                    name: Heading 3
-                                    type: FRAME
-                                    layout: layout_02FWQR
-                                    children:
-                                      - id: '2025:283'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_X17WSD
-                                        fills: color_00081E
-                                        text: |-
-                                          Pameran Karya Akhir Mahasiswa
-                                          Arsitektur 2024
-                                        textStyle: style_6YX6CH
-                              - id: '2025:284'
-                                name: Container
-                                type: FRAME
-                                layout: layout_LWQH9S
-                                children:
-                                  - id: '2025:285'
-                                    name: Link
-                                    type: FRAME
-                                    layout: layout_OYXK4I
-                                    children:
-                                      - id: '2025:286'
-                                        name: DAFTAR
-                                        type: TEXT
-                                        layout: layout_FTBUIY
-                                        fills: color_B71032
-                                        text: DAFTAR
-                                        textStyle: style_HZJ92S
-                          - id: '2025:287'
-                            name: Background
-                            type: FRAME
-                            layout: layout_U0NX0X
-                            fills: color_B71032
-                            borderRadius: 2px
-                            children:
-                              - id: '2025:288'
-                                name: Overlay+Shadow
-                                type: RECTANGLE
-                                layout: layout_Z6ZQE6
-                                fills: color_FFFFFF
-                                borderRadius: 2px
-                              - id: '2025:289'
-                                name: Container
-                                type: FRAME
-                                layout: layout_8AEOW1
-                                children:
-                                  - id: '2025:290'
-                                    name: Text
-                                    type: TEXT
-                                    layout: layout_PH1OGB
-                                    fills: color_FFFFFF
-                                    text: '18'
-                                    textStyle: style_4T7ZRK
-                              - id: '2025:291'
-                                name: Container
-                                type: FRAME
-                                layout: layout_TSY7FM
-                                children:
-                                  - id: '2025:292'
-                                    name: Text
-                                    type: TEXT
-                                    layout: layout_YCUWAY
-                                    fills: color_FFFFFF
-                                    text: NOV
-                                    textStyle: style_PJRGXM
-                      - id: '2025:293'
-                        name: Article
-                        type: FRAME
-                        layout: layout_NH467G
-                        fills: color_FFFFFF
-                        strokes: stroke_C5C6CF
-                        strokeWeight: 1px
-                        children:
-                          - id: '2025:294'
-                            name: Container
-                            type: FRAME
-                            layout: layout_6A3F0U
-                            children:
-                              - id: '2025:295'
-                                name: >-
-                                  AB6AXuAKt0ncu4XPP9Mcx9heFOwOsi46XOHgUn65gCFSOvJPDiEE5bdXLBKF31G4I1dnPqAVil--j4wTPwBq6Kha5A7ji9w5g39U3xzqaumJV3Dt2XL6UV_ElEkVSuLKKK-iK8gDtOFYs6yc0TkUyu8W8zHWU_-VSWBNlmv_v_0aP0DxgRu5SU2XATdA6SHgIWciRar_cHPylArQR5RctKAF0GA8-Ok-NGub8tVFMMqz1lnj5M28HOaJPt4-
-                                type: FRAME
-                                layout: layout_9GRNUZ
-                          - id: '2025:296'
-                            name: Container
-                            type: FRAME
-                            layout: layout_ADFGU0
-                            children:
-                              - id: '2025:297'
-                                name: Margin
-                                type: FRAME
-                                layout: layout_4LVG8B
-                                children:
-                                  - id: '2025:298'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_HOFVVB
-                                    children:
-                                      - id: '2025:299'
-                                        name: Container
-                                        type: FRAME
-                                        layout: layout_FOMMLD
-                                        children:
-                                          - id: '2025:300'
-                                            name: OLAHRAGA
-                                            type: TEXT
-                                            layout: layout_QZK0LT
-                                            fills: color_B71032
-                                            text: OLAHRAGA
-                                            textStyle: style_C921YG
-                              - id: '2025:301'
-                                name: Heading 3:margin
-                                type: FRAME
-                                layout: layout_DFM1RF
-                                children:
-                                  - id: '2025:302'
-                                    name: Heading 3
-                                    type: FRAME
-                                    layout: layout_6TXVEI
-                                    children:
-                                      - id: '2025:303'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_GW3ZMM
-                                        fills: color_00081E
-                                        text: |-
-                                          Final Kejuaraan Bola Basket
-                                          Antar Fakultas
-                                        textStyle: style_MY00BW
-                              - id: '2025:304'
-                                name: Container
-                                type: FRAME
-                                layout: layout_QLT4VP
-                                children:
-                                  - id: '2025:305'
-                                    name: Link
-                                    type: FRAME
-                                    layout: layout_3HCLZK
-                                    children:
-                                      - id: '2025:306'
-                                        name: DAFTAR
-                                        type: TEXT
-                                        layout: layout_8V1KIX
-                                        fills: color_B71032
-                                        text: DAFTAR
-                                        textStyle: style_B6XVVF
-                          - id: '2025:307'
-                            name: Background
-                            type: FRAME
-                            layout: layout_HP0J4T
-                            fills: color_B71032
-                            borderRadius: 2px
-                            children:
-                              - id: '2025:308'
-                                name: Overlay+Shadow
-                                type: RECTANGLE
-                                layout: layout_OPZISP
-                                fills: color_FFFFFF
-                                borderRadius: 2px
-                              - id: '2025:309'
-                                name: Container
-                                type: FRAME
-                                layout: layout_65WXMW
-                                children:
-                                  - id: '2025:310'
-                                    name: Text
-                                    type: TEXT
-                                    layout: layout_BD75QW
-                                    fills: color_FFFFFF
-                                    text: '20'
-                                    textStyle: style_H56DHZ
-                              - id: '2025:311'
-                                name: Container
-                                type: FRAME
-                                layout: layout_BTQEVI
-                                children:
-                                  - id: '2025:312'
-                                    name: Text
-                                    type: TEXT
-                                    layout: layout_FFAEZC
-                                    fills: color_FFFFFF
-                                    text: NOV
-                                    textStyle: style_2HFLDQ
-                      - id: '2025:313'
-                        name: Article
-                        type: FRAME
-                        layout: layout_ZJEQ94
-                        fills: color_FFFFFF
-                        strokes: stroke_C5C6CF
-                        strokeWeight: 1px
-                        children:
-                          - id: '2025:314'
-                            name: Container
-                            type: FRAME
-                            layout: layout_8AYG9Q
-                            children:
-                              - id: '2025:315'
-                                name: >-
-                                  AB6AXuDGaU4a16eE89my-CFIuApkTypYOFlUzNT0Bh5EoekOf_S7k460w_Gvekn9jAo5aB7WLEpuNyKU1DepJpcJ84KSdwiwt7QIBpjkuiJYoh_IBeJjkrXxEGmM206oQ-vS1YwsbOe_vxMSO49B9I-d6cmnNvH-BGS3sXftnog2vuTwBAmiDH9sr4fbXuPyGobu4CqIg2SZ0mC7V4tMD7LyogPm5wr6HHDzDHidtl93eMQHhDsiYUjk5lSA
-                                type: FRAME
-                                layout: layout_IOUC0U
-                          - id: '2025:316'
-                            name: Container
-                            type: FRAME
-                            layout: layout_02V3D2
-                            children:
-                              - id: '2025:317'
-                                name: Margin
-                                type: FRAME
-                                layout: layout_R66LFS
-                                children:
-                                  - id: '2025:318'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_6KEBNW
-                                    children:
-                                      - id: '2025:319'
-                                        name: Container
-                                        type: FRAME
-                                        layout: layout_CRT1S9
-                                        children:
-                                          - id: '2025:320'
-                                            name: SEMINAR
-                                            type: TEXT
-                                            layout: layout_UEAV7N
-                                            fills: color_B71032
-                                            text: SEMINAR
-                                            textStyle: style_FARU7D
-                              - id: '2025:321'
-                                name: Heading 3:margin
-                                type: FRAME
-                                layout: layout_S8KGXS
-                                children:
-                                  - id: '2025:322'
-                                    name: Heading 3
-                                    type: FRAME
-                                    layout: layout_T5UK2Z
-                                    children:
-                                      - id: '2025:323'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_TKWLCT
-                                        fills: color_00081E
-                                        text: |-
-                                          Seminar Terbuka: Inovasi
-                                          Bioteknologi Medis
-                                        textStyle: style_M3BEPI
-                              - id: '2025:324'
-                                name: Container
-                                type: FRAME
-                                layout: layout_RJ7G4T
-                                children:
-                                  - id: '2025:325'
-                                    name: Link
-                                    type: FRAME
-                                    layout: layout_LDEVHN
-                                    children:
-                                      - id: '2025:326'
-                                        name: DAFTAR
-                                        type: TEXT
-                                        layout: layout_GCT5GZ
-                                        fills: color_B71032
-                                        text: DAFTAR
-                                        textStyle: style_1URVYX
-                          - id: '2025:327'
-                            name: Background
-                            type: FRAME
-                            layout: layout_EYQXBO
-                            fills: color_B71032
-                            borderRadius: 2px
-                            children:
-                              - id: '2025:328'
-                                name: Overlay+Shadow
-                                type: RECTANGLE
-                                layout: layout_YIV8VO
-                                fills: color_FFFFFF
-                                borderRadius: 2px
-                              - id: '2025:329'
-                                name: Container
-                                type: FRAME
-                                layout: layout_01AZ5N
-                                children:
-                                  - id: '2025:330'
-                                    name: Text
-                                    type: TEXT
-                                    layout: layout_NCALPH
-                                    fills: color_FFFFFF
-                                    text: '22'
-                                    textStyle: style_H9PFP4
-                              - id: '2025:331'
-                                name: Container
-                                type: FRAME
-                                layout: layout_ITSOIX
-                                children:
-                                  - id: '2025:332'
-                                    name: Text
-                                    type: TEXT
-                                    layout: layout_TUQRQW
-                                    fills: color_FFFFFF
-                                    text: NOV
-                                    textStyle: style_K2AF5N
-                      - id: '2025:333'
-                        name: Article
-                        type: FRAME
-                        layout: layout_5213XK
-                        fills: color_FFFFFF
-                        strokes: stroke_C5C6CF
-                        strokeWeight: 1px
-                        children:
-                          - id: '2025:334'
-                            name: Container
-                            type: FRAME
-                            layout: layout_P9E3EA
-                            children:
-                              - id: '2025:335'
-                                name: >-
-                                  AB6AXuAyFhCLSRclN-oHY-gtX3EwghSFlNy-76udTexo9L8-iE37TvcxL7VcNfDscg9ch40kbR3xbOTg4ENQ-sSssSPLGz9Pxwp5a-q7B0uLnFo9uSOUYLaGEv7Uidu_hI7Gv9Q5OGl9TiYQZdkz_iTpjTHPowJhfcQcaR4oIz3NeUiftkOSODi7TvdaZrQE00Z91YzxYrCF2vB1SGnyWJmIYo637ISEwhIPqakVVQtkgwb6d818e2T9IxLg
-                                type: FRAME
-                                layout: layout_TMRJCS
-                          - id: '2025:336'
-                            name: Container
-                            type: FRAME
-                            layout: layout_0VBELL
-                            children:
-                              - id: '2025:337'
-                                name: Margin
-                                type: FRAME
-                                layout: layout_ZHW47I
-                                children:
-                                  - id: '2025:338'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_UHPH5X
-                                    children:
-                                      - id: '2025:339'
-                                        name: Container
-                                        type: FRAME
-                                        layout: layout_WAMGZS
-                                        children:
-                                          - id: '2025:340'
-                                            name: DISKUSI
-                                            type: TEXT
-                                            layout: layout_2U8GYQ
-                                            fills: color_B71032
-                                            text: DISKUSI
-                                            textStyle: style_JDYUMC
-                              - id: '2025:341'
-                                name: Heading 3:margin
-                                type: FRAME
-                                layout: layout_8HB5ZG
-                                children:
-                                  - id: '2025:342'
-                                    name: Heading 3
-                                    type: FRAME
-                                    layout: layout_MQGY53
-                                    children:
-                                      - id: '2025:343'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_JXDSN3
-                                        fills: color_00081E
-                                        text: |-
-                                          Forum Diskusi Terbuka BEM
-                                          Seluruh Indonesia
-                                        textStyle: style_RG7R3S
-                              - id: '2025:344'
-                                name: Container
-                                type: FRAME
-                                layout: layout_CPBGQK
-                                children:
-                                  - id: '2025:345'
-                                    name: Link
-                                    type: FRAME
-                                    layout: layout_BNEKQ2
-                                    children:
-                                      - id: '2025:346'
-                                        name: DAFTAR
-                                        type: TEXT
-                                        layout: layout_2FKVZJ
-                                        fills: color_B71032
-                                        text: DAFTAR
-                                        textStyle: style_9V44GH
-                          - id: '2025:347'
-                            name: Background
-                            type: FRAME
-                            layout: layout_LCBI2F
-                            fills: color_B71032
-                            borderRadius: 2px
-                            children:
-                              - id: '2025:348'
-                                name: Overlay+Shadow
-                                type: RECTANGLE
-                                layout: layout_5015RX
-                                fills: color_FFFFFF
-                                borderRadius: 2px
-                              - id: '2025:349'
-                                name: Container
-                                type: FRAME
-                                layout: layout_BUYGLH
-                                children:
-                                  - id: '2025:350'
-                                    name: Text
-                                    type: TEXT
-                                    layout: layout_OX4LRU
-                                    fills: color_FFFFFF
-                                    text: '25'
-                                    textStyle: style_ZH6FNC
-                              - id: '2025:351'
-                                name: Container
-                                type: FRAME
-                                layout: layout_V2IIAR
-                                children:
-                                  - id: '2025:352'
-                                    name: Text
-                                    type: TEXT
-                                    layout: layout_QPW7B7
-                                    fills: color_FFFFFF
-                                    text: NOV
-                                    textStyle: style_KPPGER
-                  - id: '2025:353'
-                    name: HorizontalBorder
-                    type: FRAME
-                    layout: layout_VQKZQT
-                    strokes: stroke_C5C6CF
-                    children:
-                      - id: '2025:354'
-                        name: Link
-                        type: FRAME
-                        layout: layout_SZ9E4Y
-                        children:
-                          - id: '2025:355'
-                            name: Container
-                            type: FRAME
-                            layout: layout_EQRMEW
-                            children:
-                              - id: '2025:356'
-                                name: Icon
-                                type: VECTOR
-                                layout: layout_QA2R0X
-                                fills: color_4C5E86
-                          - id: '2025:357'
-                            name: Text
-                            type: TEXT
-                            layout: layout_V3CH8U
-                            fills: color_4C5E86
-                            text: SEBELUMNYA
-                            textStyle: style_PZTZWH
-                      - id: '2025:358'
-                        name: Container
-                        type: FRAME
-                        layout: layout_1NA44Z
-                        children:
-                          - id: '2025:359'
-                            name: Link
-                            type: FRAME
-                            layout: layout_OLGAVK
-                            fills: color_00081E
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:360'
-                                name: Text
-                                type: TEXT
-                                layout: layout_4CR0Q1
-                                fills: color_FFFFFF
-                                text: '1'
-                                textStyle: style_PH9HXI
-                          - id: '2025:361'
-                            name: Link
-                            type: FRAME
-                            layout: layout_RFW5DY
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:362'
-                                name: Text
-                                type: TEXT
-                                layout: layout_4EVATE
-                                fills: color_00081E
-                                text: '2'
-                                textStyle: style_TD07CR
-                          - id: '2025:363'
-                            name: Link
-                            type: FRAME
-                            layout: layout_ZDUKJ4
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:364'
-                                name: Text
-                                type: TEXT
-                                layout: layout_43IAGA
-                                fills: color_00081E
-                                text: '3'
-                                textStyle: style_VC0AFB
-                          - id: '2025:365'
-                            name: Container
-                            type: FRAME
-                            layout: layout_JVEMDH
-                            children:
-                              - id: '2025:366'
-                                name: Text
-                                type: TEXT
-                                layout: layout_XNUDPF
-                                fills: color_C5C6CF
-                                text: ...
-                                textStyle: style_KL2HLS
-                          - id: '2025:367'
-                            name: Link
-                            type: FRAME
-                            layout: layout_BVJTR8
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:368'
-                                name: Text
-                                type: TEXT
-                                layout: layout_A3TTPE
-                                fills: color_00081E
-                                text: '12'
-                                textStyle: style_OLG79M
-                      - id: '2025:369'
-                        name: Link
-                        type: FRAME
-                        layout: layout_6D1PN5
-                        children:
-                          - id: '2025:370'
-                            name: Text
-                            type: TEXT
-                            layout: layout_9MTWRG
-                            fills: color_00081E
-                            text: BERIKUTNYA
-                            textStyle: style_46T27T
-                          - id: '2025:371'
-                            name: Container
-                            type: FRAME
-                            layout: layout_GBRXVJ
-                            children:
-                              - id: '2025:372'
-                                name: Icon
-                                type: VECTOR
-                                layout: layout_TLATR7
-                                fills: color_00081E
-              - id: '2025:373'
-                name: Aside
-                type: FRAME
-                layout: layout_9Z2PG2
-                fills: color_F6F3F4
-                borderRadius: 8px
-                children:
-                  - id: '2025:374'
-                    name: Calendar Widget
-                    type: FRAME
-                    layout: layout_16RG6W
-                    children:
-                      - id: '2025:375'
-                        name: Heading 3
-                        type: FRAME
-                        layout: layout_NN0XL4
-                        children:
-                          - id: '2025:376'
-                            name: November 2024
-                            type: TEXT
-                            layout: layout_OTJAWR
-                            fills: color_00081E
-                            text: November 2024
-                            textStyle: style_ZLGI5H
-                      - id: '2025:377'
-                        name: Container
-                        type: FRAME
-                        layout: layout_C5CXC6
-                        children:
-                          - id: '2025:378'
-                            name: Container
-                            type: FRAME
-                            layout: layout_2BD8MN
-                            children:
-                              - id: '2025:379'
-                                name: Text
-                                type: TEXT
-                                layout: layout_UZ5LE5
-                                fills: color_C5C6CF
-                                text: Mo
-                                textStyle: style_E0E54E
-                          - id: '2025:380'
-                            name: Container
-                            type: FRAME
-                            layout: layout_AB1TTB
-                            children:
-                              - id: '2025:381'
-                                name: Text
-                                type: TEXT
-                                layout: layout_T6TWQ9
-                                fills: color_C5C6CF
-                                text: Tu
-                                textStyle: style_NAUWN4
-                          - id: '2025:382'
-                            name: Container
-                            type: FRAME
-                            layout: layout_VJH59K
-                            children:
-                              - id: '2025:383'
-                                name: Text
-                                type: TEXT
-                                layout: layout_F8PN3W
-                                fills: color_C5C6CF
-                                text: We
-                                textStyle: style_3NBXIV
-                          - id: '2025:384'
-                            name: Container
-                            type: FRAME
-                            layout: layout_EG5LO0
-                            children:
-                              - id: '2025:385'
-                                name: Text
-                                type: TEXT
-                                layout: layout_2YR76Y
-                                fills: color_C5C6CF
-                                text: Th
-                                textStyle: style_P599HT
-                          - id: '2025:386'
-                            name: Container
-                            type: FRAME
-                            layout: layout_B1CDCR
-                            children:
-                              - id: '2025:387'
-                                name: Text
-                                type: TEXT
-                                layout: layout_7UX3IJ
-                                fills: color_C5C6CF
-                                text: Fr
-                                textStyle: style_IUZCSP
-                          - id: '2025:388'
-                            name: Container
-                            type: FRAME
-                            layout: layout_NJMPO0
-                            children:
-                              - id: '2025:389'
-                                name: Text
-                                type: TEXT
-                                layout: layout_XW7UQR
-                                fills: color_C5C6CF
-                                text: Sa
-                                textStyle: style_CF5TKG
-                          - id: '2025:390'
-                            name: Container
-                            type: FRAME
-                            layout: layout_BKE9GU
-                            children:
-                              - id: '2025:391'
-                                name: Text
-                                type: TEXT
-                                layout: layout_8Y5X9X
-                                fills: color_C5C6CF
-                                text: Su
-                                textStyle: style_7YXKFO
-                      - id: '2025:392'
-                        name: Container
-                        type: FRAME
-                        layout: layout_ZMJYMN
-                        children:
-                          - id: '2025:393'
-                            name: Container
-                            type: FRAME
-                            layout: layout_PSYTQZ
-                            children:
-                              - id: '2025:394'
-                                name: Text
-                                type: TEXT
-                                layout: layout_GWGP1D
-                                fills: color_C5C6CF
-                                text: '28'
-                                textStyle: style_JZ1UNW
-                          - id: '2025:395'
-                            name: Container
-                            type: FRAME
-                            layout: layout_UKJL2P
-                            children:
-                              - id: '2025:396'
-                                name: Text
-                                type: TEXT
-                                layout: layout_E8BFK8
-                                fills: color_C5C6CF
-                                text: '29'
-                                textStyle: style_UC7W5X
-                          - id: '2025:397'
-                            name: Container
-                            type: FRAME
-                            layout: layout_IJVXIJ
-                            children:
-                              - id: '2025:398'
-                                name: Text
-                                type: TEXT
-                                layout: layout_LCV1M0
-                                fills: color_C5C6CF
-                                text: '30'
-                                textStyle: style_NJVWRD
-                          - id: '2025:399'
-                            name: Container
-                            type: FRAME
-                            layout: layout_G9TQLG
-                            children:
-                              - id: '2025:400'
-                                name: Text
-                                type: TEXT
-                                layout: layout_D4ECS2
-                                fills: color_C5C6CF
-                                text: '31'
-                                textStyle: style_27ZXHU
-                          - id: '2025:401'
-                            name: Container
-                            type: FRAME
-                            layout: layout_GSQCJ0
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:402'
-                                name: Text
-                                type: TEXT
-                                layout: layout_319S0J
-                                fills: color_1B1B1C
-                                text: '1'
-                                textStyle: style_S5AGID
-                          - id: '2025:403'
-                            name: Container
-                            type: FRAME
-                            layout: layout_01GJKD
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:404'
-                                name: Text
-                                type: TEXT
-                                layout: layout_1IRLQH
-                                fills: color_1B1B1C
-                                text: '2'
-                                textStyle: style_OE2WUC
-                          - id: '2025:405'
-                            name: Container
-                            type: FRAME
-                            layout: layout_C5EMIR
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:406'
-                                name: Text
-                                type: TEXT
-                                layout: layout_1QEJ88
-                                fills: color_1B1B1C
-                                text: '3'
-                                textStyle: style_B1A1X1
-                          - id: '2025:407'
-                            name: Container
-                            type: FRAME
-                            layout: layout_JHZ4FQ
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:408'
-                                name: Text
-                                type: TEXT
-                                layout: layout_ZC22HX
-                                fills: color_1B1B1C
-                                text: '4'
-                                textStyle: style_MKJGON
-                          - id: '2025:409'
-                            name: Container
-                            type: FRAME
-                            layout: layout_Y3EMO1
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:410'
-                                name: Text
-                                type: TEXT
-                                layout: layout_NATLJS
-                                fills: color_1B1B1C
-                                text: '5'
-                                textStyle: style_E2QX3E
-                          - id: '2025:411'
-                            name: Container
-                            type: FRAME
-                            layout: layout_2H09Q3
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:412'
-                                name: Text
-                                type: TEXT
-                                layout: layout_1A27SX
-                                fills: color_1B1B1C
-                                text: '6'
-                                textStyle: style_R35JZX
-                          - id: '2025:413'
-                            name: Container
-                            type: FRAME
-                            layout: layout_IPYG89
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:414'
-                                name: Text
-                                type: TEXT
-                                layout: layout_18WJ4V
-                                fills: color_1B1B1C
-                                text: '7'
-                                textStyle: style_7LFRVC
-                          - id: '2025:415'
-                            name: Container
-                            type: FRAME
-                            layout: layout_GHCS6K
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:416'
-                                name: Text
-                                type: TEXT
-                                layout: layout_ZZGEF9
-                                fills: color_1B1B1C
-                                text: '8'
-                                textStyle: style_UGR9L8
-                          - id: '2025:417'
-                            name: Container
-                            type: FRAME
-                            layout: layout_Q8LFQ6
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:418'
-                                name: Text
-                                type: TEXT
-                                layout: layout_R5YSIX
-                                fills: color_1B1B1C
-                                text: '9'
-                                textStyle: style_OT2E2D
-                          - id: '2025:419'
-                            name: Container
-                            type: FRAME
-                            layout: layout_GAHIMZ
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:420'
-                                name: Text
-                                type: TEXT
-                                layout: layout_7LCRTC
-                                fills: color_1B1B1C
-                                text: '10'
-                                textStyle: style_Z3TS6X
-                          - id: '2025:421'
-                            name: Container
-                            type: FRAME
-                            layout: layout_S58CYC
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:422'
-                                name: Text
-                                type: TEXT
-                                layout: layout_3NE3AH
-                                fills: color_1B1B1C
-                                text: '11'
-                                textStyle: style_ODYG4Y
-                          - id: '2025:423'
-                            name: Container
-                            type: FRAME
-                            layout: layout_6YSH87
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:424'
-                                name: Text
-                                type: TEXT
-                                layout: layout_KOMNDS
-                                fills: color_1B1B1C
-                                text: '12'
-                                textStyle: style_QT9NZT
-                          - id: '2025:425'
-                            name: Container
-                            type: FRAME
-                            layout: layout_64A1KP
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:426'
-                                name: Text
-                                type: TEXT
-                                layout: layout_WUHDPU
-                                fills: color_1B1B1C
-                                text: '13'
-                                textStyle: style_09CH3A
-                          - id: '2025:427'
-                            name: Container
-                            type: FRAME
-                            layout: layout_97HA6A
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:428'
-                                name: Text
-                                type: TEXT
-                                layout: layout_GLXSXW
-                                fills: color_1B1B1C
-                                text: '14'
-                                textStyle: style_4OT7Y8
-                          - id: '2025:429'
-                            name: Background
-                            type: FRAME
-                            layout: layout_VO34I4
-                            fills: color_B71032
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:430'
-                                name: Text
-                                type: TEXT
-                                layout: layout_2UHK20
-                                fills: color_FFFFFF
-                                text: '15'
-                                textStyle: style_CBVVET
-                          - id: '2025:431'
-                            name: Container
-                            type: FRAME
-                            layout: layout_ED6JNN
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:432'
-                                name: Text
-                                type: TEXT
-                                layout: layout_HORF5W
-                                fills: color_1B1B1C
-                                text: '16'
-                                textStyle: style_3EN2ZJ
-                          - id: '2025:433'
-                            name: Container
-                            type: FRAME
-                            layout: layout_7FRZ18
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:434'
-                                name: Text
-                                type: TEXT
-                                layout: layout_0STT1M
-                                fills: color_1B1B1C
-                                text: '17'
-                                textStyle: style_2XY187
-                          - id: '2025:435'
-                            name: Border
-                            type: FRAME
-                            layout: layout_U6E23V
-                            strokes: stroke_B71032
-                            strokeWeight: 1px
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:436'
-                                name: Text
-                                type: TEXT
-                                layout: layout_L5NAG2
-                                fills: color_B71032
-                                text: '18'
-                                textStyle: style_FZ2SFO
-                          - id: '2025:437'
-                            name: Container
-                            type: FRAME
-                            layout: layout_FLEAZF
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:438'
-                                name: Text
-                                type: TEXT
-                                layout: layout_NJ8HOZ
-                                fills: color_1B1B1C
-                                text: '19'
-                                textStyle: style_ZJRRVG
-                          - id: '2025:439'
-                            name: Border
-                            type: FRAME
-                            layout: layout_DZP5F4
-                            strokes: stroke_B71032
-                            strokeWeight: 1px
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:440'
-                                name: Text
-                                type: TEXT
-                                layout: layout_J06AXQ
-                                fills: color_B71032
-                                text: '20'
-                                textStyle: style_Y58Q34
-                          - id: '2025:441'
-                            name: Container
-                            type: FRAME
-                            layout: layout_VVIDJH
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:442'
-                                name: Text
-                                type: TEXT
-                                layout: layout_V7C1AE
-                                fills: color_1B1B1C
-                                text: '21'
-                                textStyle: style_Y1NR0A
-                          - id: '2025:443'
-                            name: Border
-                            type: FRAME
-                            layout: layout_N2JBS7
-                            strokes: stroke_B71032
-                            strokeWeight: 1px
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:444'
-                                name: Text
-                                type: TEXT
-                                layout: layout_ICEOQV
-                                fills: color_B71032
-                                text: '22'
-                                textStyle: style_1N1K4P
-                          - id: '2025:445'
-                            name: Container
-                            type: FRAME
-                            layout: layout_XW3YIU
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:446'
-                                name: Text
-                                type: TEXT
-                                layout: layout_H44BE3
-                                fills: color_1B1B1C
-                                text: '23'
-                                textStyle: style_U6QFWN
-                          - id: '2025:447'
-                            name: Container
-                            type: FRAME
-                            layout: layout_MVEABT
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:448'
-                                name: Text
-                                type: TEXT
-                                layout: layout_OS9KTN
-                                fills: color_1B1B1C
-                                text: '24'
-                                textStyle: style_XKM6JT
-                          - id: '2025:449'
-                            name: Border
-                            type: FRAME
-                            layout: layout_NXPC87
-                            strokes: stroke_B71032
-                            strokeWeight: 1px
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:450'
-                                name: Text
-                                type: TEXT
-                                layout: layout_RJBD9U
-                                fills: color_B71032
-                                text: '25'
-                                textStyle: style_7F5F95
-                          - id: '2025:451'
-                            name: Container
-                            type: FRAME
-                            layout: layout_Z4XJG0
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:452'
-                                name: Text
-                                type: TEXT
-                                layout: layout_RFVADA
-                                fills: color_1B1B1C
-                                text: '26'
-                                textStyle: style_XE662F
-                          - id: '2025:453'
-                            name: Container
-                            type: FRAME
-                            layout: layout_NNALCU
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:454'
-                                name: Text
-                                type: TEXT
-                                layout: layout_FSMLZW
-                                fills: color_1B1B1C
-                                text: '27'
-                                textStyle: style_43XD1X
-                          - id: '2025:455'
-                            name: Container
-                            type: FRAME
-                            layout: layout_Z9ZVPD
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:456'
-                                name: Text
-                                type: TEXT
-                                layout: layout_G7WMGS
-                                fills: color_1B1B1C
-                                text: '28'
-                                textStyle: style_AKSDV6
-                          - id: '2025:457'
-                            name: Container
-                            type: FRAME
-                            layout: layout_P0ITSR
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:458'
-                                name: Text
-                                type: TEXT
-                                layout: layout_WZ2WRT
-                                fills: color_1B1B1C
-                                text: '29'
-                                textStyle: style_33Y60Z
-                          - id: '2025:459'
-                            name: Container
-                            type: FRAME
-                            layout: layout_P66PRV
-                            borderRadius: 4px
-                            children:
-                              - id: '2025:460'
-                                name: Text
-                                type: TEXT
-                                layout: layout_DC2605
-                                fills: color_1B1B1C
-                                text: '30'
-                                textStyle: style_BAFLOA
-                          - id: '2025:461'
-                            name: Container
-                            type: FRAME
-                            layout: layout_ZTMD9B
-                            children:
-                              - id: '2025:462'
-                                name: Text
-                                type: TEXT
-                                layout: layout_8RCNWH
-                                fills: color_C5C6CF
-                                text: '1'
-                                textStyle: style_N020YL
-                  - id: '2025:463'
-                    name: Categories
-                    type: FRAME
-                    layout: layout_5YPFI5
-                    children:
-                      - id: '2025:464'
-                        name: Heading 3
-                        type: FRAME
-                        layout: layout_UIDKKN
-                        strokes: stroke_C5C6CF
-                        children:
-                          - id: '2025:465'
-                            name: Text
-                            type: TEXT
-                            layout: layout_Z6Z3ZD
-                            fills: color_00081E
-                            text: Filter Kategori
-                            textStyle: style_V7PK0L
-                      - id: '2025:466'
-                        name: List
-                        type: FRAME
-                        layout: layout_ZMTHDG
-                        children:
-                          - id: '2025:467'
-                            name: Item → Link
-                            type: FRAME
-                            layout: layout_FNG80Y
-                            children:
-                              - id: '2025:468'
-                                name: Container
-                                type: FRAME
-                                layout: layout_Q680LB
-                                children:
-                                  - id: '2025:469'
-                                    name: Icon
-                                    type: VECTOR
-                                    layout: layout_HTIK7L
-                                    fills: color_44464E
-                              - id: '2025:470'
-                                name: Text
-                                type: TEXT
-                                layout: layout_436RLP
-                                fills: color_44464E
-                                text: Akademik
-                                textStyle: style_7S9U3E
-                          - id: '2025:471'
-                            name: Item → Link
-                            type: FRAME
-                            layout: layout_158ZFX
-                            children:
-                              - id: '2025:472'
-                                name: Container
-                                type: FRAME
-                                layout: layout_6KWRX3
-                                children:
-                                  - id: '2025:473'
-                                    name: Icon
-                                    type: VECTOR
-                                    layout: layout_ZDUAHW
-                                    fills: color_44464E
-                              - id: '2025:474'
-                                name: Text
-                                type: TEXT
-                                layout: layout_5IAGCN
-                                fills: color_44464E
-                                text: Olahraga
-                                textStyle: style_TZ92EM
-                          - id: '2025:475'
-                            name: Item → Link
-                            type: FRAME
-                            layout: layout_JWQYA3
-                            children:
-                              - id: '2025:476'
-                                name: Container
-                                type: FRAME
-                                layout: layout_7NK798
-                                children:
-                                  - id: '2025:477'
-                                    name: Icon
-                                    type: VECTOR
-                                    layout: layout_RVRKHX
-                                    fills: color_44464E
-                              - id: '2025:478'
-                                name: Text
-                                type: TEXT
-                                layout: layout_3H19LG
-                                fills: color_44464E
-                                text: Seni & Budaya
-                                textStyle: style_5VQ33W
-                          - id: '2025:479'
-                            name: Item → Link
-                            type: FRAME
-                            layout: layout_2FWK7H
-                            children:
-                              - id: '2025:480'
-                                name: Container
-                                type: FRAME
-                                layout: layout_36XK5A
-                                children:
-                                  - id: '2025:481'
-                                    name: Icon
-                                    type: VECTOR
-                                    layout: layout_KD7165
-                                    fills: color_44464E
-                              - id: '2025:482'
-                                name: Text
-                                type: TEXT
-                                layout: layout_6U27C6
-                                fills: color_44464E
-                                text: Kemahasiswaan
-                                textStyle: style_WYAPHE
-                          - id: '2025:483'
-                            name: Item → Link
-                            type: FRAME
-                            layout: layout_ABQBLH
-                            children:
-                              - id: '2025:484'
-                                name: Container
-                                type: FRAME
-                                layout: layout_9JTCPG
-                                children:
-                                  - id: '2025:485'
-                                    name: Icon
-                                    type: VECTOR
-                                    layout: layout_K9D7QV
-                                    fills: color_44464E
-                              - id: '2025:486'
-                                name: Text
-                                type: TEXT
-                                layout: layout_RIVUAI
-                                fills: color_44464E
-                                text: Seminar Umum
-                                textStyle: style_APNFTF
-                  - id: '2025:487'
-                    name: Key Events List
-                    type: FRAME
-                    layout: layout_M2PXW7
-                    children:
-                      - id: '2025:488'
-                        name: Heading 3
-                        type: FRAME
-                        layout: layout_43P46Y
-                        strokes: stroke_C5C6CF
-                        children:
-                          - id: '2025:489'
-                            name: Text
-                            type: TEXT
-                            layout: layout_HPCLL1
-                            fills: color_00081E
-                            text: Acara Utama Pekan Ini
-                            textStyle: style_STG0L6
-                      - id: '2025:490'
-                        name: Container
-                        type: FRAME
-                        layout: layout_P5D7AK
-                        children:
-                          - id: '2025:491'
-                            name: Container
-                            type: FRAME
-                            layout: layout_R4WW82
-                            children:
-                              - id: '2025:492'
-                                name: Container
-                                type: FRAME
-                                layout: layout_53GFDO
-                                children:
-                                  - id: '2025:493'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_936VMY
-                                    children:
-                                      - id: '2025:494'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_SOBAWV
-                                        fills: color_B71032
-                                        text: NOV
-                                        textStyle: style_S33H2I
-                                  - id: '2025:495'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_G4P83P
-                                    children:
-                                      - id: '2025:496'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_5PAXCM
-                                        fills: color_B71032
-                                        text: '15'
-                                        textStyle: style_73CDV1
-                              - id: '2025:497'
-                                name: Container
-                                type: FRAME
-                                layout: layout_6Y2WUW
-                                children:
-                                  - id: '2025:498'
-                                    name: |-
-                                      Heading 4 → Konser Orkestra Simfoni
-                                      Universitas Musim Gugur
-                                    type: TEXT
-                                    layout: layout_ILFOG5
-                                    fills: color_00081E
-                                    text: |-
-                                      Konser Orkestra Simfoni
-                                      Universitas Musim Gugur
-                                    textStyle: style_SAVCWW
-                          - id: '2025:499'
-                            name: Container
-                            type: FRAME
-                            layout: layout_MP4YXN
-                            children:
-                              - id: '2025:500'
-                                name: Container
-                                type: FRAME
-                                layout: layout_N7ZYJ1
-                                children:
-                                  - id: '2025:501'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_PCR639
-                                    children:
-                                      - id: '2025:502'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_IXIV86
-                                        fills: color_4C5E86
-                                        text: NOV
-                                        textStyle: style_V5NIMX
-                                  - id: '2025:503'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_J6PKXM
-                                    children:
-                                      - id: '2025:504'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_F2RAW6
-                                        fills: color_4C5E86
-                                        text: '18'
-                                        textStyle: style_T7KMLB
-                              - id: '2025:505'
-                                name: Container
-                                type: FRAME
-                                layout: layout_OKIBWD
-                                children:
-                                  - id: '2025:506'
-                                    name: |-
-                                      Heading 4 → Pameran Karya Akhir Mahasiswa
-                                      Arsitektur 2024
-                                    type: TEXT
-                                    layout: layout_9TSYXW
-                                    fills: color_00081E
-                                    text: |-
-                                      Pameran Karya Akhir Mahasiswa
-                                      Arsitektur 2024
-                                    textStyle: style_UGQWBV
-                          - id: '2025:507'
-                            name: Container
-                            type: FRAME
-                            layout: layout_JQPM1Y
-                            children:
-                              - id: '2025:508'
-                                name: Container
-                                type: FRAME
-                                layout: layout_P7LWIT
-                                children:
-                                  - id: '2025:509'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_7DA89R
-                                    children:
-                                      - id: '2025:510'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_KBK7R2
-                                        fills: color_4C5E86
-                                        text: NOV
-                                        textStyle: style_EPYDXX
-                                  - id: '2025:511'
-                                    name: Container
-                                    type: FRAME
-                                    layout: layout_VNNFKG
-                                    children:
-                                      - id: '2025:512'
-                                        name: Text
-                                        type: TEXT
-                                        layout: layout_2870F2
-                                        fills: color_4C5E86
-                                        text: '20'
-                                        textStyle: style_4K3TXR
-                              - id: '2025:513'
-                                name: Container
-                                type: FRAME
-                                layout: layout_NVQJF8
-                                children:
-                                  - id: '2025:514'
-                                    name: |-
-                                      Heading 4 → Final Kejuaraan Bola Basket Antar
-                                      Fakultas
-                                    type: TEXT
-                                    layout: layout_8BYUF4
-                                    fills: color_00081E
-                                    text: |-
-                                      Final Kejuaraan Bola Basket Antar
-                                      Fakultas
-                                    textStyle: style_CO5ZK4
-                  - id: '2025:515'
-                    name: Ad Space
-                    type: FRAME
-                    layout: layout_RJQQLV
-                    strokes: stroke_C5C6CF
-                    children:
-                      - id: '2025:516'
-                        name: Container
-                        type: FRAME
-                        layout: layout_XGY4E4
-                        children:
-                          - id: '2025:517'
-                            name: Background
-                            type: RECTANGLE
-                            layout: layout_0Y13L6
-                            fills: color_B71032
-                            borderRadius: 9999px
-                          - id: '2025:518'
-                            name: Container
-                            type: FRAME
-                            layout: layout_0DUO40
-                            children:
-                              - id: '2025:519'
-                                name: Text
-                                type: TEXT
-                                layout: layout_IRVZM5
-                                fills: color_44464E
-                                text: ADVERTISEMENT
-                                textStyle: style_SZ9UY8
-                      - id: '2025:520'
-                        name: Background+Border
-                        type: FRAME
-                        layout: layout_SCPLAU
-                        fills: color_EAE7E8
-                        strokes: stroke_C5C6CF
-                        strokeWeight: 1px
-                        borderRadius: 8px
-                        children:
-                          - id: '2025:521'
-                            name: Margin
-                            type: FRAME
-                            layout: layout_LCQYKG
-                            children:
-                              - id: '2025:522'
-                                name: Icon
-                                type: VECTOR
-                                layout: layout_H4BMHG
-                                fills: color_C5C6CF
-                          - id: '2025:523'
-                            name: Container
-                            type: FRAME
-                            layout: layout_NRP84V
-                            children:
-                              - id: '2025:524'
-                                name: Text
-                                type: TEXT
-                                layout: layout_ZLS6PW
-                                fills: color_C5C6CF
-                                text: SPONSOR CONTENT
-                                textStyle: style_P3OTAJ
-      - id: '2025:525'
-        name: Footer
-        type: FRAME
-        layout: layout_MGL5P5
-        fills: color_00081E
-        strokes: stroke_B71032
-        children:
-          - id: '2025:526'
-            name: Container
-            type: FRAME
-            layout: layout_99SWQF
-            children:
-              - id: '2025:527'
-                name: Branding & Copyright
-                type: FRAME
-                layout: layout_1V3C6S
-                children:
-                  - id: '2025:528'
-                    name: Container
-                    type: FRAME
-                    layout: layout_5PR2EU
-                    children:
-                      - id: '2025:529'
-                        name: Heading 3
-                        type: FRAME
-                        layout: layout_34BTET
-                        children:
-                          - id: '2025:530'
-                            name: University News
-                            type: TEXT
-                            layout: layout_TLMVUM
-                            fills: color_FFFFFF
-                            text: University News
-                            textStyle: style_UM2RRP
-                      - id: '2025:531'
-                        name: Container
-                        type: FRAME
-                        layout: layout_TJZJIT
-                        children:
-                          - id: '2025:532'
-                            name: >-
-                              Providing authoritative reporting and intellectual discourse for the academic community
-                              since 1893.
-                            type: TEXT
-                            layout: layout_F1J6Q4
-                            fills: color_7687B2
-                            text: |-
-                              Providing authoritative reporting and
-                              intellectual discourse for the academic
-                              community since 1893.
-                            textStyle: style_0FOP0Y
-              - id: '2025:533'
-                name: 'Links: Resources'
-                type: FRAME
-                layout: layout_V9ICY2
-                children:
-                  - id: '2025:534'
-                    name: Heading 4
-                    type: FRAME
-                    layout: layout_GI1THR
-                    children:
-                      - id: '2025:535'
-                        name: RESOURCES
-                        type: TEXT
-                        layout: layout_4SK2X3
-                        fills: color_B71032
-                        text: RESOURCES
-                        textStyle: style_U0N177
-                  - id: '2025:536'
-                    name: List
-                    type: FRAME
-                    layout: layout_ERKH2H
-                    children:
-                      - id: '2025:537'
-                        name: Item
-                        type: FRAME
-                        layout: layout_27MNXL
-                        children:
-                          - id: '2025:538'
-                            name: Faculty Experts
-                            type: TEXT
-                            layout: layout_0IDGFL
-                            fills: color_FFFFFF
-                            text: Faculty Experts
-                            textStyle: style_WY6CIP
-                      - id: '2025:539'
-                        name: Item
-                        type: FRAME
-                        layout: layout_61T2SN
-                        children:
-                          - id: '2025:540'
-                            name: Media Relations
-                            type: TEXT
-                            layout: layout_KWZK6H
-                            fills: color_FFFFFF
-                            text: Media Relations
-                            textStyle: style_RIO87T
-                      - id: '2025:541'
-                        name: Item
-                        type: FRAME
-                        layout: layout_PDZGR9
-                        children:
-                          - id: '2025:542'
-                            name: Archives
-                            type: TEXT
-                            layout: layout_P3MPZZ
-                            fills: color_FFFFFF
-                            text: Archives
-                            textStyle: style_69HGJW
-              - id: '2025:543'
-                name: 'Links: Social'
-                type: FRAME
-                layout: layout_ZY6BMW
-                children:
-                  - id: '2025:544'
-                    name: Heading 4
-                    type: FRAME
-                    layout: layout_KNIVEB
-                    children:
-                      - id: '2025:545'
-                        name: SOCIAL
-                        type: TEXT
-                        layout: layout_8LYUG2
-                        fills: color_B71032
-                        text: SOCIAL
-                        textStyle: style_TE6QB7
-                  - id: '2025:546'
-                    name: List
-                    type: FRAME
-                    layout: layout_REOVVP
-                    children:
-                      - id: '2025:547'
-                        name: Item
-                        type: FRAME
-                        layout: layout_KE8DUU
-                        children:
-                          - id: '2025:548'
-                            name: Newsletter
-                            type: TEXT
-                            layout: layout_5RZQRI
-                            fills: color_FFFFFF
-                            text: Newsletter
-                            textStyle: style_BXV9XH
-                      - id: '2025:549'
-                        name: Item
-                        type: FRAME
-                        layout: layout_85F8P9
-                        children:
-                          - id: '2025:550'
-                            name: Podcasts
-                            type: TEXT
-                            layout: layout_SDBKIF
-                            fills: color_FFFFFF
-                            text: Podcasts
-                            textStyle: style_0SI79V
-                      - id: '2025:551'
-                        name: Item
-                        type: FRAME
-                        layout: layout_V1W16X
-                        children:
-                          - id: '2025:552'
-                            name: Events
-                            type: TEXT
-                            layout: layout_25FLRJ
-                            fills: color_FFFFFF
-                            text: Events
-                            textStyle: style_D6MFOH
-              - id: '2025:553'
-                name: Quick Links
-                type: FRAME
-                layout: layout_XB43SU
-                children:
-                  - id: '2025:554'
-                    name: Heading 4
-                    type: FRAME
-                    layout: layout_PWY583
-                    children:
-                      - id: '2025:555'
-                        name: INSTITUTION
-                        type: TEXT
-                        layout: layout_W8Q2T8
-                        fills: color_B71032
-                        text: INSTITUTION
-                        textStyle: style_35QZRH
-                  - id: '2025:556'
-                    name: List
-                    type: FRAME
-                    layout: layout_G4S981
-                    children:
-                      - id: '2025:557'
-                        name: Item
-                        type: FRAME
-                        layout: layout_G09CA1
-                        children:
-                          - id: '2025:558'
-                            name: About the University
-                            type: TEXT
-                            layout: layout_074HU2
-                            fills: color_FFFFFF
-                            text: About the University
-                            textStyle: style_0T8XOX
-                      - id: '2025:559'
-                        name: Item
-                        type: FRAME
-                        layout: layout_VHJFFW
-                        children:
-                          - id: '2025:560'
-                            name: Admissions
-                            type: TEXT
-                            layout: layout_DSF3XR
-                            fills: color_FFFFFF
-                            text: Admissions
-                            textStyle: style_DIRV4U
-                      - id: '2025:561'
-                        name: Item
-                        type: FRAME
-                        layout: layout_SC5E8M
-                        children:
-                          - id: '2025:562'
-                            name: Giving
-                            type: TEXT
-                            layout: layout_8CCSGJ
-                            fills: color_FFFFFF
-                            text: Giving
-                            textStyle: style_K2VHLG
-          - id: '2025:563'
-            name: HorizontalBorder
-            type: FRAME
-            layout: layout_SQLT5M
-            strokes: stroke_C5C6CF
-            children:
-              - id: '2025:564'
-                name: Container
-                type: FRAME
-                layout: layout_XU0BEM
-                children:
-                  - id: '2025:565'
-                    name: Container
-                    type: FRAME
-                    layout: layout_YE8I7N
-                    children:
-                      - id: '2025:566'
-                        name: Text
-                        type: TEXT
-                        layout: layout_ILH6DM
-                        fills: color_7687B2
-                        text: © 2024 University News Portal. All academic rights reserved.
-                        textStyle: style_E2M589
-                  - id: '2025:567'
-                    name: Container
-                    type: FRAME
-                    layout: layout_Z7ONMA
-                    children:
-                      - id: '2025:568'
-                        name: Link
-                        type: FRAME
-                        layout: layout_TFR5Q8
-                        children:
-                          - id: '2025:569'
-                            name: Text
-                            type: TEXT
-                            layout: layout_PT6V3T
-                            fills: color_7687B2
-                            text: Privacy Policy
-                            textStyle: style_3EECA5
-                      - id: '2025:570'
-                        name: Link
-                        type: FRAME
-                        layout: layout_KN3Y7K
-                        children:
-                          - id: '2025:571'
-                            name: Text
-                            type: TEXT
-                            layout: layout_R0QHAS
-                            fills: color_7687B2
-                            text: Accessibility
-                            textStyle: style_27GGU1
-      - id: '2025:572'
-        name: Header - TopNavBar
-        type: FRAME
-        layout: layout_9J0IHN
-        fills: color_0A1F44
-        children:
-          - id: '2025:573'
-            name: Container
-            type: FRAME
-            layout: layout_JK351Y
-            children:
-              - id: '2025:574'
-                name: Nav
-                type: FRAME
-                layout: layout_25ISLM
-                children:
-                  - id: '2025:575'
-                    name: Link
-                    type: FRAME
-                    layout: layout_8QR31O
-                    children:
-                      - id: '2025:576'
-                        name: Text
-                        type: TEXT
-                        layout: layout_W4D4QM
-                        fills: color_FFFFFF
-                        text: HOME
-                        textStyle: style_7363ZF
-                  - id: '2025:577'
-                    name: Link
-                    type: FRAME
-                    layout: layout_6YPHHT
-                    children:
-                      - id: '2025:578'
-                        name: Text
-                        type: TEXT
-                        layout: layout_42W1C9
-                        fills: color_FFFFFF
-                        text: CAMPUS LIFE
-                        textStyle: style_95E316
-                  - id: '2025:579'
-                    name: Link
-                    type: FRAME
-                    layout: layout_U65O0D
-                    strokes: stroke_B71032
-                    children:
-                      - id: '2025:580'
-                        name: Text
-                        type: TEXT
-                        layout: layout_2LN07V
-                        fills: color_B71032
-                        text: EVENTS
-                        textStyle: style_83HBLV
-                  - id: '2025:581'
-                    name: Link
-                    type: FRAME
-                    layout: layout_WTFKMR
-                    children:
-                      - id: '2025:582'
-                        name: Text
-                        type: TEXT
-                        layout: layout_AUMV6S
-                        fills: color_FFFFFF
-                        text: RESEARCH & INNOVATION
-                        textStyle: style_0PR8S1
-              - id: '2025:583'
-                name: Container
-                type: FRAME
-                layout: layout_EPRRWD
-                children:
-                  - id: '2025:584'
-                    name: Overlay+Border
-                    type: FRAME
-                    layout: layout_PGBRGG
-                    fills: color_FFFFFF
-                    strokes: stroke_C5C6CF
-                    strokeWeight: 1px
-                    children:
-                      - id: '2025:585'
-                        name: Margin
-                        type: FRAME
-                        layout: layout_6K55DB
-                        children:
-                          - id: '2025:586'
-                            name: Icon
-                            type: VECTOR
-                            layout: layout_7VZQE2
-                            fills: color_7687B2
-                      - id: '2025:587'
-                        name: Input
-                        type: FRAME
-                        layout: layout_UF8KUD
-                        children:
-                          - id: '2025:588'
-                            name: Container
-                            type: FRAME
-                            layout: layout_5V8YHH
-                            children:
-                              - id: '2025:589'
-                                name: Search news...
-                                type: TEXT
-                                layout: layout_K34UFX
-                                fills: color_7687B2
-                                text: Search news...
-                                textStyle: style_1QECK7
-                  - id: '2025:590'
-                    name: Vertical Divider
-                    type: RECTANGLE
-                    layout: layout_7GWR34
-                    fills: color_C5C6CF
-                  - id: '2025:591'
-                    name: Link
-                    type: FRAME
-                    layout: layout_D3SVVD
-                    children:
-                      - id: '2025:592'
-                        name: Text
-                        type: TEXT
-                        layout: layout_42IV24
-                        fills: color_FFFFFF
-                        text: Login
-                        textStyle: style_V3AFIN
-globalVars:
-  styles:
-    layout_S4D0Y2:
-      mode: none
-      sizing:
-        horizontal: fixed
-        vertical: fixed
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-      dimensions:
-        width: 1280
-        height: 1924
-      locationRelativeToParent:
-        x: -290
-        'y': -617
-    color_FFFFFF:
-      - '#FFFFFF'
-    layout_2373XZ:
-      mode: column
-      gap: 32px
-      padding: 48px 40px
-      sizing:
-        horizontal: fixed
-        vertical: hug
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-      dimensions:
-        width: 1200
-      locationRelativeToParent:
-        x: 40
-        'y': 64
-    layout_ZJ0QU5:
-      mode: row
-      padding: 0px 0px 16px 0px
-      sizing:
-        horizontal: fill
-        vertical: hug
-      justifyContent: flex-start
-      alignItems: center
-      alignSelf: stretch
-      locationRelativeToParent:
-        x: 40
-        'y': 48
-    stroke_C5C6CF:
-      - '#C5C6CF'
-    layout_M1G27R:
-      mode: column
-      sizing:
-        horizontal: hug
-        vertical: hug
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-    layout_CM9XR5:
-      mode: none
-      sizing:
-        horizontal: hug
-        vertical: hug
-    color_00081E:
-      - '#00081E'
-    style_DC04L1:
-      fontFamily: Montserrat
-      fontWeight: 700
-      fontSize: 48
-      lineHeight: 1.17em
-      textAlignHorizontal: LEFT
-      textAlignVertical: CENTER
-    layout_P731U4:
-      mode: none
-      sizing:
-        horizontal: fill
-        vertical: hug
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-      locationRelativeToParent:
-        x: 40
-        'y': 154
-    layout_ZJVYGN:
-      mode: column
-      gap: 48px
-      sizing:
-        horizontal: fill
-        vertical: hug
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-    layout_00DEFQ:
-      mode: column
-      sizing:
-        horizontal: fill
-        vertical: hug
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-    layout_7JWUXO:
-      mode: column
-      sizing:
-        horizontal: fill
-        vertical: hug
-      justifyContent: center
-      alignItems: flex-start
-      alignSelf: stretch
-      locationRelativeToParent:
-        x: 1
-        'y': 1
-    layout_B3L69E:
-      mode: none
-      sizing:
-        horizontal: fill
-        vertical: fixed
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-      dimensions:
-        height: 316
-    layout_E26JMJ:
-      mode: none
-      sizing:
-        horizontal: hug
-        vertical: hug
-    layout_AQR0EP:
-      mode: column
-      gap: 8px
-      padding: 24px
-      sizing:
-        horizontal: fixed
-        vertical: hug
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-      dimensions:
-        width: 737
-      locationRelativeToParent:
-        x: 0
-        'y': 100
-    layout_Y2O3LE:
-      mode: column
-      sizing:
-        horizontal: fill
-        vertical: hug
-      justifyContent: flex-start
-      alignItems: flex-start
-      alignSelf: stretch
-      locationRelativeToParent:
-        x: 24
-        'y': 24
-    layout_SZ314T:
-      mode: none
-      sizing:
-        horizontal: hug
-        vertical: hug
-    color_B71032:
-      - '#B71032'
-    style_519DZB:
-      fontFamily: Work Sans
-      fontWeight: 600
-      fontSize: 12
-      
+# =========================================================
+# University News Portal — UI/UX Design Spec (cleaned)
+# Page: EVENTS
+# Shares tokens + components with: design-spec.yaml (Research & Innovation),
+# home-design-spec.yaml (Homepage)
+# =========================================================
+
+meta:
+  name: University News Portal
+  page: Events
+  visual_verification: >
+    Cross-checked against the rendered reference screenshot. Confirmed
+    matching: header active-tab style (text color + underline, no pill),
+    featured/date badge corner placement, calendar day-cell states,
+    sidebar panel background spanning calendar through ad slot as one
+    continuous rounded container, pagination active-button style, and
+    footer. One correction made from the earlier draft: date_badge
+    position (see main_content.featured_event and main_content.event_list
+    below) — was previously described as near the ribbon, corrected to
+    top-right / opposite corner.
+  style: editorial / academic / newsroom, sharp corners (mostly), minimal shadow
+  content_language_note: >
+    Source content on this page is in Indonesian (category names, "DAFTAR"
+    = Register, "SEBELUMNYA"/"BERIKUTNYA" = Previous/Next, calendar day
+    labels Mo/Tu/We...). Section title "EVENTS" itself stayed in English —
+    confirm with design source whether the whole site is meant to be
+    bilingual/localized or if "EVENTS" should also become "ACARA" for
+    consistency.
+
+# ---------------------------------------------------------
+# RADIUS SCALE - now 4 distinct values in circulation
+# ---------------------------------------------------------
+radius_scale_in_use:
+  - value: 0px
+    usage: "cards, buttons, inputs, nav - the stated global default"
+  - value: 2px
+    usage: "date badge (day/month chip on event cards) - NEW on this page"
+  - value: 4px
+    usage: "pagination number buttons, calendar day cells"
+  - value: 8px
+    usage: "sidebar 'Aside' widget containers, advertisement box"
+  recommendation: >
+    Formalize this as an explicit scale in the design tokens
+    (radius.none:0, radius.sm:2, radius.md:4, radius.lg:8) and document
+    which kind of element gets which tier, rather than letting it stay
+    incidental per-component.
+
+# ---------------------------------------------------------
+# DESIGN TOKENS (consistent with prior pages - no new colors this time,
+# color_1B1B1C used here matches text_primary exactly, no drift)
+# ---------------------------------------------------------
+tokens:
+  color:
+    primary_navy: "#00081E"
+    header_navy: "#0A1F44"        # still flagged from before - now used consistently across 3 pages, more likely intentional than a mistake
+    crimson: "#B71032"
+    background: "#FCF8F9"
+    surface: "#FFFFFF"
+    surface_alt: "#F0EDEE"
+    surface_alt_2: "#F6F3F4"      # Aside sidebar bg - same as home page sidebar, consistent reuse
+    surface_muted: "#EAE7E8"      # Ad box bg - same as home page ad slot, consistent reuse
+    text_primary: "#1B1B1C"       # calendar day numbers - matches token exactly, no drift
+    text_secondary: "#44464E"
+    text_secondary_on_dark: "#7687B2"
+    text_muted_link: "#4C5E86"
+    border: "#C5C6CF"
+
+  typography:
+    heading_font: "Montserrat"
+    body_font: "Source Serif 4"
+    utility_font: "Work Sans"
+
+  radius:
+    none: 0px
+    sm: 2px       # date badges
+    md: 4px       # pagination, calendar cells
+    lg: 8px       # sidebar widget containers
+    circular: 9999px
+
+  border:
+    default: "1px solid #C5C6CF"
+
+# ---------------------------------------------------------
+# HEADER / NAV - reuse global component, active tab = EVENTS
+# ---------------------------------------------------------
+header_nav:
+  reuse_component: "header_nav from home-design-spec.yaml"
+  background: header_navy
+  active_link: "EVENTS"
+  note: "Third page in a row using this exact header - safe to treat as the final global nav component now."
+
+# ---------------------------------------------------------
+# PAGE HEADER
+# ---------------------------------------------------------
+page_header:
+  title:
+    text: "EVENTS"
+    style: { font: heading_font, weight: 700, size: 48px, color: primary_navy }
+  border_bottom: default
+  container: "page_container (max-width 1280/1200, see responsive_container in home-design-spec.yaml)"
+
+# ---------------------------------------------------------
+# MAIN LAYOUT: 2-column [main_content, sidebar]
+# ---------------------------------------------------------
+layout:
+  desktop: "grid-cols-[1fr_360px] gap-12, same pattern as Recent News section on homepage"
+
+main_content:
+
+  featured_event:
+    card:
+      image: { aspect: wide, overlay: "gradient dark-to-transparent bottom" }
+      ribbon_badge:
+        position: "top-left corner of image"
+        text: "FEATURED"
+        style: { background: crimson, color: "#FFFFFF", font: utility_font, weight: 600, uppercase: true }
+      date_badge:
+        position: "top-right corner of image - OPPOSITE corner from the FEATURED ribbon (which sits top-left). Confirmed from reference screenshot."
+        shape: { background: crimson, radius: "radius.sm" }
+        decorative_ring: "thin white inset border/ring behind the badge for contrast against the photo - purely decorative"
+        content: { day: "15", month: "NOV", text_color: "#FFFFFF" }
+      content:
+        position: "overlay bottom-left of image"
+        category: { text: "SENI & BUDAYA", color: crimson, uppercase: true, weight: 600 }
+        headline:
+          text: "Konser Orkestra Simfoni Universitas Musim Gugur"
+          style: { font: heading_font, weight: 600, size: 24px, color: "#FFFFFF" }
+        excerpt:
+          text: "Pertunjukan istimewa menampilkan karya-karya klasik dan kontemporer oleh mahasiswa fakultas seni pertunjukan."
+          style: { font: body_font, size: 14px, color: text_secondary_on_dark }
+
+  event_list:
+    layout: "vertical stack, each row: thumbnail image (left, fixed ref width) + content (right, fill)"
+    card:
+      border: default
+      date_badge:
+        position: "top-right corner of thumbnail image (no ribbon on these cards, unlike featured_event) - confirmed from reference screenshot"
+        shape: { background: crimson, radius: "radius.sm" }
+      content:
+        category: { color: crimson, uppercase: true, weight: 600, size: 12px }
+        headline: { style: { font: heading_font, weight: 600, size: "18-20px", color: primary_navy } }
+        cta:
+          label: "DAFTAR"
+          style: { font: utility_font, weight: 600, color: crimson, uppercase: true }
+    sample_items:
+      - date: { day: "18", month: "NOV" }
+        category: "PAMERAN"
+        title: "Pameran Karya Akhir Mahasiswa Arsitektur 2024"
+      - date: { day: "20", month: "NOV" }
+        category: "OLAHRAGA"
+        title: "Final Kejuaraan Bola Basket Antar Fakultas"
+      - date: { day: "22", month: "NOV" }
+        category: "SEMINAR"
+        title: "Seminar Terbuka: Inovasi Bioteknologi Medis"
+      - date: { day: "25", month: "NOV" }
+        category: "DISKUSI"
+        title: "Forum Diskusi Terbuka BEM Seluruh Indonesia"
+    note: >
+      Each card has its own "DAFTAR" (Register) CTA - implies events have a
+      registration flow per event, not just "read more" like regular
+      articles. MVP-safe default: link to event detail page, add real
+      registration/RSVP later.
+
+  pagination:
+    prev: { label: "SEBELUMNYA", icon: arrow_left, color: text_muted_link }
+    pages:
+      - { label: "1", state: active, background: primary_navy, text_color: "#FFFFFF", radius: "radius.md", size: "40x40" }
+      - { label: "2", radius: "radius.md", size: "40x40" }
+      - { label: "3", radius: "radius.md", size: "40x40" }
+      - { label: "...", disabled: true }
+      - { label: "12", radius: "radius.md", size: "40x40" }
+    next: { label: "BERIKUTNYA", icon: arrow_right, color: primary_navy }
+    divider: border-top
+
+sidebar:
+  container: { background: surface_alt_2, radius: "radius.lg" }
+
+  # ---------------------------------------------------------
+  # FUNCTIONAL CALENDAR - needs real data binding, not decorative
+  # ---------------------------------------------------------
+  calendar_widget:
+    title: { text: "November 2024", style: { font: heading_font, weight: 600, color: primary_navy } }
+    behavior: >
+      THIS IS A REAL MINI CALENDAR TIED TO EVENT DATES, not a static image.
+      Generate dynamically from the current month + actual events table
+      data (event date column), with 3 visual states per day cell:
+        1. default - text_primary color, no background, radius.md on hover
+        2. has_event (outlined) - 1px crimson border, crimson text,
+           radius.md - used for days 18, 20, 22, 25 (each has a
+           registered event that day)
+        3. featured_or_selected (filled) - crimson background, white text,
+           radius.md - used for day 15 (matches the featured_event date)
+      Days belonging to the previous/next month (28-31 leading, 1 trailing)
+      render muted (border color, no interaction) to show grid continuity
+      without implying they're clickable.
+    weekday_header:
+      labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+      style: { color: border, uppercase: true }
+    implementation_note: >
+      Build as a reusable Blade/Alpine component taking a month + an array
+      of event dates as props. This same widget likely belongs on the
+      admin CMS side too (e.g. scheduled publishing calendar) - don't
+      build it as a one-off hardcoded grid.
+
+  categories_filter:
+    title: { text: "Filter Kategori", border_bottom: default }
+    item: { icon: muted, text_color: text_secondary, style: utility_font }
+    items: ["Akademik", "Olahraga", "Seni & Budaya", "Kemahasiswaan", "Seminar Umum"]
+    behavior: "clicking a category filters event_list - should update the query/URL (e.g. ?kategori=olahraga), not just client-side hide/show, so it's linkable and paginatable"
+
+  key_events_list:
+    title: { text: "Acara Utama Pekan Ini", border_bottom: default }
+    item:
+      date_chip: { month: { color: varies, uppercase: true }, day: { color: varies, weight: 700 } }
+      title: { style: { font: heading_font, weight: 600, size: 14px, color: primary_navy } }
+    items:
+      - date: { day: "15", month: "NOV" }
+        color: crimson
+        title: "Konser Orkestra Simfoni Universitas Musim Gugur"
+      - date: { day: "18", month: "NOV" }
+        color: text_muted_link
+        title: "Pameran Karya Akhir Mahasiswa Arsitektur 2024"
+      - date: { day: "20", month: "NOV" }
+        color: text_muted_link
+        title: "Final Kejuaraan Bola Basket Antar Fakultas"
+    note: >
+      Only the nearest/featured event (Nov 15) uses crimson; the other two
+      use the muted text_muted_link color. Likely logic: "next upcoming
+      event" gets emphasis - implement as a computed state (closest
+      upcoming date = emphasized), not a hardcoded style per item.
+
+  advertisement_slot:
+    reuse_component: "advertisement_slot from home-design-spec.yaml - identical structure (label + SPONSOR CONTENT box, surface_muted bg, radius.lg)"
+    note: "Confirms this should be a shared Blade component, not duplicated markup, across Homepage and Events."
+
+# ---------------------------------------------------------
+# FOOTER - identical to Homepage footer, confirmed reused as-is
+# ---------------------------------------------------------
+footer:
+  reuse_component: "footer from home-design-spec.yaml - no changes on this page"
+
+# ---------------------------------------------------------
+# RESPONSIVE
+# ---------------------------------------------------------
+responsive:
+  container: "same page_container strategy as other pages (max-w-[1280px] mx-auto px-10) - see home-design-spec.yaml for full rationale"
+  below_lg: "sidebar (calendar + filters + key events + ad) moves below main_content, full width"
+  mobile: "event_list cards stack thumbnail above content instead of side-by-side; calendar_widget stays a full 7-column grid but shrinks cell padding rather than dropping to a list"

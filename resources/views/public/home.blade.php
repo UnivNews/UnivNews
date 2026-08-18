@@ -39,7 +39,7 @@
                             <img src="{{ asset('storage/' . $featuredArticle->featured_image_path) }}" class="w-full h-full object-cover" alt="{{ $featuredArticle->title }}">
                         @endif
                     @else
-                        <img src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover" alt="Featured">
+                        <img src="https://picsum.photos/seed/hero/1280/720" class="w-full h-full object-cover" alt="Featured">
                     @endif
                     
                     <!-- Gradient Overlay -->
@@ -132,7 +132,7 @@
                                     <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover" alt="{{ $article->title }}">
                                 @endif
                             @else
-                                <img src="https://images.unsplash.com/photo-1507668077129-56e32842fceb?q=80&w=800&auto=format&fit=crop" class="w-full h-auto object-cover" alt="Article">
+                                <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover" alt="Article">
                             @endif
                         </div>
                         
