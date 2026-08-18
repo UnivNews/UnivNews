@@ -60,10 +60,10 @@
             </div>
         </div>
 
-        <!-- Trending Research Sidebar -->
+        <!-- Trending Search Sidebar -->
         <div>
             <div class="flex items-center justify-between border-b-2 border-crimson pb-2 mb-8">
-                <h3 class="text-2xl font-heading font-bold text-navy uppercase">Trending Research</h3>
+                <h3 class="text-2xl font-heading font-bold text-navy uppercase">Trending Search</h3>
             </div>
             <div class="space-y-6">
                 @foreach($trendingResearch as $index => $article)

@@ -16,11 +16,49 @@
                 </div>
 
                 <!-- Navigation -->
-                <nav class="hidden md:flex space-x-8 font-sans font-medium">
-                    <a href="{{ route('home') }}" class="hover:text-crimson transition-colors px-3 py-2 text-sm uppercase tracking-wider {{ request()->routeIs('home') ? 'text-crimson border-b-2 border-crimson' : '' }}">Home</a>
-                    <a href="{{ route('research') }}" class="hover:text-crimson transition-colors px-3 py-2 text-sm uppercase tracking-wider {{ request()->routeIs('research') ? 'text-crimson border-b-2 border-crimson' : '' }}">Research & Innovation</a>
-                    <a href="{{ route('category', 'campus-life') }}" class="hover:text-crimson transition-colors px-3 py-2 text-sm uppercase tracking-wider">Campus Life</a>
-                    <a href="{{ route('category', 'achievements') }}" class="hover:text-crimson transition-colors px-3 py-2 text-sm uppercase tracking-wider">Achievements</a>
+                <nav class="hidden md:flex items-center space-x-8 font-sans font-medium">
+                    <a href="{{ route('home') }}" class="hover:text-crimson transition-colors px-3 py-6 text-sm uppercase tracking-wider {{ request()->routeIs('home') ? 'text-crimson border-b-2 border-crimson' : 'border-b-2 border-transparent' }}">Home</a>
+                    
+                    <!-- News & Event Dropdown (Alpine.js) -->
+                    <div x-data="{ open: false }" 
+                         @mouseenter="open = true" 
+                         @mouseleave="open = false" 
+                         class="relative">
+                        <button @click="open = !open" 
+                                :aria-expanded="open" 
+                                aria-haspopup="true" 
+                                class="flex items-center hover:text-crimson transition-colors px-3 py-6 text-sm uppercase tracking-wider {{ request()->routeIs('category') && request()->category?->slug !== 'achievements' || request()->routeIs('article') || request()->routeIs('research') ? 'text-crimson border-b-2 border-crimson' : 'border-b-2 border-transparent' }}">
+                            News & Event
+                            <svg class="ml-1 w-4 h-4 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div x-show="open" 
+                             @click.away="open = false"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute left-0 top-full w-56 bg-white border border-border-main shadow-sm z-50 rounded-none"
+                             x-cloak>
+                            <div class="py-2">
+                                @if(isset($navCategories) && $navCategories->count() > 0)
+                                    @foreach($navCategories as $cat)
+                                        @if($cat->slug === 'research-innovation')
+                                            <a href="{{ route('research') }}" class="block px-4 py-2 text-sm text-navy hover:bg-gray-50 hover:text-crimson transition-colors {{ request()->routeIs('research') ? 'text-crimson font-bold' : '' }}">{{ $cat->name }}</a>
+                                        @elseif($cat->slug !== 'achievements')
+                                            <a href="{{ route('category', $cat->slug) }}" class="block px-4 py-2 text-sm text-navy hover:bg-gray-50 hover:text-crimson transition-colors {{ request()->is('category/' . $cat->slug) ? 'text-crimson font-bold' : '' }}">{{ $cat->name }}</a>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-500 italic">No categories</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('category', 'achievements') }}" class="hover:text-crimson transition-colors px-3 py-6 text-sm uppercase tracking-wider {{ request()->is('category/achievements') ? 'text-crimson border-b-2 border-crimson' : 'border-b-2 border-transparent' }}">Achievements</a>
                 </nav>
 
                 <!-- Search & Admin Link -->
