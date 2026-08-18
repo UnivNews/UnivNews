@@ -13,7 +13,7 @@
             {{ $article->title }}
         </h1>
         <div class="text-gray-600 font-sans flex items-center justify-center space-x-4">
-            <span class="font-medium text-navy">By {{ $article->user->name }}</span>
+            <span class="font-medium text-navy">By {{ $article->user->name }} @if($article->user->university) ({{ $article->user->university->abbreviation ?? $article->user->university->name }}) @endif</span>
             <span>&bull;</span>
             <span>{{ $article->published_at->format('F j, Y') }}</span>
             <span>&bull;</span>
@@ -22,9 +22,11 @@
     </header>
 
     <!-- Featured Image -->
-    <div class="aspect-video bg-gray-100 w-full relative mb-12 shadow-md">
-        <div class="absolute inset-0 flex items-center justify-center text-gray-400">Featured Image Placeholder</div>
+    @if($article->featured_image_path)
+    <div class="aspect-video bg-gray-100 w-full relative mb-12 shadow-md overflow-hidden border border-border-main">
+        <img src="{{ asset($article->featured_image_path) }}" alt="{{ $article->title }}" class="w-full h-full object-cover">
     </div>
+    @endif
 
     <!-- Content -->
     <div class="prose prose-lg prose-blue max-w-none font-serif text-gray-800 leading-relaxed mb-12">

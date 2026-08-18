@@ -4,12 +4,12 @@
 @section('header_tagline', 'EDIT ARTICLE - UNIVERSITY NEWS')
 
 @section('content')
-<div class="max-w-6xl mx-auto" x-data="articleEditFormHandler()">
+<div class="max-w-6xl mx-auto" x-data="authorArticleEditFormHandler()">
     
     <!-- Top Back Link & Heading -->
     <div class="mb-6 flex items-center justify-between">
         <div>
-            <a href="{{ route('admin.articles.index') }}" class="inline-flex items-center text-xs font-semibold text-gray-500 hover:text-[#8b1528] mb-2 transition-colors">
+            <a href="{{ route('author.articles.index') }}" class="inline-flex items-center text-xs font-semibold text-gray-500 hover:text-[#8b1528] mb-2 transition-colors">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
@@ -18,13 +18,10 @@
             <h1 class="text-3xl font-extrabold font-heading text-[#00081e] tracking-tight">Edit Article</h1>
         </div>
 
-        @if($article->isPendingReview())
-            <a href="{{ route('admin.articles.review', $article) }}" class="px-4 py-2 bg-[#8b1528] hover:bg-[#721120] text-white text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                </svg>
-                Open Review Mode
-            </a>
+        @if($article->isRejected() && $article->admin_notes)
+        <div class="p-3 bg-red-50 border-l-4 border-red-600 text-red-800 text-xs max-w-md">
+            <strong>Editor Feedback:</strong> {{ $article->admin_notes }}
+        </div>
         @endif
     </div>
 
@@ -39,7 +36,7 @@
     </div>
     @endif
 
-    <form action="{{ route('admin.articles.update', $article) }}" method="POST" enctype="multipart/form-data" id="articleEditForm">
+    <form action="{{ route('author.articles.update', $article) }}" method="POST" enctype="multipart/form-data" id="authorArticleEditForm">
         @csrf
         @method('PUT')
         <input type="hidden" name="status" id="formStatus" value="{{ $article->status }}">
@@ -111,14 +108,14 @@
                     </h3>
 
                     <div class="space-y-3">
-                        <!-- Publish Now Button -->
+                        <!-- Submit for Review Button -->
                         <button type="button" 
-                                @click="submitWithStatus('published')" 
+                                @click="submitWithStatus('pending_review')" 
                                 class="w-full py-3 bg-[#6b0f1f] hover:bg-[#520a17] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-colors">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                             </svg>
-                            Publish Now
+                            Submit for Review
                         </button>
 
                         <!-- Save as Draft Button -->
@@ -128,12 +125,12 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
                             </svg>
-                            Save as Draft
+                            Save Draft
                         </button>
 
                         <!-- Cancel Link -->
                         <div class="text-center pt-2">
-                            <a href="{{ route('admin.articles.index') }}" class="text-xs text-gray-500 hover:text-[#00081e] transition-colors font-medium">
+                            <a href="{{ route('author.articles.index') }}" class="text-xs text-gray-500 hover:text-[#00081e] transition-colors font-medium">
                                 Cancel
                             </a>
                         </div>
@@ -229,7 +226,7 @@
 </div>
 
 <script>
-function articleEditFormHandler() {
+function authorArticleEditFormHandler() {
     return {
         newTagInput: '',
         tags: @json($article->tags->pluck('name')),
@@ -255,7 +252,7 @@ function articleEditFormHandler() {
         },
         submitWithStatus(status) {
             document.getElementById('formStatus').value = status;
-            document.getElementById('articleEditForm').submit();
+            document.getElementById('authorArticleEditForm').submit();
         }
     }
 }
