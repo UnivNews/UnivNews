@@ -1,72 +1,248 @@
-@extends('layouts.admin')
+@extends('layouts.cms')
 
-@section('title', 'Create Article - University News')
+@section('title', 'Create New Article - University News')
+@section('header_tagline', 'CREATE ARTICLE - UNIVERSITY NEWS')
 
 @section('content')
-<div class="mb-8 flex items-center justify-between">
-    <div>
-        <a href="{{ route('admin.articles') }}" class="text-sm font-sans text-gray-500 hover:text-navy mb-2 inline-block">&larr; Back to Articles</a>
-        <h2 class="text-3xl font-heading font-bold text-navy">Create New Article</h2>
+<div class="max-w-6xl mx-auto" x-data="articleFormHandler()">
+    
+    <!-- Top Back Link & Heading -->
+    <div class="mb-6">
+        <a href="{{ route('admin.articles.index') }}" class="inline-flex items-center text-xs font-semibold text-gray-500 hover:text-[#8b1528] mb-2 transition-colors">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Articles
+        </a>
+        <h1 class="text-3xl font-extrabold font-heading text-[#00081e] tracking-tight">Create New Article</h1>
     </div>
+
+    @if($errors->any())
+    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-600 text-red-700 text-sm">
+        <p class="font-bold">Please check the form for errors:</p>
+        <ul class="list-disc pl-5 mt-1 space-y-1">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    <form action="{{ route('admin.articles.store') }}" method="POST" enctype="multipart/form-data" id="articleForm">
+        @csrf
+        <input type="hidden" name="status" id="formStatus" value="draft">
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Main Editor Fields -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Title Field -->
+                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                    <label for="title" class="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">
+                        Title <span class="text-[#8b1528]">*</span>
+                    </label>
+                    <input type="text" 
+                           name="title" 
+                           id="title" 
+                           value="{{ old('title') }}" 
+                           placeholder="Enter article title..." 
+                           class="w-full bg-[#f8f9fa] border border-gray-300 px-4 py-3 text-base text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0" 
+                           required>
+                </div>
+
+                <!-- Excerpt Field -->
+                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                    <label for="excerpt" class="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">
+                        Excerpt (Summary)
+                    </label>
+                    <textarea name="excerpt" 
+                              id="excerpt" 
+                              rows="3" 
+                              placeholder="A brief summary that appears on listing pages. Leave blank to auto-generate." 
+                              class="w-full bg-[#f8f9fa] border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">{{ old('excerpt') }}</textarea>
+                </div>
+
+                <!-- Full Content Editor -->
+                <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-gray-200 flex items-center justify-between bg-[#fcfcfd]">
+                        <label class="block text-xs font-bold text-gray-800 uppercase tracking-wider">
+                            Full Content <span class="text-[#8b1528]">*</span>
+                        </label>
+                        
+                        <!-- Rich text toolbar helper -->
+                        <div class="flex items-center space-x-2 text-gray-500">
+                            <button type="button" @click="insertTag('<b>', '</b>')" class="p-1.5 hover:text-navy hover:bg-gray-100 font-bold text-sm w-7 h-7 flex items-center justify-center border border-gray-200" title="Bold">B</button>
+                            <button type="button" @click="insertTag('<i>', '</i>')" class="p-1.5 hover:text-navy hover:bg-gray-100 italic font-serif text-sm w-7 h-7 flex items-center justify-center border border-gray-200" title="Italic">I</button>
+                            <button type="button" @click="insertTag('<u>', '</u>')" class="p-1.5 hover:text-navy hover:bg-gray-100 underline text-sm w-7 h-7 flex items-center justify-center border border-gray-200" title="Underline">U</button>
+                            <button type="button" @click="insertTag('<blockquote>', '</blockquote>')" class="p-1.5 hover:text-navy hover:bg-gray-100 text-xs w-7 h-7 flex items-center justify-center border border-gray-200" title="Quote">&ldquo;&rdquo;</button>
+                            <button type="button" @click="insertTag('<h3>', '</h3>')" class="p-1.5 hover:text-navy hover:bg-gray-100 text-xs font-bold w-7 h-7 flex items-center justify-center border border-gray-200" title="Heading">H3</button>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <textarea name="content" 
+                                  id="content" 
+                                  rows="18" 
+                                  placeholder="Start writing your article here..." 
+                                  class="w-full bg-[#f8f9fa] border border-gray-300 p-4 text-base font-serif-content leading-relaxed text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0" 
+                                  required>{{ old('content') }}</textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Sidebar Action Controls -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Publish Box -->
+                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-5 border-b border-gray-100">
+                        Publish
+                    </h3>
+
+                    <div class="space-y-3">
+                        <!-- Publish Now Button -->
+                        <button type="button" 
+                                @click="submitWithStatus('published')" 
+                                class="w-full py-3 bg-[#6b0f1f] hover:bg-[#520a17] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-colors">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                            Publish Now
+                        </button>
+
+                        <!-- Save Article / Draft Button -->
+                        <button type="button" 
+                                @click="submitWithStatus('draft')" 
+                                class="w-full py-3 bg-[#8b1528] hover:bg-[#721120] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                            </svg>
+                            Save Article
+                        </button>
+
+                        <!-- Cancel Link -->
+                        <div class="text-center pt-2">
+                            <a href="{{ route('admin.articles.index') }}" class="text-xs text-gray-500 hover:text-[#00081e] transition-colors font-medium">
+                                Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Box -->
+                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-4 border-b border-gray-100">
+                        Categories <span class="text-[#8b1528]">*</span>
+                    </h3>
+
+                    <div class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+                        @foreach($categories as $category)
+                        <label class="flex items-center gap-3 text-sm text-gray-700 cursor-pointer hover:text-black select-none">
+                            <input type="radio" 
+                                   name="category_id" 
+                                   value="{{ $category->id }}" 
+                                   {{ (old('category_id') == $category->id || $loop->first) ? 'checked' : '' }} 
+                                   class="text-[#8b1528] focus:ring-0 focus:ring-offset-0 border-gray-300" 
+                                   required>
+                            <span>{{ $category->name }}</span>
+                        </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Tags Box -->
+                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-4 border-b border-gray-100">
+                        Tags
+                    </h3>
+
+                    <!-- Add Tag Input Row -->
+                    <div class="flex items-center gap-2 mb-4">
+                        <input type="text" 
+                               x-model="newTagInput" 
+                               @keydown.enter.prevent="addTag()" 
+                               placeholder="Add a tag..." 
+                               class="flex-1 bg-[#f8f9fa] border border-gray-300 px-3 py-2 text-xs text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">
+                        <button type="button" 
+                                @click="addTag()" 
+                                class="px-4 py-2 bg-[#6b0f1f] hover:bg-[#520a17] text-white text-xs font-bold uppercase tracking-wider transition-colors">
+                            Add
+                        </button>
+                    </div>
+
+                    <!-- Selected Tag Badges Container -->
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="(tag, index) in tags" :key="index">
+                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-[#8b1528] border border-[#8b1528]/30 bg-[#8b1528]/5 gap-1.5">
+                                <span x-text="'#' + tag"></span>
+                                <button type="button" @click="removeTag(index)" class="hover:text-red-900 font-bold leading-none">&times;</button>
+                                <input type="hidden" name="tags[]" :value="tag">
+                            </span>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Featured Image Box -->
+                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-4 border-b border-gray-100">
+                        Featured Image
+                    </h3>
+
+                    <div class="relative border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors p-6 text-center cursor-pointer bg-[#fafafa]">
+                        <input type="file" 
+                               name="featured_image" 
+                               id="featured_image" 
+                               accept="image/*" 
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        
+                        <div class="space-y-2">
+                            <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <p class="text-xs font-medium text-gray-700">Click to upload or drag and drop</p>
+                            <p class="text-[10px] text-gray-400">SVG, PNG, JPG or GIF (max. 800&times;400px)</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
 </div>
 
-<form action="{{ route('admin.articles.store') }}" method="POST" class="bg-white shadow-sm border border-border-main p-8 max-w-4xl">
-    @csrf
-
-    <div class="space-y-6">
-        <!-- Title -->
-        <div>
-            <label for="title" class="block text-sm font-semibold text-navy uppercase tracking-wider mb-2">Title <span class="text-crimson">*</span></label>
-            <input type="text" name="title" id="title" value="{{ old('title') }}" class="w-full border-border-main bg-gray-50 focus:bg-white focus:ring-0 focus:border-navy text-navy font-serif text-xl px-4 py-3" required>
-            @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        </div>
-
-        <!-- Category & Status Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label for="category_id" class="block text-sm font-semibold text-navy uppercase tracking-wider mb-2">Category <span class="text-crimson">*</span></label>
-                <select name="category_id" id="category_id" class="w-full border-border-main bg-gray-50 focus:bg-white focus:ring-0 focus:border-navy px-4 py-2.5" required>
-                    <option value="">Select a category</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                    @endforeach
-                </select>
-                @error('category_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div>
-                <label for="status" class="block text-sm font-semibold text-navy uppercase tracking-wider mb-2">Status <span class="text-crimson">*</span></label>
-                <select name="status" id="status" class="w-full border-border-main bg-gray-50 focus:bg-white focus:ring-0 focus:border-navy px-4 py-2.5" required>
-                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft (Hidden)</option>
-                    <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published (Visible)</option>
-                </select>
-                @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-        </div>
-
-        <!-- Excerpt -->
-        <div>
-            <label for="excerpt" class="block text-sm font-semibold text-navy uppercase tracking-wider mb-2">Excerpt (Summary)</label>
-            <textarea name="excerpt" id="excerpt" rows="3" class="w-full border-border-main bg-gray-50 focus:bg-white focus:ring-0 focus:border-navy px-4 py-3 text-gray-700">{{ old('excerpt') }}</textarea>
-            <p class="text-gray-400 text-xs mt-1">A brief summary that appears on listing pages. Leave blank to auto-generate.</p>
-            @error('excerpt') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        </div>
-
-        <!-- Content -->
-        <div>
-            <label for="content" class="block text-sm font-semibold text-navy uppercase tracking-wider mb-2">Full Content <span class="text-crimson">*</span></label>
-            <textarea name="content" id="content" rows="15" class="w-full border-border-main bg-gray-50 focus:bg-white focus:ring-0 focus:border-navy font-serif px-4 py-3 text-gray-800" required>{{ old('content') }}</textarea>
-            <p class="text-gray-400 text-xs mt-1">HTML is supported for formatting.</p>
-            @error('content') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        </div>
-
-        <!-- Actions -->
-        <div class="pt-6 border-t border-border-main flex items-center justify-end space-x-4">
-            <a href="{{ route('admin.articles') }}" class="text-gray-500 hover:text-navy font-sans font-medium uppercase tracking-wider text-sm px-4 py-2">Cancel</a>
-            <button type="submit" class="bg-navy hover:bg-black text-white px-8 py-3 font-heading font-bold text-sm uppercase tracking-wider transition-colors">
-                Save Article
-            </button>
-        </div>
-    </div>
-</form>
+<script>
+function articleFormHandler() {
+    return {
+        newTagInput: '',
+        tags: ['Announcement', 'Research'],
+        addTag() {
+            const trimmed = this.newTagInput.trim().replace(/^#/, '');
+            if (trimmed && !this.tags.includes(trimmed)) {
+                this.tags.push(trimmed);
+            }
+            this.newTagInput = '';
+        },
+        removeTag(index) {
+            this.tags.splice(index, 1);
+        },
+        insertTag(openTag, closeTag) {
+            const textarea = document.getElementById('content');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selected = textarea.value.substring(start, end);
+            const replacement = openTag + selected + closeTag;
+            textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + openTag.length, end + openTag.length);
+        },
+        submitWithStatus(status) {
+            document.getElementById('formStatus').value = status;
+            document.getElementById('articleForm').submit();
+        }
+    }
+}
+</script>
 @endsection

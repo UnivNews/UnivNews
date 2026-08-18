@@ -1,31 +1,20 @@
 @extends('layouts.cms')
 
-@section('title', 'Edit Article - University News')
-@section('header_tagline', 'EDIT ARTICLE - UNIVERSITY NEWS')
+@section('title', 'Create New Article - University News')
+@section('header_tagline', 'CREATE ARTICLE - UNIVERSITY NEWS')
 
 @section('content')
-<div class="max-w-6xl mx-auto" x-data="articleEditFormHandler()">
+<div class="max-w-6xl mx-auto" x-data="authorArticleFormHandler()">
     
     <!-- Top Back Link & Heading -->
-    <div class="mb-6 flex items-center justify-between">
-        <div>
-            <a href="{{ route('admin.articles.index') }}" class="inline-flex items-center text-xs font-semibold text-gray-500 hover:text-[#8b1528] mb-2 transition-colors">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to Articles
-            </a>
-            <h1 class="text-3xl font-extrabold font-heading text-[#00081e] tracking-tight">Edit Article</h1>
-        </div>
-
-        @if($article->isPendingReview())
-            <a href="{{ route('admin.articles.review', $article) }}" class="px-4 py-2 bg-[#8b1528] hover:bg-[#721120] text-white text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                </svg>
-                Open Review Mode
-            </a>
-        @endif
+    <div class="mb-6">
+        <a href="{{ route('author.articles.index') }}" class="inline-flex items-center text-xs font-semibold text-gray-500 hover:text-[#8b1528] mb-2 transition-colors">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Articles
+        </a>
+        <h1 class="text-3xl font-extrabold font-heading text-[#00081e] tracking-tight">Create New Article</h1>
     </div>
 
     @if($errors->any())
@@ -39,10 +28,9 @@
     </div>
     @endif
 
-    <form action="{{ route('admin.articles.update', $article) }}" method="POST" enctype="multipart/form-data" id="articleEditForm">
+    <form action="{{ route('author.articles.store') }}" method="POST" enctype="multipart/form-data" id="authorArticleForm">
         @csrf
-        @method('PUT')
-        <input type="hidden" name="status" id="formStatus" value="{{ $article->status }}">
+        <input type="hidden" name="status" id="formStatus" value="draft">
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
@@ -57,7 +45,8 @@
                     <input type="text" 
                            name="title" 
                            id="title" 
-                           value="{{ old('title', $article->title) }}" 
+                           value="{{ old('title') }}" 
+                           placeholder="Enter article title..." 
                            class="w-full bg-[#f8f9fa] border border-gray-300 px-4 py-3 text-base text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0" 
                            required>
                 </div>
@@ -70,7 +59,8 @@
                     <textarea name="excerpt" 
                               id="excerpt" 
                               rows="3" 
-                              class="w-full bg-[#f8f9fa] border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">{{ old('excerpt', $article->excerpt) }}</textarea>
+                              placeholder="A brief summary that appears on listing pages. Leave blank to auto-generate." 
+                              class="w-full bg-[#f8f9fa] border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">{{ old('excerpt') }}</textarea>
                 </div>
 
                 <!-- Full Content Editor -->
@@ -94,8 +84,9 @@
                         <textarea name="content" 
                                   id="content" 
                                   rows="18" 
+                                  placeholder="Start writing your article here..." 
                                   class="w-full bg-[#f8f9fa] border border-gray-300 p-4 text-base font-serif-content leading-relaxed text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0" 
-                                  required>{{ old('content', $article->content) }}</textarea>
+                                  required>{{ old('content') }}</textarea>
                     </div>
                 </div>
 
@@ -111,14 +102,14 @@
                     </h3>
 
                     <div class="space-y-3">
-                        <!-- Publish Now Button -->
+                        <!-- Submit for Review Button -->
                         <button type="button" 
-                                @click="submitWithStatus('published')" 
+                                @click="submitWithStatus('pending_review')" 
                                 class="w-full py-3 bg-[#6b0f1f] hover:bg-[#520a17] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-colors">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                             </svg>
-                            Publish Now
+                            Submit for Review
                         </button>
 
                         <!-- Save as Draft Button -->
@@ -128,12 +119,12 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
                             </svg>
-                            Save as Draft
+                            Save Draft
                         </button>
 
                         <!-- Cancel Link -->
                         <div class="text-center pt-2">
-                            <a href="{{ route('admin.articles.index') }}" class="text-xs text-gray-500 hover:text-[#00081e] transition-colors font-medium">
+                            <a href="{{ route('author.articles.index') }}" class="text-xs text-gray-500 hover:text-[#00081e] transition-colors font-medium">
                                 Cancel
                             </a>
                         </div>
@@ -152,7 +143,7 @@
                             <input type="radio" 
                                    name="category_id" 
                                    value="{{ $category->id }}" 
-                                   {{ (old('category_id', $article->category_id) == $category->id) ? 'checked' : '' }} 
+                                   {{ (old('category_id') == $category->id || $loop->first) ? 'checked' : '' }} 
                                    class="text-[#8b1528] focus:ring-0 focus:ring-offset-0 border-gray-300" 
                                    required>
                             <span>{{ $category->name }}</span>
@@ -199,12 +190,6 @@
                         Featured Image
                     </h3>
 
-                    @if($article->featured_image_path)
-                    <div class="mb-4">
-                        <img src="{{ asset($article->featured_image_path) }}" alt="Featured Image" class="w-full h-32 object-cover border border-gray-200">
-                    </div>
-                    @endif
-
                     <div class="relative border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors p-6 text-center cursor-pointer bg-[#fafafa]">
                         <input type="file" 
                                name="featured_image" 
@@ -229,10 +214,10 @@
 </div>
 
 <script>
-function articleEditFormHandler() {
+function authorArticleFormHandler() {
     return {
         newTagInput: '',
-        tags: @json($article->tags->pluck('name')),
+        tags: ['Announcement', 'Research'],
         addTag() {
             const trimmed = this.newTagInput.trim().replace(/^#/, '');
             if (trimmed && !this.tags.includes(trimmed)) {
@@ -255,7 +240,7 @@ function articleEditFormHandler() {
         },
         submitWithStatus(status) {
             document.getElementById('formStatus').value = status;
-            document.getElementById('articleEditForm').submit();
+            document.getElementById('authorArticleForm').submit();
         }
     }
 }

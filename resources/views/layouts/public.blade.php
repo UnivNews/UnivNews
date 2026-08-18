@@ -42,6 +42,20 @@
                     </form>
                     
                     @auth
+                        @if(auth()->user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="bg-crimson hover:bg-red-700 text-white px-4 py-2 font-heading font-bold text-xs uppercase tracking-wider transition-colors">Admin CMS</a>
+                        @elseif(auth()->user()->isAuthor())
+                            <a href="{{ route('author.dashboard') }}" class="bg-crimson hover:bg-red-700 text-white px-4 py-2 font-heading font-bold text-xs uppercase tracking-wider transition-colors">Author Desk</a>
+                        @else
+                            <a href="{{ route('author.apply') }}" class="border border-white/30 text-white hover:bg-white/10 px-3.5 py-1.5 font-sans font-medium text-xs tracking-wider transition-colors">Apply as Author</a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="text-xs text-gray-400 hover:text-white ml-3 transition-colors">Log Out</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="text-sm font-sans hover:text-crimson transition-colors">Staff Login</a>
+                        <a href="{{ route('register') }}" class="bg-crimson hover:bg-red-700 text-white px-3.5 py-1.5 text-xs font-heading font-bold uppercase tracking-wider transition-colors">Register</a>
                         <a href="{{ route('dashboard') }}" class="bg-crimson hover:bg-red-700 text-white px-4 py-2 font-heading font-bold text-sm uppercase tracking-wider transition-colors rounded-none">CMS</a>
                     @else
                         <a href="{{ route('login') }}" class="text-sm font-sans font-medium text-white hover:text-crimson transition-colors">Login</a>

@@ -16,6 +16,20 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <!-- University -->
+        <div class="mt-4">
+            <x-input-label for="university_id" :value="__('University / Institution')" />
+            <select id="university_id" name="university_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
+                <option value="">Select your university</option>
+                @foreach($universities as $uni)
+                    <option value="{{ $uni->id }}" {{ old('university_id') == $uni->id ? 'selected' : '' }}>
+                        {{ $uni->name }} ({{ $uni->abbreviation }})
+                    </option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('university_id')" class="mt-2" />
+        </div>
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
