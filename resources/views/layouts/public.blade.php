@@ -54,11 +54,8 @@
                             <button type="submit" class="text-xs text-gray-400 hover:text-white ml-3 transition-colors">Log Out</button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-sans hover:text-crimson transition-colors">Staff Login</a>
-                        <a href="{{ route('register') }}" class="bg-crimson hover:bg-red-700 text-white px-3.5 py-1.5 text-xs font-heading font-bold uppercase tracking-wider transition-colors">Register</a>
-                        <a href="{{ route('dashboard') }}" class="bg-crimson hover:bg-red-700 text-white px-4 py-2 font-heading font-bold text-sm uppercase tracking-wider transition-colors rounded-none">CMS</a>
-                    @else
                         <a href="{{ route('login') }}" class="text-sm font-sans font-medium text-white hover:text-crimson transition-colors">Login</a>
+                        <a href="{{ route('register') }}" class="bg-crimson hover:bg-red-700 text-white px-3.5 py-1.5 text-xs font-heading font-bold uppercase tracking-wider transition-colors">Register</a>
                     @endauth
                 </div>
             </div>

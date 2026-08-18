@@ -201,10 +201,6 @@ class DatabaseSeeder extends Seeder
                 'published_at' => now()->subDays(8),
                 'views_count' => 1840,
                 'tags' => ['Engineering', 'Innovation'],
-                'content' => '<p>After months of preparation, our student engineering team emerged victorious at the National Robotics Showcase.</p><p>Their autonomous rescue robot outperformed 50 other teams in simulated disaster scenarios.</p>',
-                'category_id' => $categories->where('name', 'Achievements')->first()->id,
-                'status' => 'published',
-                'published_at' => now()->subDays(10),
                 'featured_image_path' => 'https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?q=80&w=800&auto=format&fit=crop',
             ],
             [
@@ -248,29 +244,15 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($articles as $data) {
-            $tagNames = $data['tags'];
+            $tagNames = $data['tags'] ?? [];
             unset($data['tags']);
-                'featured_image_path' => 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=800&auto=format&fit=crop',
-            ],
-        ];
-
-        foreach ($articleData as $data) {
-            $article = Article::create([
-                'title' => $data['title'],
-                'slug' => Str::slug($data['title']),
-                'excerpt' => $data['excerpt'],
-                'content' => $data['content'],
-                'status' => $data['status'],
-                'published_at' => $data['published_at'],
-                'user_id' => $author->id,
-                'category_id' => $data['category_id'],
-                'views_count' => rand(100, 5000),
-                'featured_image_path' => $data['featured_image_path'] ?? null,
-            ]);
 
             $article = Article::create($data);
-            $tagIds = collect($tagNames)->map(fn ($name) => $tags[$name]->id ?? null)->filter();
-            $article->tags()->attach($tagIds);
+            
+            if (!empty($tagNames)) {
+                $tagIds = collect($tagNames)->map(fn ($name) => $tags[$name]->id ?? null)->filter();
+                $article->tags()->attach($tagIds);
+            }
         }
     }
 }
