@@ -7,6 +7,7 @@ use App\Http\Controllers\Author as Author;
 
 // 1. Public Portal Routes
 Route::get('/', [PublicController::class, 'home'])->name('home');
+Route::get('/events', [PublicController::class, 'events'])->name('events');
 Route::get('/category/{category:slug}', [PublicController::class, 'category'])->name('category');
 Route::get('/research', [PublicController::class, 'research'])->name('research');
 Route::get('/article/{article:slug}', [PublicController::class, 'article'])->name('article');

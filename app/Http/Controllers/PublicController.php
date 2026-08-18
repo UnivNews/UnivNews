@@ -21,7 +21,7 @@ class PublicController extends Controller
             ->where('published_at', '<=', now())
             ->where('id', '!=', $featuredArticle?->id)
             ->orderBy('published_at', 'desc')
-            ->limit(6)
+            ->limit(8)
             ->get();
 
         $trendingResearch = Article::whereHas('category', function($q) {
@@ -64,6 +64,12 @@ class PublicController extends Controller
             ->get();
 
         return view('public.research', compact('category', 'featuredResearch', 'articles', 'breakingNews'));
+    }
+
+    public function events()
+    {
+        // For now, returning dummy data directly in the blade since we don't have an Event model.
+        return view('public.event');
     }
 
     public function category(Category $category)

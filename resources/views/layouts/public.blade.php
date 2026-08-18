@@ -1,70 +1,44 @@
 @extends('layouts.app')
 
 @section('base_content')
+    <!-- Top Announcement Bar -->
+    <div class="bg-crimson text-white text-xs font-bold uppercase tracking-widest text-center py-2 w-full font-sans">
+        OFFICIAL UNIVERSITY NEWS PORTAL
+    </div>
+
     <header class="bg-navy text-white shadow-md sticky top-0 z-50">
-        <div class="bg-crimson py-1 px-4 text-center text-xs tracking-widest uppercase font-heading font-bold">
-            Official University News Portal
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1280px] w-full mx-auto px-6 md:px-10">
             <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('home') }}" class="font-heading font-bold text-2xl tracking-tight flex items-center gap-2">
-                        <div class="w-8 h-8 bg-crimson flex items-center justify-center font-serif text-white">U</div>
-                        <span>University<span class="font-light">News</span></span>
+                
+                <!-- Left: Logo -->
+                <div class="flex-shrink-0">
+                    <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
+                        <div class="bg-crimson text-white w-10 h-10 flex items-center justify-center font-heading font-bold text-2xl transition-transform group-hover:scale-105">
+                            U
+                        </div>
+                        <span class="font-heading font-bold text-2xl tracking-tight">
+                            University<span class="font-normal">News</span>
+                        </span>
                     </a>
                 </div>
 
-                <!-- Navigation -->
-                <nav class="hidden md:flex items-center space-x-8 font-sans font-medium">
-                    <a href="{{ route('home') }}" class="hover:text-crimson transition-colors px-3 py-6 text-sm uppercase tracking-wider {{ request()->routeIs('home') ? 'text-crimson border-b-2 border-crimson' : 'border-b-2 border-transparent' }}">Home</a>
-                    
-                    <!-- News & Event Dropdown (Alpine.js) -->
-                    <div x-data="{ open: false }" 
-                         @mouseenter="open = true" 
-                         @mouseleave="open = false" 
-                         class="relative">
-                        <button @click="open = !open" 
-                                :aria-expanded="open" 
-                                aria-haspopup="true" 
-                                class="flex items-center hover:text-crimson transition-colors px-3 py-6 text-sm uppercase tracking-wider {{ request()->routeIs('category') && request()->category?->slug !== 'achievements' || request()->routeIs('article') || request()->routeIs('research') ? 'text-crimson border-b-2 border-crimson' : 'border-b-2 border-transparent' }}">
-                            News & Event
-                            <svg class="ml-1 w-4 h-4 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-
-                        <div x-show="open" 
-                             @click.away="open = false"
-                             x-transition:enter="transition ease-out duration-100"
-                             x-transition:enter-start="transform opacity-0 scale-95"
-                             x-transition:enter-end="transform opacity-100 scale-100"
-                             x-transition:leave="transition ease-in duration-75"
-                             x-transition:leave-start="transform opacity-100 scale-100"
-                             x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute left-0 top-full w-56 bg-white border border-border-main shadow-sm z-50 rounded-none"
-                             x-cloak>
-                            <div class="py-2">
-                                @if(isset($navCategories) && $navCategories->count() > 0)
-                                    @foreach($navCategories as $cat)
-                                        @if($cat->slug === 'research-innovation')
-                                            <a href="{{ route('research') }}" class="block px-4 py-2 text-sm text-navy hover:bg-gray-50 hover:text-crimson transition-colors {{ request()->routeIs('research') ? 'text-crimson font-bold' : '' }}">{{ $cat->name }}</a>
-                                        @elseif($cat->slug !== 'achievements')
-                                            <a href="{{ route('category', $cat->slug) }}" class="block px-4 py-2 text-sm text-navy hover:bg-gray-50 hover:text-crimson transition-colors {{ request()->is('category/' . $cat->slug) ? 'text-crimson font-bold' : '' }}">{{ $cat->name }}</a>
-                                        @endif
-                                    @endforeach
-                                @else
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-500 italic">No categories</a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    <a href="{{ route('category', 'achievements') }}" class="hover:text-crimson transition-colors px-3 py-6 text-sm uppercase tracking-wider {{ request()->is('category/achievements') ? 'text-crimson border-b-2 border-crimson' : 'border-b-2 border-transparent' }}">Achievements</a>
+                <!-- Center: Navigation -->
+                <nav class="hidden lg:flex items-center justify-center space-x-8 font-sans font-bold text-[11px] uppercase tracking-wider flex-1 px-8">
+                    <a href="{{ route('home') }}" class="hover:text-crimson transition-colors px-1 py-7 {{ request()->routeIs('home') ? 'text-crimson border-b-2 border-crimson' : 'text-white border-b-2 border-transparent' }}">HOME</a>
+                    <a href="{{ route('category', 'achievements') }}" class="hover:text-crimson transition-colors px-1 py-7 {{ request()->is('category/achievements') ? 'text-crimson border-b-2 border-crimson' : 'text-white border-b-2 border-transparent' }}">ACHIEVEMENTS</a>
+                    <a href="{{ route('events') }}" class="hover:text-crimson transition-colors px-1 py-7 {{ request()->routeIs('events') ? 'text-crimson border-b-2 border-crimson' : 'text-white border-b-2 border-transparent' }}">EVENTS</a>
+                    <a href="{{ route('research') }}" class="hover:text-crimson transition-colors px-1 py-7 {{ request()->routeIs('research') ? 'text-crimson border-b-2 border-crimson' : 'text-white border-b-2 border-transparent' }}">RESEARCH & INNOVATION</a>
                 </nav>
 
-                <!-- Search & Admin Link -->
-                <div class="flex items-center space-x-6">
+                <!-- Right: Search & Login -->
+                <div class="flex items-center justify-end space-x-8 flex-shrink-0">
                     <form action="{{ route('search') }}" method="GET" class="hidden lg:block relative">
-                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Search news..." class="bg-white/10 border border-white/20 text-white placeholder-gray-400 px-4 py-1.5 focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson w-48 transition-all">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <svg class="w-4 h-4" style="color: #7687B2;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </span>
+                            <input type="text" name="q" value="{{ request('q') }}" placeholder="Search news..." class="bg-[#0A1F44] text-white placeholder-[#7687B2] border border-transparent focus:border-crimson pl-10 pr-4 py-2 focus:outline-none w-56 transition-all rounded-none font-sans text-sm">
+                        </div>
                     </form>
                     
                     @auth
@@ -82,6 +56,9 @@
                     @else
                         <a href="{{ route('login') }}" class="text-sm font-sans hover:text-crimson transition-colors">Staff Login</a>
                         <a href="{{ route('register') }}" class="bg-crimson hover:bg-red-700 text-white px-3.5 py-1.5 text-xs font-heading font-bold uppercase tracking-wider transition-colors">Register</a>
+                        <a href="{{ route('dashboard') }}" class="bg-crimson hover:bg-red-700 text-white px-4 py-2 font-heading font-bold text-sm uppercase tracking-wider transition-colors rounded-none">CMS</a>
+                    @else
+                        <a href="{{ route('login') }}" class="text-sm font-sans font-medium text-white hover:text-crimson transition-colors">Login</a>
                     @endauth
                 </div>
             </div>
@@ -93,36 +70,49 @@
     </main>
 
     <footer class="bg-navy text-white mt-auto py-12 border-t-8 border-crimson">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1280px] w-full mx-auto px-6 md:px-10">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="col-span-1 md:col-span-2">
-                    <a href="{{ route('home') }}" class="font-heading font-bold text-2xl tracking-tight mb-4 inline-block">
-                        University<span class="font-light">News</span>
-                    </a>
-                    <p class="text-gray-400 font-sans max-w-sm">
-                        The official news portal delivering the latest updates on research, campus life, and achievements.
+                <div>
+                    <h2 class="font-heading font-bold text-2xl tracking-tight mb-4" style="color: #FFFFFF;">
+                        University News
+                    </h2>
+                    <p class="font-sans text-sm leading-relaxed" style="color: #7687B2;">
+                        Providing authoritative reporting and intellectual discourse for the academic community since 1893.
                     </p>
                 </div>
                 <div>
-                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block">Categories</h3>
-                    <ul class="space-y-2 text-gray-400 font-sans">
-                        <li><a href="{{ route('research') }}" class="hover:text-white transition-colors">Research & Innovation</a></li>
-                        <li><a href="{{ route('category', 'campus-life') }}" class="hover:text-white transition-colors">Campus Life</a></li>
-                        <li><a href="{{ route('category', 'achievements') }}" class="hover:text-white transition-colors">Achievements</a></li>
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">RESOURCES</h3>
+                    <ul class="space-y-2 text-gray-400 font-sans text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">Faculty Experts</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Media Relations</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Archives</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block">Connect</h3>
-                    <ul class="space-y-2 text-gray-400 font-sans">
-                        <li><a href="#" class="hover:text-white transition-colors">Twitter</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">LinkedIn</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">YouTube</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Contact Press Office</a></li>
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">SOCIAL</h3>
+                    <ul class="space-y-2 text-gray-400 font-sans text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">Newsletter</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Podcasts</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Events</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">INSTITUTION</h3>
+                    <ul class="space-y-2 text-gray-400 font-sans text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">About the University</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Admissions</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Giving</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 font-sans text-sm">
-                &copy; {{ date('Y') }} University News. All rights reserved. Strictly 0px border radii layout.
+            <div class="border-t border-[#C5C6CF] mt-12 pt-8 flex flex-col md:flex-row justify-between items-center font-sans text-sm" style="color: #7687B2;">
+                <div>
+                    &copy; 2024 University News Portal. All academic rights reserved.
+                </div>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Accessibility</a>
+                </div>
             </div>
         </div>
     </footer>
