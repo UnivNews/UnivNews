@@ -30,16 +30,16 @@
             <!-- Hero Article (Left, wide) -->
             <div class="lg:col-span-8">
                 @if($featuredArticle)
-                <a href="{{ route('article', $featuredArticle->slug) }}" class="block group relative w-full h-[400px] lg:h-[500px]">
+                <a href="{{ route('article', $featuredArticle->slug) }}" class="block group relative w-full h-[400px] lg:h-[500px] overflow-hidden">
                     <!-- Check if article has featured image path -->
                     @if($featuredArticle->featured_image_path)
                         @if(Str::startsWith($featuredArticle->featured_image_path, ['http://', 'https://']))
-                            <img src="{{ $featuredArticle->featured_image_path }}" class="w-full h-full object-cover" alt="{{ $featuredArticle->title }}">
+                            <img src="{{ $featuredArticle->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredArticle->title }}">
                         @else
-                            <img src="{{ asset('storage/' . $featuredArticle->featured_image_path) }}" class="w-full h-full object-cover" alt="{{ $featuredArticle->title }}">
+                            <img src="{{ asset('storage/' . $featuredArticle->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredArticle->title }}">
                         @endif
                     @else
-                        <img src="https://picsum.photos/seed/hero/1280/720" class="w-full h-full object-cover" alt="Featured">
+                        <img src="https://picsum.photos/seed/hero/1280/720" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Featured">
                     @endif
                     
                     <!-- Gradient Overlay -->
@@ -124,15 +124,15 @@
                     @foreach($recentArticles->skip(2)->take(6) as $article)
                     <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid">
                         <!-- Thumbnail -->
-                        <div class="w-full bg-gray-100 border-b border-[#C5C6CF]">
+                        <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
                             @if($article->featured_image_path)
                                 @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                    <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover" alt="{{ $article->title }}">
+                                    <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                                 @else
-                                    <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover" alt="{{ $article->title }}">
+                                    <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                                 @endif
                             @else
-                                <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover" alt="Article">
+                                <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
                             @endif
                         </div>
                         

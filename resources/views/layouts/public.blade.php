@@ -7,7 +7,7 @@
     </div>
 
     <header class="bg-navy text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-[1280px] w-full mx-auto px-6 md:px-10">
+        <div class="w-full px-6 md:px-10 lg:px-12 xl:px-16">
             <div class="flex justify-between items-center h-20">
                 
                 <!-- Left: Logo -->
@@ -31,31 +31,33 @@
                 </nav>
 
                 <!-- Right: Search & Login -->
-                <div class="flex items-center justify-end space-x-8 flex-shrink-0">
-                    <form action="{{ route('search') }}" method="GET" class="hidden lg:block relative">
-                        <div class="relative">
+                <div class="flex items-center justify-end space-x-6 flex-shrink-0 h-10">
+                    <a href="{{ route('profile.edit') }}" class="h-full flex items-center justify-center hover:opacity-80 transition-opacity px-2" title="Settings">
+                        <img src="{{ asset('setting-1.png') }}" alt="Settings" class="w-6 h-6 object-contain">
+                    </a>
+                    <form action="{{ route('search') }}" method="GET" class="hidden lg:block relative h-full">
+                        <div class="relative h-full">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                                 <svg class="w-4 h-4" style="color: #7687B2;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </span>
-                            <input type="text" name="q" value="{{ request('q') }}" placeholder="Search news..." class="bg-[#0A1F44] text-white placeholder-[#7687B2] border border-transparent focus:border-crimson pl-10 pr-4 py-2 focus:outline-none w-56 transition-all rounded-none font-sans text-sm">
+                            <input type="text" name="q" value="{{ request('q') }}" placeholder="Search news..." class="bg-[#0A1F44] text-white placeholder-[#7687B2] border border-transparent focus:border-crimson pl-10 pr-4 h-full focus:outline-none w-56 transition-all rounded-none font-sans text-sm">
                         </div>
                     </form>
                     
                     @auth
                         @if(auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="bg-crimson hover:bg-red-700 text-white px-4 py-2 font-heading font-bold text-xs uppercase tracking-wider transition-colors">Admin CMS</a>
+                            <a href="{{ route('admin.dashboard') }}" class="h-full flex items-center bg-crimson hover:bg-red-700 text-white px-4 font-heading font-bold text-xs uppercase tracking-wider transition-colors">Admin CMS</a>
                         @elseif(auth()->user()->isAuthor())
-                            <a href="{{ route('author.dashboard') }}" class="bg-crimson hover:bg-red-700 text-white px-4 py-2 font-heading font-bold text-xs uppercase tracking-wider transition-colors">Author Desk</a>
+                            <a href="{{ route('author.dashboard') }}" class="h-full flex items-center bg-crimson hover:bg-red-700 text-white px-4 font-heading font-bold text-xs uppercase tracking-wider transition-colors">Author Desk</a>
                         @else
-                            <a href="{{ route('author.apply') }}" class="border border-white/30 text-white hover:bg-white/10 px-3.5 py-1.5 font-sans font-medium text-xs tracking-wider transition-colors">Apply as Author</a>
+                            <a href="{{ route('author.apply') }}" class="h-full flex items-center justify-center border border-white/30 text-white hover:bg-crimson hover:border-crimson px-4 font-sans font-medium text-xs tracking-wider transition-colors">Apply as Author</a>
                         @endif
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="text-xs text-gray-400 hover:text-white ml-3 transition-colors">Log Out</button>
-                        </form>
+                        <a href="{{ route('profile.edit') }}" class="h-full flex items-center ml-2 focus:outline-none" title="Profile">
+                            <img src="{{ asset('user-1.png') }}" alt="Profile" class="w-9 h-9 object-cover rounded-full border-2 border-transparent hover:border-crimson hover:opacity-90 transition-all">
+                        </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-sans font-medium text-white hover:text-crimson transition-colors">Login</a>
-                        <a href="{{ route('register') }}" class="bg-crimson hover:bg-red-700 text-white px-3.5 py-1.5 text-xs font-heading font-bold uppercase tracking-wider transition-colors">Register</a>
+                        <a href="{{ route('login') }}" class="h-full flex items-center text-sm font-sans font-medium text-white hover:text-crimson transition-colors">Login</a>
+                        <a href="{{ route('register') }}" class="h-full flex items-center bg-crimson hover:bg-red-700 text-white px-4 text-xs font-heading font-bold uppercase tracking-wider transition-colors">Register</a>
                     @endauth
                 </div>
             </div>

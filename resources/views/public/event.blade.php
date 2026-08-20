@@ -19,7 +19,7 @@
                 <div class="bg-white border border-[#C5C6CF] mb-10 overflow-hidden relative group cursor-pointer hover:shadow-lg transition-shadow">
                     <!-- Image Area -->
                     <div class="relative h-[400px] w-full">
-                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop" alt="Concert" class="w-full h-full object-cover">
+                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop" alt="Concert" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         <!-- Gradient Overlay -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                         
@@ -51,10 +51,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                     
                     <!-- Event Item 1 -->
-                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow">
+                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow group cursor-pointer">
                         <!-- Thumbnail Image (Top) -->
-                        <div class="relative w-full h-[240px] flex-shrink-0">
-                            <img src="https://images.unsplash.com/photo-1517502884422-41eaead166d4?q=80&w=600&auto=format&fit=crop" alt="Exhibition" class="w-full h-full object-cover">
+                        <div class="relative w-full h-[240px] flex-shrink-0 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1517502884422-41eaead166d4?q=80&w=600&auto=format&fit=crop" alt="Exhibition" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             <!-- Date Badge on Thumbnail -->
                             <div class="absolute top-0 right-0 bg-crimson text-center overflow-hidden shadow-sm">
                                 <div class="bg-crimson text-white text-2xl font-bold pt-3 pb-1 px-4 leading-none font-sans">18</div>
@@ -78,9 +78,9 @@
                     </div>
 
                     <!-- Event Item 2 -->
-                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow">
-                        <div class="relative w-full h-[240px] flex-shrink-0">
-                            <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=600&auto=format&fit=crop" alt="Sports" class="w-full h-full object-cover">
+                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow group cursor-pointer">
+                        <div class="relative w-full h-[240px] flex-shrink-0 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=600&auto=format&fit=crop" alt="Sports" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             <div class="absolute top-0 right-0 bg-crimson text-center overflow-hidden shadow-sm">
                                 <div class="bg-crimson text-white text-2xl font-bold pt-3 pb-1 px-4 leading-none font-sans">20</div>
                                 <div class="bg-crimson text-white text-[10px] font-bold pb-3 px-4 tracking-widest uppercase">NOV</div>
@@ -102,9 +102,9 @@
                     </div>
 
                     <!-- Event Item 3 -->
-                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow">
-                        <div class="relative w-full h-[240px] flex-shrink-0">
-                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop" alt="Seminar" class="w-full h-full object-cover">
+                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow group cursor-pointer">
+                        <div class="relative w-full h-[240px] flex-shrink-0 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop" alt="Seminar" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             <div class="absolute top-0 right-0 bg-crimson text-center overflow-hidden shadow-sm">
                                 <div class="bg-crimson text-white text-2xl font-bold pt-3 pb-1 px-4 leading-none font-sans">22</div>
                                 <div class="bg-crimson text-white text-[10px] font-bold pb-3 px-4 tracking-widest uppercase">NOV</div>
@@ -126,9 +126,9 @@
                     </div>
 
                     <!-- Event Item 4 -->
-                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow">
-                        <div class="relative w-full h-[240px] flex-shrink-0">
-                            <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?q=80&w=600&auto=format&fit=crop" alt="Discussion" class="w-full h-full object-cover">
+                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow group cursor-pointer">
+                        <div class="relative w-full h-[240px] flex-shrink-0 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?q=80&w=600&auto=format&fit=crop" alt="Discussion" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             <div class="absolute top-0 right-0 bg-crimson text-center overflow-hidden shadow-sm">
                                 <div class="bg-crimson text-white text-2xl font-bold pt-3 pb-1 px-4 leading-none font-sans">25</div>
                                 <div class="bg-crimson text-white text-[10px] font-bold pb-3 px-4 tracking-widest uppercase">NOV</div>

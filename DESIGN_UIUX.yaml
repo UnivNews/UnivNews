@@ -606,3 +606,150 @@ responsive:
   container: "same page_container strategy as other pages (max-w-[1280px] mx-auto px-10) - see home-design-spec.yaml for full rationale"
   below_lg: "sidebar (calendar + filters + key events + ad) moves below main_content, full width"
   mobile: "event_list cards stack thumbnail above content instead of side-by-side; calendar_widget stays a full 7-column grid but shrinks cell padding rather than dropping to a list"
+
+# =========================================================
+# University News Portal — UI/UX Design Spec (cleaned)
+# Page: PROFILE (Account Settings)
+# Shares tokens with: global design spec
+# =========================================================
+
+meta:
+  name: University News Portal
+  page: Profile / Account Settings
+  visual_verification: >
+    Cross-checked against the rendered reference screenshot. Includes a
+    simplified "transactional" header (no main navigation links, only Logo,
+    "Settings", and a red "Log Out" button). Main content area has a strong
+    240px inline padding (on 1280px container) to keep forms narrow and readable.
+  style: minimal / clean, sharp corners (0px default), distinct "Danger Zone" block
+
+header_nav_transactional:
+  background: primary_navy
+  container: page_container
+  layout: [brand_logo, spacer, settings_label, logout_button]
+  
+  brand_logo:
+    icon: { shape: square, color: crimson, letter: "U" }
+    text: { label: "UniversityNews", color: "#FFFFFF", font: body_font, size: 24px }
+  
+  settings_label:
+    text: "Settings"
+    style: { font: utility_font, color: "#FFFFFF", weight: 600, size: 14px }
+    
+  logout_button:
+    label: "LOG OUT"
+    icon: arrow_right_bracket (optional)
+    style: { background: crimson, color: "#FFFFFF", font: utility_font, weight: 600, uppercase: true, padding: "8px 24px" }
+
+main_content:
+  container: 
+    width: "fill (within page_container max 1280px)"
+    padding_inline: 240px # Constrains forms to a comfortable reading width
+    padding_block: "80px 40px"
+    
+  page_title:
+    text: "Account Settings"
+    style: { font: heading_font, weight: 600, size: 32px, color: primary_navy }
+  page_description:
+    text: "Manage your profile, security, and account preferences."
+    style: { font: body_font, size: 17px, color: text_secondary }
+
+  sections:
+    common_layout: "vertical stack, gap 32px, top border #C5C6CF on each section (except top)"
+    
+    profile_information:
+      title: "Profile Information"
+      description: "Update your account's profile information and email address."
+      fields_layout: "grid, label on left (width ~200px), input on right (fill)"
+      fields:
+        - label: "FULL NAME"
+          input: { value: "Public Reader", border: default, bg: surface, radius: 0 }
+        - label: "EMAIL ADDRESS"
+          input: { value: "public@university.edu", border: default, bg: surface, radius: 0 }
+      action:
+        button: "SAVE CHANGES"
+        style: { bg: primary_navy, color: "#FFFFFF", align: right }
+
+    security:
+      title: "Security"
+      description: "Ensure your account is using a long, random password to stay secure."
+      fields_layout: "grid, label on left, input on right"
+      fields:
+        - label: "CURRENT PASSWORD"
+        - label: "NEW PASSWORD"
+        - label: "CONFIRM PASSWORD"
+      action:
+        button: "UPDATE PASSWORD"
+        style: { bg: primary_navy, color: "#FFFFFF", align: right }
+
+    danger_zone:
+      border_left: "2px solid crimson"
+      padding_left: 32px
+      title: 
+        icon: warning_triangle (crimson)
+        text: "Danger Zone"
+        color: crimson
+      description: "Once your account is deleted, all of its resources and data will be permanently deleted. This action cannot be undone."
+      actions:
+        layout: row, gap 16px
+        button_delete:
+          label: "PERMANENTLY DELETE ACCOUNT"
+          style: { border: "1px solid crimson", color: crimson, bg: transparent }
+# =========================================================
+# Page: RESEARCH & INNOVATION
+# =========================================================
+
+page_research_and_innovation:
+  meta:
+    name: Research & Innovation
+    description: "2-column layout: Left column for articles (Featured + 2x2 Grid), Right column for sidebar widgets (Filters, Trending, Metrics, Ad). Uses the global page_container (max-w-[1280px])."
+
+  components:
+    hero_article:
+      layout: "Image top, text bottom. Image takes full width."
+      elements:
+        image_container: { height: 400px, border: "1px solid #C5C6CF", background: "#F3F4F6" } # gray-100
+        tag: { position: absolute, top: 16px, left: 16px, bg: crimson, text: white, typography: utility_font, uppercase: true }
+        title: { typography: heading_font, size: 32px, color: primary_navy, hover: crimson }
+        excerpt: { typography: body_font, size: 17px, line_height: 28px, color: text_secondary, line_clamp: 3 }
+        button: { style: outline, border: primary_navy, text: primary_navy, hover_bg: primary_navy, hover_text: white }
+
+    research_grid:
+      layout: "2 columns on tablet/desktop. CSS Grid."
+      card:
+        bg: background
+        border: "1px solid #C5C6CF"
+        hover_bg: white
+        image: { height: 192px } # h-48
+        category_tag: { typography: utility_font, size: 14px, color: crimson, uppercase: true }
+        title: { typography: heading_font, size: 24px, color: primary_navy, hover: underline (crimson) }
+        excerpt: { typography: body_font, size: 17px, color: text_secondary, line_clamp: 3 }
+        link: { typography: utility_font, size: 14px, color: primary_navy, hover: crimson, icon: arrow_forward }
+
+    sidebar_filter:
+      bg: background
+      border: "1px solid #C5C6CF"
+      title_border_bottom: "2px solid crimson"
+      select_input: { border: "#C5C6CF", bg: white, focus_border: crimson, radius: 0px }
+      button: { bg: primary_navy, text: white, hover_bg: gray-800 }
+
+    sidebar_trending:
+      item:
+        border_left: "3px solid transparent"
+        hover_border_left: crimson
+        category: { typography: utility_font, size: 12px, color: crimson, uppercase: true }
+        title: { typography: body_font, size: 17px, weight: bold, color: primary_navy, hover: crimson }
+
+    sidebar_metrics:
+      bg: primary_navy
+      text: white
+      icon_color: crimson
+      title_border_bottom: "1px solid rgba(255,255,255,0.2)"
+      number: { typography: heading_font, size: 24px, weight: bold }
+      label: { typography: utility_font, size: 12px, color: gray-300, uppercase: true }
+
+    sidebar_ad_slot:
+      bg: gray-100
+      border: "1px solid #C5C6CF"
+      label: { typography: utility_font, size: 12px, color: text_secondary, uppercase: true, letter_spacing: widest }
+      content_box: { bg: white, border: "1px solid #C5C6CF", height: 250px, relative: true }
