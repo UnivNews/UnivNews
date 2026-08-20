@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\Admin as Admin;
 use App\Http\Controllers\Author as Author;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\AdminLoginController;
 
 // 1. Public Portal Routes
 Route::get('/', [PublicController::class, 'home'])->name('home');
@@ -78,17 +80,14 @@ Route::middleware(['auth'])->group(function () {
 // 5. Auth Routes (Breeze)
 require __DIR__.'/auth.php';
 
-// 6. Account Request Routes (Guest)
-Route::get('/account-request', function () {
-    return view('auth.account-request');
-})->middleware('guest')->name('account-request');
+// 6. Google OAuth Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('auth.google.redirect');
+    Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+});
 
-Route::post('/account-request', function (\Illuminate\Http\Request $request) {
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'department' => 'required|string',
-    ]);
-    
-    return back()->with('status', 'Your account request has been submitted successfully.');
-})->middleware('guest')->name('account-request.store');
+// 7. Admin Login Routes
+Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/sign-in', [AdminLoginController::class, 'create'])->name('login');
+    Route::post('/sign-in', [AdminLoginController::class, 'store']);
+});

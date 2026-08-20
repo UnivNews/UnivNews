@@ -53,6 +53,23 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Terms and Privacy Policy -->
+        <div class="block mt-4">
+            <label for="terms" class="inline-flex items-center">
+                <input id="terms" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 h-4 w-4" name="terms" required>
+                <span class="ml-2 text-sm text-gray-600">I agree to the <a href="#" class="underline hover:text-gray-900">Terms of Service</a> and <a href="#" class="underline hover:text-gray-900">Privacy Policy</a></span>
+            </label>
+            <x-input-error :messages="$errors->get('terms')" class="mt-2 text-red-600" />
+        </div>
+
+        @if(env('CAPTCHA_SITE_KEY'))
+        <div class="mt-4">
+            <div class="g-recaptcha" data-sitekey="{{ env('CAPTCHA_SITE_KEY') }}"></div>
+            <x-input-error :messages="$errors->get('g-recaptcha-response')" class="mt-2 text-red-600" />
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        </div>
+        @endif
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                 {{ __('Already registered?') }}

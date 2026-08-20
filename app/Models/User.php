@@ -40,6 +40,8 @@ class User extends Authenticatable
         'author_bio',
         'page_name',
         'avatar_path',
+        'provider',
+        'provider_id',
     ];
 
     /**

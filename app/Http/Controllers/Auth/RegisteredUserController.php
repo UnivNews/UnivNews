@@ -32,12 +32,19 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'university_id' => ['nullable', 'exists:universities,id'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+            'terms' => ['accepted'],
+        ];
+
+        if (env('CAPTCHA_SITE_KEY') && env('CAPTCHA_SECRET_KEY')) {
+            $rules['g-recaptcha-response'] = ['required', 'string'];
+        }
+
+        $request->validate($rules);
 
         $user = User::create([
             'name' => $request->name,
