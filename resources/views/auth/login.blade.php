@@ -84,7 +84,7 @@
                 </div>
                 <div class="relative flex justify-center text-xs">
                     <span class="px-2 bg-surface text-gray-400 uppercase tracking-widest font-heading font-semibold">
-                        Or continue with
+                        Or
                     </span>
                 </div>
             </div>

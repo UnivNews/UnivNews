@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
     // Apply to Become an Author
     Route::get('/apply-author', [Author\ApplyController::class, 'create'])->name('author.apply');
     Route::post('/apply-author', [Author\ApplyController::class, 'store'])->name('author.apply.store');
+    Route::get('/apply-author/confirmation', [Author\ApplyController::class, 'confirmation'])->name('author.apply.confirmation');
 
     // 3. Author Area Routes
     Route::prefix('author')->middleware(['role:author'])->name('author.')->group(function () {
@@ -91,3 +92,8 @@ Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/sign-in', [AdminLoginController::class, 'create'])->name('login');
     Route::post('/sign-in', [AdminLoginController::class, 'store']);
 });
+
+// 8. Author Password Setup (token-based, no auth required)
+Route::get('/author/set-password', [Author\SetPasswordController::class, 'show'])->name('author.set-password.show');
+Route::post('/author/set-password', [Author\SetPasswordController::class, 'store'])->name('author.set-password.store');
+Route::post('/author/set-password/resend', [Author\SetPasswordController::class, 'resend'])->name('author.set-password.resend');
