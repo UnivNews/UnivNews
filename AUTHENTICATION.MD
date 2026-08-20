@@ -486,7 +486,7 @@ Do not replace the existing authentication endpoint.
 Display:
 
 ```text
-OR CONTINUE WITH
+OR
 ```
 
 with an appropriate horizontal divider.
