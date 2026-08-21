@@ -39,6 +39,11 @@ class CheckRole
             abort(403, 'Your author account has been temporarily suspended. Please contact administration.');
         }
 
+        // If author hasn't set password yet (has pending approval token)
+        if ($user->isAuthor() && $user->approvalToken()->exists()) {
+            return redirect()->route('author.apply.confirmation');
+        }
+
         return $next($request);
     }
 }
