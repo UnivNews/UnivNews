@@ -81,13 +81,20 @@ class ApplyController extends Controller
         return redirect()->route('author.apply.confirmation');
     }
 
-    public function confirmation(): View
+    public function confirmation(): View|RedirectResponse
     {
         $user = auth()->user();
+
+        // If approved but accessing this page (maybe hasn't set password yet or just checking status)
+        if ($user->author_status === User::STATUS_APPROVED) {
+            return view('author.apply-approved', compact('user'));
+        }
+
         // If they haven't actually applied, redirect to form
         if ($user->author_status !== User::STATUS_PENDING) {
             return redirect()->route('author.apply');
         }
+        
         return view('author.apply-confirmation', compact('user'));
     }
 }

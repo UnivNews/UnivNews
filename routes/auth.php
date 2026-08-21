@@ -22,16 +22,24 @@ Route::middleware('guest')->group(function () {
         ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+});
 
+// Allow both guests and authenticated users to use the password reset flow
+Route::middleware([])->group(function () {
+    // The form to request a reset link is for guests
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
+        ->name('password.request')
+        ->middleware('guest');
 
+    // But anyone can POST to request a reset link (like from settings)
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
         ->name('password.email');
 
+    // Anyone can click the reset link in their email
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
+    // Anyone can submit the new password form
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });

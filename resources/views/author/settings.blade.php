@@ -226,6 +226,13 @@
             <!-- Security & Password Card -->
             <div class="bg-white border border-gray-200 shadow-sm p-6 lg:p-8">
                 <h2 class="text-xl font-bold font-heading text-[#00081e] mb-3">Security & Password</h2>
+                
+                @if (session('status'))
+                    <div class="mb-4 font-medium text-sm text-green-600 bg-green-50 p-3 border border-green-200">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
                 <p class="text-gray-600 text-xs font-sans mb-6">
                     To change your password, click the button below to receive a reset link via email.
                 </p>
