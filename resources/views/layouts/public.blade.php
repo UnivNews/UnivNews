@@ -22,19 +22,90 @@
                     </a>
                 </div>
 
-                <!-- Center: Navigation -->
-                <nav class="hidden lg:flex items-center justify-center space-x-8 font-sans font-bold text-[11px] uppercase tracking-wider flex-1 px-8">
-                    <a href="{{ route('home') }}" class="hover:text-crimson transition-colors px-1 py-7 {{ request()->routeIs('home') ? 'text-crimson border-b-2 border-crimson' : 'text-white border-b-2 border-transparent' }}">HOME</a>
-                    <a href="{{ route('category', 'achievements') }}" class="hover:text-crimson transition-colors px-1 py-7 {{ request()->is('category/achievements') ? 'text-crimson border-b-2 border-crimson' : 'text-white border-b-2 border-transparent' }}">ACHIEVEMENTS</a>
-                    <a href="{{ route('events') }}" class="hover:text-crimson transition-colors px-1 py-7 {{ request()->routeIs('events') ? 'text-crimson border-b-2 border-crimson' : 'text-white border-b-2 border-transparent' }}">EVENTS</a>
-                    <a href="{{ route('research') }}" class="hover:text-crimson transition-colors px-1 py-7 {{ request()->routeIs('research') ? 'text-crimson border-b-2 border-crimson' : 'text-white border-b-2 border-transparent' }}">RESEARCH & INNOVATION</a>
-                </nav>
+
 
                 <!-- Right: Search & Login -->
                 <div class="flex items-center justify-end space-x-6 flex-shrink-0 h-10">
-                    <a href="{{ route('profile.edit') }}" class="h-full flex items-center justify-center hover:opacity-80 transition-opacity px-2" title="Settings">
-                        <img src="{{ asset('setting-1.png') }}" alt="Settings" class="w-6 h-6 object-contain">
-                    </a>
+                    <!-- Filter/Mega Menu Trigger -->
+                    <div x-data="{ openMegaMenu: false }" @click.outside="openMegaMenu = false" class="h-full flex items-center justify-center px-2 cursor-pointer z-50">
+                        <img src="{{ asset('setting-1.png') }}" alt="Filter Menu" class="w-6 h-6 object-contain hover:opacity-80 transition-opacity" @click="openMegaMenu = !openMegaMenu">
+                        
+                        <!-- Mega Menu Dropdown -->
+                        <div x-show="openMegaMenu" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-2"
+                             class="absolute top-full left-0 w-full bg-white/80 backdrop-blur-md shadow-[0_15px_40px_rgba(0,0,0,0.15)] border-t-2 border-crimson cursor-default overflow-hidden z-50"
+                             style="display: none;">
+                            <!-- Bridge to prevent hover gap -->
+                            <div class="absolute -top-10 right-0 w-64 h-10 bg-transparent"></div>
+                            
+                            <!-- Categories Section (Top) -->
+                            <div class="p-8 max-w-[1280px] mx-auto w-full">
+                                <h3 class="text-gray-500 font-sans text-xs uppercase tracking-widest font-bold mb-4">Top Categories</h3>
+                                <div class="grid grid-cols-4 gap-6">
+                                    <!-- HOME -->
+                                    <a href="{{ route('home') }}" class="group/card relative h-40 rounded-lg overflow-hidden flex items-end shadow-md bg-white/50 border border-gray-200/50">
+                                        <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110 opacity-80 group-hover/card:opacity-100">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                        <div class="relative w-full text-center pb-4 z-10 flex justify-center">
+                                            <span class="bg-crimson text-white font-heading font-extrabold text-sm uppercase px-4 py-1.5 shadow-lg tracking-wider rounded-sm">Home</span>
+                                        </div>
+                                    </a>
+                                    <!-- ACHIEVEMENTS -->
+                                    <a href="{{ route('category', 'achievements') }}" class="group/card relative h-40 rounded-lg overflow-hidden flex items-end shadow-md bg-white/50 border border-gray-200/50">
+                                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110 opacity-80 group-hover/card:opacity-100">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                        <div class="relative w-full text-center pb-4 z-10 flex justify-center">
+                                            <span class="bg-crimson text-white font-heading font-extrabold text-sm uppercase px-4 py-1.5 shadow-lg tracking-wider rounded-sm">Achievements</span>
+                                        </div>
+                                    </a>
+                                    <!-- EVENTS -->
+                                    <a href="{{ route('events') }}" class="group/card relative h-40 rounded-lg overflow-hidden flex items-end shadow-md bg-white/50 border border-gray-200/50">
+                                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110 opacity-80 group-hover/card:opacity-100">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                        <div class="relative w-full text-center pb-4 z-10 flex justify-center">
+                                            <span class="bg-crimson text-white font-heading font-extrabold text-sm uppercase px-4 py-1.5 shadow-lg tracking-wider rounded-sm">Events</span>
+                                        </div>
+                                    </a>
+                                    <!-- RESEARCH -->
+                                    <a href="{{ route('research') }}" class="group/card relative h-40 rounded-lg overflow-hidden flex items-end shadow-md bg-white/50 border border-gray-200/50">
+                                        <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110 opacity-80 group-hover/card:opacity-100">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                        <div class="relative w-full text-center pb-4 z-10 flex justify-center">
+                                            <span class="bg-crimson text-white font-heading font-extrabold text-sm uppercase px-4 py-1.5 shadow-lg tracking-wider rounded-sm">Research</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Tags Section (Bottom) -->
+                            <div class="bg-gray-50/50 border-t border-gray-200/50">
+                                <div class="p-6 max-w-[1280px] mx-auto w-full">
+                                    <h3 class="text-gray-500 font-sans text-xs uppercase tracking-widest font-bold mb-4 flex justify-between items-center">
+                                        <span>Browse by Tags</span>
+                                        <a href="#" class="text-crimson hover:text-red-800 capitalize font-normal text-xs transition-colors">View all tags ></a>
+                                    </h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Akademik</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Beasiswa</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Penelitian</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Mahasiswa</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Fasilitas</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Olahraga</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Seni & Budaya</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Prestasi</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Seminar</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Inovasi</a>
+                                        <a href="#" class="px-4 py-2 bg-white hover:bg-crimson text-gray-700 hover:text-white rounded shadow-sm text-xs font-sans transition-colors border border-gray-200 hover:border-crimson tracking-wide">Alumni</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <form action="{{ route('search') }}" method="GET" class="hidden lg:block relative h-full">
                         <div class="relative h-full">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
