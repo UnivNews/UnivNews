@@ -120,54 +120,101 @@
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-12">
             <!-- Main Grid -->
             <div>
-                <div class="columns-1 sm:columns-2 gap-6 space-y-6 mb-12">
-                    @foreach($recentArticles->skip(2)->take(6) as $article)
-                    <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid">
-                        <!-- Thumbnail -->
-                        <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                            @if($article->featured_image_path)
-                                @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                    <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                <div x-data="{ loading: false, loaded: false }" class="relative mb-12">
+                    <!-- Main Grid (Unified) -->
+                    <div class="columns-1 sm:columns-2 gap-6 overflow-hidden transition-all duration-1000 ease-in-out"
+                         :class="loaded ? 'max-h-[5000px]' : 'max-h-[700px]'">
+                        @foreach($recentArticles->skip(2)->take(6) as $article)
+                        <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <!-- Thumbnail -->
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                @if($article->featured_image_path)
+                                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
+                                        <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @else
+                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @endif
                                 @else
-                                    <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
                                 @endif
-                            @else
-                                <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
-                            @endif
-                        </div>
-                        
-                        <!-- Content -->
-                        <div class="p-6">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
-                                <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
                             </div>
-                            <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                {{ $article->title }}
-                            </h3>
-                            <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                {{ $article->excerpt }}
-                            </p>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
+                            
+                            <!-- Content -->
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    {{ $article->title }}
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    {{ $article->excerpt }}
+                                </p>
+                            </div>
+                        </a>
+                        @endforeach
 
-                <!-- Pagination -->
-                <div class="flex items-center justify-between border-t pt-8 border-[#C5C6CF]">
-                    <a href="#" class="text-sm font-bold uppercase tracking-widest flex items-center hover:opacity-80 text-[#4C5E86]" style="font-family: 'Work Sans', sans-serif;">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> NEWER
-                    </a>
-                    <div class="flex space-x-2" style="font-family: 'Work Sans', sans-serif;">
-                        <span class="w-10 h-10 flex items-center justify-center font-bold text-sm text-white bg-navy rounded-[4px]">1</span>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center font-bold text-sm text-[#44464E] rounded-[4px] hover:bg-gray-100">2</a>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center font-bold text-sm text-[#44464E] rounded-[4px] hover:bg-gray-100">3</a>
-                        <span class="w-10 h-10 flex items-center justify-center font-bold text-sm text-[#C5C6CF]">...</span>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center font-bold text-sm text-[#44464E] rounded-[4px] hover:bg-gray-100">12</a>
+                        <!-- Additional Dummy Cards -->
+                        <a href="#" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Robotics">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">TECHNOLOGY</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">Nov 15</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    Robotics Lab Unveils Autonomous Campus Delivery Prototype
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.
+                                </p>
+                            </div>
+                        </a>
+
+                        <a href="#" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Finance">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">BUSINESS</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">Nov 12</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    Business School Launches New Venture Capital Fellowship
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.
+                                </p>
+                            </div>
+                        </a>
                     </div>
-                    <a href="#" class="text-sm font-bold uppercase tracking-widest flex items-center hover:opacity-80 text-navy" style="font-family: 'Work Sans', sans-serif;">
-                        OLDER <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
+
+                    <!-- Fade Overlay & Load More Button -->
+                    <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end h-64 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"
+                         x-show="!loaded"
+                         x-transition.opacity.duration.500ms>
+                        
+                        <div class="pb-2 pointer-events-auto border-t border-[#C5C6CF] w-full pt-10 mt-10">
+                            <div class="flex justify-center">
+                                <button @click="loading = true; setTimeout(() => { loading = false; loaded = true; }, 1000)"
+                                        class="inline-block font-sans font-semibold text-sm text-[#00081E] border border-[#00081E] px-8 py-3 hover:bg-[#00081E] hover:text-white transition-colors uppercase tracking-wider relative min-w-[200px] bg-white"
+                                        style="font-family: 'Work Sans', sans-serif;"
+                                        :disabled="loading">
+                                    <span x-show="!loading">Load More</span>
+                                    <span x-show="loading" class="flex items-center justify-center">
+                                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

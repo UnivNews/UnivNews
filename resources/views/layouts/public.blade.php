@@ -56,7 +56,7 @@
                                         </div>
                                     </a>
                                     <!-- ACHIEVEMENTS -->
-                                    <a href="{{ route('category', 'achievements') }}" class="group/card relative h-40 rounded-lg overflow-hidden flex items-end shadow-md bg-white/50 border border-gray-200/50">
+                                    <a href="{{ route('achievements') }}" class="group/card relative h-40 rounded-lg overflow-hidden flex items-end shadow-md bg-white/50 border border-gray-200/50">
                                         <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110 opacity-80 group-hover/card:opacity-100">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div class="relative w-full text-center pb-4 z-10 flex justify-center">

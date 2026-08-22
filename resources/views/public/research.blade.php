@@ -56,77 +56,126 @@
 
             <hr class="border-[#C5C6CF]"/>
 
-            <!-- Research Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Using static HTML to match design exactly first, later can map to $articles -->
-                <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                    <div class="h-48 overflow-hidden relative">
-                        <img alt="Biotechnology Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVOgwG1VeuOCNwD2kqePNaQDmsbwyBi07NeNYxSG1OXFrxextbBbt_3cSGgJ-6z-WMxNUQCp0W0EmK6Tys6ZYDVA6ohpVv3-u56595wRpsyC7UbwyS6eYZH4wjYrO4V8y2Rb25iG7F6-1bykAY2cwQwGWIqZC90k4W7NJP8v1CgGz5ifXz8YiWivwHYQs7IlpeyMKOPy5w2RdAwHC977H2wsHYsjUqB-X9cSQW0OzojXTeGsncWGdj"/>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">BIOTECHNOLOGY</div>
-                        <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">CRISPR Applications in Neurodegenerative Diseases</h3>
-                        <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">A new study outlines targeted genetic editing techniques that show promise in halting the progression of specific neurodegenerative pathways in early trials.</p>
-                        <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                            View Project 
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-                </article>
+            <!-- Research Grid with Dynamic Load More -->
+            <div x-data="{ loading: false, loaded: false }" class="relative mb-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 overflow-hidden transition-all duration-1000 ease-in-out"
+                     :class="loaded ? 'max-h-[5000px]' : 'max-h-[600px]'">
+                     
+                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
+                        <div class="h-48 overflow-hidden relative">
+                            <img alt="Public Health Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC2wXpL1P6C7B1nQG4Y4hC59u4D5E1n8-wL8105H24oB9q98gM7OqyR_-0z8vB7s3e1W50mO3jHk3F7yH_3H_Y7z7r3W3QzZ80u_b1z8kH200o_n2m1Z7fN802cE-0-WzN0YxL88uK0-NfC0o_aZ7X7tQfR9jJ_nKjP6s-M5Y6R4rN5kOqN0c"/>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">PUBLIC HEALTH</div>
+                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">New Strategies in Epidemic Tracking</h3>
+                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">A multi-disciplinary team develops a real-time data modeling framework that improves prediction of viral spread patterns by up to 40%.</p>
+                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
+                                View Project 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </article>
 
-                <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                    <div class="h-48 overflow-hidden relative">
-                        <img alt="AI Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZpFGSPeWsP-76HL2LAjBhT3szbaJ-iy26G_1SPXBzI9F8WgI5by5YMSnLQAbUbyGccWmH0PUqyliMtTsNd3GnGJZOI-eByI-DVj5Nzj5u_bOAypw7CmXW0vB1wq_CBls-vqDUaZbpADAhqZh6G2wONILuQYbjFyR2zNe2aFVYkd2t0FtnvhN3f0rAoExpGamqQcfV0yoKCbKo1xJIrP2Pfrk4oH2_QFNjbt8M86K_g104BpQri2L2"/>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">ARTIFICIAL INTELLIGENCE</div>
-                        <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Ethical Frameworks for Autonomous Systems</h3>
-                        <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">The Center for Digital Ethics publishes a comprehensive guide on implementing human-centric moral reasoning algorithms into autonomous vehicles.</p>
-                        <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                            View Project 
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-                </article>
+                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
+                        <div class="h-48 overflow-hidden relative">
+                            <img alt="AI Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZpFGSPeWsP-76HL2LAjBhT3szbaJ-iy26G_1SPXBzI9F8WgI5by5YMSnLQAbUbyGccWmH0PUqyliMtTsNd3GnGJZOI-eByI-DVj5Nzj5u_bOAypw7CmXW0vB1wq_CBls-vqDUaZbpADAhqZh6G2wONILuQYbjFyR2zNe2aFVYkd2t0FtnvhN3f0rAoExpGamqQcfV0yoKCbKo1xJIrP2Pfrk4oH2_QFNjbt8M86K_g104BpQri2L2"/>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">ARTIFICIAL INTELLIGENCE</div>
+                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Ethical Frameworks for Autonomous Systems</h3>
+                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">The Center for Digital Ethics publishes a comprehensive guide on implementing human-centric moral reasoning algorithms into autonomous vehicles.</p>
+                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
+                                View Project 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </article>
 
-                <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                    <div class="h-48 overflow-hidden relative">
-                        <img alt="Sustainability Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzlA8x7OQls5LI9ZZ6-2RGs8GazT3YBOkyol2naUtJLg8dQV04dPy6Zax4gDKorU1lDb7H51TReMMHDW-d826ghWpP5etvNClJ1RM4qae6MH1GFVueJBHdVeTr4t3D-L3_GdBtuoEjIqZ8QVki0XNz7yFDXmvTqJcKh9J3afcc2_hg8NJ02NnQ2qneBLB27YU3BEMSnoapqykjGUpvBJGjscKV6gxmoOvKv4dd0W9H3SCjh-2Wyjc1"/>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">SUSTAINABILITY</div>
-                        <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Next-Generation Urban Water Management</h3>
-                        <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">Engineering faculty unveil a modular infrastructure design that reclaims and purifies urban runoff using passive, low-energy bio-filtration systems.</p>
-                        <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                            View Project 
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-                </article>
+                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
+                        <div class="h-48 overflow-hidden relative">
+                            <img alt="Sustainability Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzlA8x7OQls5LI9ZZ6-2RGs8GazT3YBOkyol2naUtJLg8dQV04dPy6Zax4gDKorU1lDb7H51TReMMHDW-d826ghWpP5etvNClJ1RM4qae6MH1GFVueJBHdVeTr4t3D-L3_GdBtuoEjIqZ8QVki0XNz7yFDXmvTqJcKh9J3afcc2_hg8NJ02NnQ2qneBLB27YU3BEMSnoapqykjGUpvBJGjscKV6gxmoOvKv4dd0W9H3SCjh-2Wyjc1"/>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">SUSTAINABILITY</div>
+                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Next-Generation Urban Water Management</h3>
+                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">Engineering faculty unveil a modular infrastructure design that reclaims and purifies urban runoff using passive, low-energy bio-filtration systems.</p>
+                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
+                                View Project 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </article>
 
-                <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                    <div class="h-48 overflow-hidden relative">
-                        <img alt="Physics Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHFsIO7UV6UeuMGAQWscmeOrQ451xwQhDKJfbJKE93wKdkejq0W5Lbiuki3YrtjHPZOxVunRVJql7aVQ7jlNKdoW_Jd_NCzUgh6EA7ZDGCUAmT5U_br4F1VUxNgYrqMf_cCevfbxeJnIhq4LrB59BRzUP7L1a8Hwxb7ijh9pbPbf-uOL3Q-aHlXeJYLHhywzKzNRouWExTHSFWOElu8ybVbXW7y-Ek1sJP0rN4TWd-rr-nEnZd8tSb"/>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">QUANTUM PHYSICS</div>
-                        <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Achieving Room-Temperature Superconductivity</h3>
-                        <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">Physics department claims a minor but significant leap in stabilizing superconducting materials at elevated temperatures using novel pressure techniques.</p>
-                        <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                            View Project 
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-                </article>
-            </div>
+                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
+                        <div class="h-48 overflow-hidden relative">
+                            <img alt="Physics Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHFsIO7UV6UeuMGAQWscmeOrQ451xwQhDKJfbJKE93wKdkejq0W5Lbiuki3YrtjHPZOxVunRVJql7aVQ7jlNKdoW_Jd_NCzUgh6EA7ZDGCUAmT5U_br4F1VUxNgYrqMf_cCevfbxeJnIhq4LrB59BRzUP7L1a8Hwxb7ijh9pbPbf-uOL3Q-aHlXeJYLHhywzKzNRouWExTHSFWOElu8ybVbXW7y-Ek1sJP0rN4TWd-rr-nEnZd8tSb"/>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">QUANTUM PHYSICS</div>
+                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Achieving Room-Temperature Superconductivity</h3>
+                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">Physics department claims a minor but significant leap in stabilizing superconducting materials at elevated temperatures using novel pressure techniques.</p>
+                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
+                                View Project 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </article>
 
-            <!-- Pagination -->
-            <div class="flex justify-center items-center gap-2 pt-8 border-t border-[#C5C6CF]">
-                <button class="font-sans font-semibold text-sm text-[#44464E] hover:text-[#00081E] px-3 py-2 uppercase tracking-wider disabled:opacity-50" disabled>SEBELUMNYA</button>
-                <button class="w-10 h-10 flex items-center justify-center bg-[#00081E] text-white font-sans font-semibold text-sm">1</button>
-                <button class="w-10 h-10 flex items-center justify-center border border-[#C5C6CF] text-[#00081E] hover:bg-[#F0EDEE] font-sans font-semibold text-sm transition-colors">2</button>
-                <button class="w-10 h-10 flex items-center justify-center border border-[#C5C6CF] text-[#00081E] hover:bg-[#F0EDEE] font-sans font-semibold text-sm transition-colors">3</button>
-                <button class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] px-3 py-2 uppercase tracking-wider transition-colors">BERIKUTNYA</button>
+                    <!-- Dummy Article 1 -->
+                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
+                        <div class="h-48 overflow-hidden relative">
+                            <img alt="Medical Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop"/>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">MEDICINE</div>
+                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Breakthrough in Cellular Regeneration</h3>
+                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">Researchers have identified a new protein pathway that significantly accelerates the healing of damaged neural tissues in preliminary trials.</p>
+                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
+                                View Project 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Dummy Article 2 -->
+                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
+                        <div class="h-48 overflow-hidden relative">
+                            <img alt="AI Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=600&auto=format&fit=crop"/>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">ARTIFICIAL INTELLIGENCE</div>
+                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Ethical Frameworks in Machine Learning</h3>
+                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">A joint study between the philosophy and computer science departments proposes a new computable framework for embedding ethical constraints into LLMs.</p>
+                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
+                                View Project 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Fade Overlay & Load More Button -->
+                <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end h-64 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"
+                     x-show="!loaded"
+                     x-transition.opacity.duration.500ms>
+                    
+                    <div class="pb-2 pointer-events-auto border-t border-[#C5C6CF] w-full pt-10 mt-10">
+                        <div class="flex justify-center">
+                            <button @click="loading = true; setTimeout(() => { loading = false; loaded = true; }, 1000)"
+                                    class="inline-block font-sans font-semibold text-sm text-[#00081E] border border-[#00081E] px-8 py-3 hover:bg-[#00081E] hover:text-white transition-colors uppercase tracking-wider relative min-w-[200px] bg-[#FCF8F9]"
+                                    style="font-family: 'Work Sans', sans-serif;"
+                                    :disabled="loading">
+                                <span x-show="!loading">Load More</span>
+                                <span x-show="loading" class="flex items-center justify-center">
+                                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

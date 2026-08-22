@@ -66,6 +66,11 @@ class PublicController extends Controller
         return view('public.research', compact('category', 'featuredResearch', 'articles', 'breakingNews'));
     }
 
+    public function achievements()
+    {
+        return view('public.achievements');
+    }
+
     public function events()
     {
         // For now, returning dummy data directly in the blade since we don't have an Event model.

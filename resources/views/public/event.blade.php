@@ -100,76 +100,85 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Event Item 3 -->
-                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow group cursor-pointer">
-                        <div class="relative w-full h-[240px] flex-shrink-0 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop" alt="Seminar" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                            <div class="absolute top-0 right-0 bg-crimson text-center overflow-hidden shadow-sm">
-                                <div class="bg-crimson text-white text-2xl font-bold pt-3 pb-1 px-4 leading-none font-sans">22</div>
-                                <div class="bg-crimson text-white text-[10px] font-bold pb-3 px-4 tracking-widest uppercase">NOV</div>
-                            </div>
-                        </div>
-                        <div class="p-6 flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="text-crimson font-sans font-bold text-[11px] uppercase tracking-wider mb-3">SEMINAR</div>
-                                <h3 class="font-heading font-semibold text-[18px] text-[#00081E] mb-4 hover:text-crimson transition-colors cursor-pointer leading-snug">
-                                    Seminar Terbuka: Inovasi Bioteknologi Medis
-                                </h3>
-                            </div>
-                            <div class="mt-4">
-                                <a href="#" class="inline-block text-crimson hover:text-[#00081E] transition-colors text-xs font-bold uppercase tracking-wider">
-                                    DAFTAR
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Event Item 4 -->
-                    <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow group cursor-pointer">
-                        <div class="relative w-full h-[240px] flex-shrink-0 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?q=80&w=600&auto=format&fit=crop" alt="Discussion" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                            <div class="absolute top-0 right-0 bg-crimson text-center overflow-hidden shadow-sm">
-                                <div class="bg-crimson text-white text-2xl font-bold pt-3 pb-1 px-4 leading-none font-sans">25</div>
-                                <div class="bg-crimson text-white text-[10px] font-bold pb-3 px-4 tracking-widest uppercase">NOV</div>
-                            </div>
-                        </div>
-                        <div class="p-6 flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="text-crimson font-sans font-bold text-[11px] uppercase tracking-wider mb-3">DISKUSI</div>
-                                <h3 class="font-heading font-semibold text-[18px] text-[#00081E] mb-4 hover:text-crimson transition-colors cursor-pointer leading-snug">
-                                    Forum Diskusi Terbuka BEM Seluruh Indonesia
-                                </h3>
-                            </div>
-                            <div class="mt-4">
-                                <a href="#" class="inline-block text-crimson hover:text-[#00081E] transition-colors text-xs font-bold uppercase tracking-wider">
-                                    DAFTAR
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
-                <!-- Pagination -->
-                <div class="flex items-center justify-between border-t border-[#C5C6CF] pt-10">
-                    <a href="#" class="text-[#4C5E86] hover:text-crimson font-sans font-bold text-xs tracking-wider uppercase flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        SEBELUMNYA
-                    </a>
-                    
-                    <div class="flex space-x-1">
-                        <a href="#" class="w-10 h-10 flex items-center justify-center rounded bg-[#00081E] text-white font-sans font-bold text-sm">1</a>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center rounded hover:bg-[#F0EDEE] text-[#44464E] font-sans font-bold text-sm transition-colors">2</a>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center rounded hover:bg-[#F0EDEE] text-[#44464E] font-sans font-bold text-sm transition-colors">3</a>
-                        <span class="w-10 h-10 flex items-center justify-center text-[#7687B2] font-sans font-bold text-sm">...</span>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center rounded hover:bg-[#F0EDEE] text-[#44464E] font-sans font-bold text-sm transition-colors">12</a>
+                <div x-data="{ loading: false, loaded: false }" class="relative mb-12">
+                    <!-- Main Grid (Unified) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-hidden transition-all duration-1000 ease-in-out"
+                         :class="loaded ? 'max-h-[5000px]' : 'max-h-[350px]'">
+                        
+                        <!-- Event Item 3 (Dummy) -->
+                        <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow group cursor-pointer">
+                            <div class="relative w-full h-[240px] flex-shrink-0 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop" alt="Workshop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                <div class="absolute top-0 right-0 bg-crimson text-center overflow-hidden shadow-sm">
+                                    <div class="bg-crimson text-white text-2xl font-bold pt-3 pb-1 px-4 leading-none font-sans">15</div>
+                                    <div class="bg-crimson text-white text-[10px] font-bold pb-3 px-4 tracking-widest uppercase">NOV</div>
+                                </div>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <div class="text-crimson font-sans font-bold text-[11px] uppercase tracking-wider mb-3">WORKSHOP</div>
+                                    <h3 class="font-heading font-semibold text-[18px] text-[#00081E] mb-4 hover:text-crimson transition-colors cursor-pointer leading-snug">
+                                        Workshop Penulisan Karya Tulis Ilmiah untuk Mahasiswa Baru
+                                    </h3>
+                                </div>
+                                <div class="mt-4">
+                                    <a href="#" class="inline-block text-crimson hover:text-[#00081E] transition-colors text-xs font-bold uppercase tracking-wider">
+                                        DAFTAR
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Item 4 (Dummy) -->
+                        <div class="bg-white border border-[#C5C6CF] flex flex-col hover:shadow-md transition-shadow group cursor-pointer">
+                            <div class="relative w-full h-[240px] flex-shrink-0 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1523580494112-071d4581a59c?q=80&w=600&auto=format&fit=crop" alt="Seminar" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                <div class="absolute top-0 right-0 bg-crimson text-center overflow-hidden shadow-sm">
+                                    <div class="bg-crimson text-white text-2xl font-bold pt-3 pb-1 px-4 leading-none font-sans">22</div>
+                                    <div class="bg-crimson text-white text-[10px] font-bold pb-3 px-4 tracking-widest uppercase">NOV</div>
+                                </div>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <div class="text-crimson font-sans font-bold text-[11px] uppercase tracking-wider mb-3">SEMINAR</div>
+                                    <h3 class="font-heading font-semibold text-[18px] text-[#00081E] mb-4 hover:text-crimson transition-colors cursor-pointer leading-snug">
+                                        Seminar Nasional: Menghadapi Era Society 5.0
+                                    </h3>
+                                </div>
+                                <div class="mt-4">
+                                    <a href="#" class="inline-block text-crimson hover:text-[#00081E] transition-colors text-xs font-bold uppercase tracking-wider">
+                                        DAFTAR
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                    
-                    <a href="#" class="text-[#00081E] hover:text-crimson font-sans font-bold text-xs tracking-wider uppercase flex items-center">
-                        BERIKUTNYA
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
+
+                    <!-- Fade Overlay & Load More Button -->
+                    <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end h-64 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"
+                         x-show="!loaded"
+                         x-transition.opacity.duration.500ms>
+                        
+                        <div class="pb-2 pointer-events-auto border-t border-[#C5C6CF] w-full pt-10 mt-10">
+                            <div class="flex justify-center">
+                                <button @click="loading = true; setTimeout(() => { loading = false; loaded = true; }, 1000)"
+                                        class="inline-block font-sans font-semibold text-sm text-[#00081E] border border-[#00081E] px-8 py-3 hover:bg-[#00081E] hover:text-white transition-colors uppercase tracking-wider relative min-w-[200px] bg-white"
+                                        style="font-family: 'Work Sans', sans-serif;"
+                                        :disabled="loading">
+                                    <span x-show="!loading">Load More</span>
+                                    <span x-show="loading" class="flex items-center justify-center">
+                                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
