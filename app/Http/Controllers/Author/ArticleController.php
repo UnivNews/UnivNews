@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Models\User;
+use App\Mail\AdminNewArticleSubmission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -87,6 +90,23 @@ class ArticleController extends Controller
             $article->tags()->sync($tagIds);
         }
 
+        if ($validated['status'] === Article::STATUS_PENDING_REVIEW) {
+            try {
+                $adminEmails = User::where('role', User::ROLE_ADMIN)->pluck('email')->toArray();
+                $fallbackAdminEmail = env('ADMIN_EMAIL');
+
+                if ($fallbackAdminEmail && !in_array($fallbackAdminEmail, $adminEmails)) {
+                    $adminEmails[] = $fallbackAdminEmail;
+                }
+
+                foreach ($adminEmails as $email) {
+                    Mail::to($email)->send(new AdminNewArticleSubmission($article->fresh()));
+                }
+            } catch (\Exception $e) {
+                // Log but don't block
+            }
+        }
+
         $message = $validated['status'] === Article::STATUS_PENDING_REVIEW
             ? 'Article submitted for editorial review.'
             : 'Draft saved successfully.';
@@ -139,6 +159,8 @@ class ArticleController extends Controller
             $article->slug = $slug;
         }
 
+        $oldStatus = $article->status;
+
         $article->title = $validated['title'];
         $article->excerpt = $validated['excerpt'] ?? Str::limit(strip_tags($validated['content']), 160);
         $article->content = $validated['content'];
@@ -162,6 +184,23 @@ class ArticleController extends Controller
                 }
             }
             $article->tags()->sync($tagIds);
+        }
+
+        if ($oldStatus === Article::STATUS_DRAFT && $validated['status'] === Article::STATUS_PENDING_REVIEW) {
+            try {
+                $adminEmails = User::where('role', User::ROLE_ADMIN)->pluck('email')->toArray();
+                $fallbackAdminEmail = env('ADMIN_EMAIL');
+
+                if ($fallbackAdminEmail && !in_array($fallbackAdminEmail, $adminEmails)) {
+                    $adminEmails[] = $fallbackAdminEmail;
+                }
+
+                foreach ($adminEmails as $email) {
+                    Mail::to($email)->send(new AdminNewArticleSubmission($article->fresh()));
+                }
+            } catch (\Exception $e) {
+                // Log but don't block
+            }
         }
 
         $message = $validated['status'] === Article::STATUS_PENDING_REVIEW

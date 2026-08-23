@@ -70,9 +70,15 @@ class ApplyController extends Controller
 
         // Notify all admins
         try {
-            $admins = User::where('role', User::ROLE_ADMIN)->get();
-            foreach ($admins as $admin) {
-                Mail::to($admin->email)->send(new AdminNewApplicationNotification($user->fresh()));
+            $adminEmails = User::where('role', User::ROLE_ADMIN)->pluck('email')->toArray();
+            $fallbackAdminEmail = env('ADMIN_EMAIL');
+
+            if ($fallbackAdminEmail && !in_array($fallbackAdminEmail, $adminEmails)) {
+                $adminEmails[] = $fallbackAdminEmail;
+            }
+
+            foreach ($adminEmails as $email) {
+                Mail::to($email)->send(new AdminNewApplicationNotification($user->fresh()));
             }
         } catch (\Exception $e) {
             // Log but don't block
