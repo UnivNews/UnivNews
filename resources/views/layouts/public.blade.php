@@ -46,15 +46,7 @@
                             <!-- Categories Section (Top) -->
                             <div class="p-4 sm:p-8 max-w-[1280px] mx-auto w-full max-h-[75vh] overflow-y-auto">
                                 <h3 class="text-gray-500 font-sans text-xs uppercase tracking-widest font-bold mb-4">Top Categories</h3>
-                                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-                                    <!-- HOME -->
-                                    <a href="{{ route('home') }}" class="group/card relative h-24 sm:h-40 rounded-lg overflow-hidden flex items-end shadow-md bg-white/50 border border-gray-200/50">
-                                        <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110 opacity-80 group-hover/card:opacity-100">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                                        <div class="relative w-full text-center pb-2.5 sm:pb-4 z-10 flex justify-center">
-                                            <span class="bg-crimson text-white font-heading font-extrabold text-xs sm:text-sm uppercase px-3 sm:px-4 py-1 sm:py-1.5 shadow-lg tracking-wider rounded-sm">Home</span>
-                                        </div>
-                                    </a>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
                                     <!-- ACHIEVEMENTS -->
                                     <a href="{{ route('achievements') }}" class="group/card relative h-24 sm:h-40 rounded-lg overflow-hidden flex items-end shadow-md bg-white/50 border border-gray-200/50">
                                         <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110 opacity-80 group-hover/card:opacity-100">
@@ -76,7 +68,7 @@
                                         <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110 opacity-80 group-hover/card:opacity-100">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div class="relative w-full text-center pb-2.5 sm:pb-4 z-10 flex justify-center">
-                                            <span class="bg-crimson text-white font-heading font-extrabold text-xs sm:text-sm uppercase px-3 sm:px-4 py-1 sm:py-1.5 shadow-lg tracking-wider rounded-sm">Research</span>
+                                            <span class="bg-crimson text-white font-heading font-extrabold text-xs sm:text-sm uppercase px-3 sm:px-4 py-1 sm:py-1.5 shadow-lg tracking-wider rounded-sm">Research & Innovation</span>
                                         </div>
                                     </a>
                                 </div>
@@ -114,9 +106,11 @@
                         @else
                             <a href="{{ route('author.apply') }}" class="h-full flex items-center justify-center border border-white/30 text-white hover:bg-crimson hover:border-crimson px-3 sm:px-4 font-sans font-medium text-xs tracking-wider transition-colors whitespace-nowrap">Apply as Author</a>
                         @endif
-                        <a href="{{ route('profile.edit') }}" class="h-full flex items-center ml-2 focus:outline-none" title="Profile">
-                            <img src="{{ asset('user-1.png') }}" alt="Profile" class="w-8 h-8 sm:w-9 sm:h-9 object-cover rounded-full border-2 border-transparent hover:border-crimson hover:opacity-90 transition-all">
-                        </a>
+                        @if(!auth()->user()->isAuthor())
+                            <a href="{{ route('profile.edit') }}" class="h-full flex items-center ml-2 focus:outline-none" title="Profile">
+                                <img src="{{ asset('user-1.png') }}" alt="Profile" class="w-8 h-8 sm:w-9 sm:h-9 object-cover rounded-full border-2 border-transparent hover:border-crimson hover:opacity-90 transition-all">
+                            </a>
+                        @endif
                     @else
                         <a href="{{ route('login') }}" class="h-full flex items-center text-xs sm:text-sm font-sans font-medium text-white hover:text-crimson transition-colors px-2">Login</a>
                         <a href="{{ route('register') }}" class="h-full flex items-center bg-crimson hover:bg-red-700 text-white px-3 sm:px-4 text-xs font-heading font-bold uppercase tracking-wider transition-colors whitespace-nowrap">Register</a>
