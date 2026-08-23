@@ -4,17 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
 {
     public function home()
     {
-        $featuredArticle = Article::where('status', 'published')
+        $featuredArticles = Article::where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->orderBy('published_at', 'desc')
-            ->first();
+            ->limit(4)
+            ->get();
+
+        $featuredArticle = $featuredArticles->first();
 
         $recentArticles = Article::where('status', 'published')
             ->whereNotNull('published_at')
@@ -34,22 +38,25 @@ class PublicController extends Controller
             ->limit(5)
             ->get();
 
-        return view('public.home', compact('featuredArticle', 'recentArticles', 'trendingResearch'));
+        return view('public.home', compact('featuredArticle', 'featuredArticles', 'recentArticles', 'trendingResearch'));
     }
 
     public function research()
     {
         $category = Category::where('slug', 'research-innovation')->firstOrFail();
         
-        $featuredResearch = Article::where('category_id', $category->id)
+        $featuredResearchArticles = Article::where('category_id', $category->id)
             ->where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->orderBy('published_at', 'desc')
-            ->first();
+            ->limit(3)
+            ->get();
+
+        $featuredResearch = $featuredResearchArticles->first();
 
         $articles = Article::where('category_id', $category->id)
-            ->where('id', '!=', $featuredResearch?->id)
+            ->whereNotIn('id', $featuredResearchArticles->pluck('id'))
             ->where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
@@ -63,7 +70,7 @@ class PublicController extends Controller
             ->limit(3)
             ->get();
 
-        return view('public.research', compact('category', 'featuredResearch', 'articles', 'breakingNews'));
+        return view('public.research', compact('category', 'featuredResearch', 'featuredResearchArticles', 'articles', 'breakingNews'));
     }
 
     public function achievements()
@@ -125,5 +132,19 @@ class PublicController extends Controller
             ->paginate(10);
 
         return view('public.search', compact('articles', 'query'));
+    }
+
+    public function tag($name)
+    {
+        $tag = Tag::where('name', $name)->firstOrFail();
+
+        $articles = $tag->articles()
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->paginate(15);
+
+        return view('public.tag', compact('tag', 'articles'));
     }
 }

@@ -15,6 +15,7 @@ Route::get('/category/{category:slug}', [PublicController::class, 'category'])->
 Route::get('/research', [PublicController::class, 'research'])->name('research');
 Route::get('/article/{article:slug}', [PublicController::class, 'article'])->name('article');
 Route::get('/search', [PublicController::class, 'search'])->name('search');
+Route::get('/tag/{name}', [PublicController::class, 'tag'])->name('tag');
 
 // 2. Authenticated General Routes
 Route::middleware(['auth'])->group(function () {

@@ -27,36 +27,78 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Hero Article (Left, wide) -->
-            <div class="lg:col-span-8">
-                @if($featuredArticle)
-                <a href="{{ route('article', $featuredArticle->slug) }}" class="block group relative w-full h-[400px] lg:h-[500px] overflow-hidden">
-                    <!-- Check if article has featured image path -->
-                    @if($featuredArticle->featured_image_path)
-                        @if(Str::startsWith($featuredArticle->featured_image_path, ['http://', 'https://']))
-                            <img src="{{ $featuredArticle->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredArticle->title }}">
+            <!-- Hero Slider (Left, wide) -->
+            <div class="lg:col-span-8" x-data="{ 
+                currentSlide: 0, 
+                totalSlides: {{ $featuredArticles->count() }},
+                autoplay: null,
+                startAutoplay() {
+                    this.autoplay = setInterval(() => { this.nextSlide() }, 5000);
+                },
+                stopAutoplay() {
+                    clearInterval(this.autoplay);
+                },
+                nextSlide() {
+                    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+                },
+                prevSlide() {
+                    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+                },
+                goToSlide(i) {
+                    this.currentSlide = i;
+                    this.stopAutoplay();
+                    this.startAutoplay();
+                }
+            }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
+                <div class="relative w-full h-[400px] lg:h-[500px] overflow-hidden">
+                    @foreach($featuredArticles as $index => $slide)
+                    <a href="{{ route('article', $slide->slug) }}" 
+                       class="absolute inset-0 block group transition-opacity duration-700 ease-in-out"
+                       :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
+                       @if($index !== 0) x-cloak @endif>
+                        @if($slide->featured_image_path)
+                            @if(Str::startsWith($slide->featured_image_path, ['http://', 'https://']))
+                                <img src="{{ $slide->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
+                            @else
+                                <img src="{{ asset('storage/' . $slide->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
+                            @endif
                         @else
-                            <img src="{{ asset('storage/' . $featuredArticle->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredArticle->title }}">
+                            <img src="https://picsum.photos/seed/hero{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Featured">
                         @endif
-                    @else
-                        <img src="https://picsum.photos/seed/hero/1280/720" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Featured">
-                    @endif
-                    
-                    <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#00081E] via-[#00081E]/80 to-transparent"></div>
-                    
-                    <!-- Content -->
-                    <div class="absolute bottom-0 left-0 p-8 w-full max-w-3xl">
-                        <span class="text-sm font-bold uppercase tracking-widest text-crimson mb-3 block" style="font-family: 'Work Sans', sans-serif;">{{ $featuredArticle->category->name }}</span>
-                        <h2 class="text-3xl lg:text-[32px] font-bold mb-4 text-white group-hover:text-gray-200 transition-colors" style="font-family: Montserrat, sans-serif; line-height: 1.2;">
-                            {{ $featuredArticle->title }}
-                        </h2>
-                        <p class="text-[17px] text-[#7687B2] line-clamp-2" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                            {{ $featuredArticle->excerpt }}
-                        </p>
+                        
+                        <!-- Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#00081E] via-[#00081E]/80 to-transparent"></div>
+                        
+                        <!-- Content -->
+                        <div class="absolute bottom-0 left-0 p-8 w-full max-w-3xl">
+                            <span class="text-sm font-bold uppercase tracking-widest text-crimson mb-3 block" style="font-family: 'Work Sans', sans-serif;">{{ $slide->category->name }}</span>
+                            <h2 class="text-3xl lg:text-[32px] font-bold mb-4 text-white" style="font-family: Montserrat, sans-serif; line-height: 1.2;">
+                                {{ $slide->title }}
+                            </h2>
+                            <p class="text-[17px] text-[#7687B2] line-clamp-2" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                {{ $slide->excerpt }}
+                            </p>
+                        </div>
+                    </a>
+                    @endforeach
+
+                    <!-- Slide Indicators -->
+                    <div class="absolute bottom-4 right-4 z-20 flex items-center space-x-2">
+                        @foreach($featuredArticles as $index => $slide)
+                        <button @click="goToSlide({{ $index }})" 
+                                class="w-2.5 h-2.5 rounded-full transition-all duration-300 focus:outline-none"
+                                :class="currentSlide === {{ $index }} ? 'bg-crimson w-6' : 'bg-white/50 hover:bg-white/80'"></button>
+                        @endforeach
                     </div>
-                </a>
-                @endif
+
+                    <!-- Navigation Arrows (Desktop only to prevent mobile text overlap) -->
+                    <button @click="prevSlide(); stopAutoplay(); startAutoplay();" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button @click="nextSlide(); stopAutoplay(); startAutoplay();" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Sidebar Articles (Right, narrow) -->
@@ -120,11 +162,60 @@
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-12">
             <!-- Main Grid -->
             <div>
-                <div x-data="{ loading: false, loaded: false }" class="relative mb-12">
-                    <!-- Main Grid (Unified) -->
-                    <div class="columns-1 sm:columns-2 gap-6 overflow-hidden transition-all duration-1000 ease-in-out"
-                         :class="loaded ? 'max-h-[5000px]' : 'max-h-[700px]'">
-                        @foreach($recentArticles->skip(2)->take(6) as $article)
+                <div class="mb-12">
+                    <!-- Recent News Grid -->
+                    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
+                        @php
+                            $recentList = $recentArticles->skip(2)->take(6);
+                            $recentDummyCount = 6 - $recentList->count();
+                            
+                            $dummyVariations = [
+                                [
+                                    'category' => 'TECHNOLOGY',
+                                    'date' => 'Nov 15',
+                                    'title' => 'Robotics Lab Unveils Autonomous Campus Delivery Prototype',
+                                    'excerpt' => 'A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.',
+                                    'image' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'BUSINESS',
+                                    'date' => 'Nov 12',
+                                    'title' => 'Business School Launches New Venture Capital Fellowship',
+                                    'excerpt' => 'The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.',
+                                    'image' => 'https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'RESEARCH',
+                                    'date' => 'Nov 10',
+                                    'title' => 'New Study Links Urban Green Spaces to Lower Stress Levels in Students',
+                                    'excerpt' => 'Researchers found a significant correlation between time spent in campus parks and reduced cortisol levels during finals week.',
+                                    'image' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'CAMPUS LIFE',
+                                    'date' => 'Nov 08',
+                                    'title' => 'Annual Arts Festival Draws Record-Breaking Crowd This Weekend',
+                                    'excerpt' => 'Over 10,000 students and local residents attended the three-day event featuring live music, student films, and interactive installations.',
+                                    'image' => 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'ENVIRONMENT',
+                                    'date' => 'Nov 05',
+                                    'title' => 'Researchers Discover Novel Enzyme that Breaks Down Microplastics',
+                                    'excerpt' => 'A cross-disciplinary team from Biology and Chemistry has isolated a bacteria strain capable of digesting common packaging materials.',
+                                    'image' => 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'HEALTH',
+                                    'date' => 'Nov 02',
+                                    'title' => 'Medical School Partners with Regional Hospitals for Rural Care',
+                                    'excerpt' => 'A new initiative will send final-year medical students to rural clinics to provide essential healthcare services while gaining clinical experience.',
+                                    'image' => 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop'
+                                ]
+                            ];
+                        @endphp
+
+                        @foreach($recentList as $article)
                         <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <!-- Thumbnail -->
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
@@ -155,65 +246,96 @@
                         </a>
                         @endforeach
 
-                        <!-- Additional Dummy Cards -->
+                        @for($i = 0; $i < $recentDummyCount; $i++)
+                        @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
                         <a href="#" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Robotics">
+                                <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
                             </div>
                             <div class="p-6">
                                 <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">TECHNOLOGY</span>
-                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">Nov 15</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $variation['category'] }}</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $variation['date'] }}</span>
                                 </div>
                                 <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                    Robotics Lab Unveils Autonomous Campus Delivery Prototype
+                                    {{ $variation['title'] }}
                                 </h3>
                                 <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                    A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.
+                                    {{ $variation['excerpt'] }}
                                 </p>
                             </div>
                         </a>
-
-                        <a href="#" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
-                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Finance">
-                            </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">BUSINESS</span>
-                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">Nov 12</span>
-                                </div>
-                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                    Business School Launches New Venture Capital Fellowship
-                                </h3>
-                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                    The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.
-                                </p>
-                            </div>
-                        </a>
+                        @endfor
                     </div>
+                </div>
 
-                    <!-- Fade Overlay & Load More Button -->
-                    <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end h-64 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"
-                         x-show="!loaded"
-                         x-transition.opacity.duration.500ms>
-                        
-                        <div class="pb-2 pointer-events-auto border-t border-[#C5C6CF] w-full pt-10 mt-10">
-                            <div class="flex justify-center">
-                                <button @click="loading = true; setTimeout(() => { loading = false; loaded = true; }, 1000)"
-                                        class="inline-block font-sans font-semibold text-sm text-[#00081E] border border-[#00081E] px-8 py-3 hover:bg-[#00081E] hover:text-white transition-colors uppercase tracking-wider relative min-w-[200px] bg-white"
-                                        style="font-family: 'Work Sans', sans-serif;"
-                                        :disabled="loading">
-                                    <span x-show="!loading">Load More</span>
-                                    <span x-show="loading" class="flex items-center justify-center">
-                                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    </span>
-                                </button>
+                <!-- Others Section Header -->
+                <div class="mb-8 border-b pb-4 border-[#C5C6CF] mt-16">
+                    <h2 class="text-[32px] font-bold text-navy" style="font-family: Montserrat, sans-serif;">
+                        Others
+                    </h2>
+                </div>
+
+                <div class="mb-12">
+                    <!-- Others Grid (15 items) -->
+                    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
+                        @php
+                            $otherArticles = $recentArticles->skip(8)->take(15);
+                            $dummyCount = 15 - $otherArticles->count();
+                        @endphp
+
+                        @foreach($otherArticles as $article)
+                        <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <!-- Thumbnail -->
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                @if($article->featured_image_path)
+                                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
+                                        <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @else
+                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @endif
+                                @else
+                                    <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
+                                @endif
                             </div>
-                        </div>
+                            
+                            <!-- Content -->
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    {{ $article->title }}
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    {{ $article->excerpt }}
+                                </p>
+                            </div>
+                        </a>
+                        @endforeach
+
+                        @for($i = 0; $i < $dummyCount; $i++)
+                        @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
+                        <!-- Dummy Card -->
+                        <a href="#" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $variation['category'] }}</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $variation['date'] }}</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    {{ $variation['title'] }}
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    {{ $variation['excerpt'] }}
+                                </p>
+                            </div>
+                        </a>
+                        @endfor
                     </div>
                 </div>
             </div>

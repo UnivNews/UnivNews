@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('content')
-<div class="max-w-[1280px] w-full mx-auto px-6 md:px-10 py-12 min-h-screen">
+<div class="max-w-[1280px] w-full mx-auto px-6 md:px-10 py-12 min-h-screen" x-data="researchSystem()">
     <div class="mb-12 border-b border-[#C5C6CF] pb-6">
         <h1 class="font-heading text-5xl font-bold text-[#00081E] mb-4 tracking-tight uppercase">Research & Innovation</h1>
         <p class="font-sans text-xl text-[#44464E] max-w-3xl">Exploring the frontiers of knowledge and technology to address global challenges and shape the future of society.</p>
@@ -10,27 +10,64 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Main Content (Left) -->
         <div class="lg:col-span-8 space-y-12">
-            <!-- Featured Hero -->
-            @if($featuredResearch ?? false)
-            <article class="group cursor-pointer">
+            <!-- Featured Hero Slider -->
+            @if(($featuredResearchArticles ?? collect())->count() > 0)
+            <div x-data="{
+                currentSlide: 0,
+                totalSlides: {{ $featuredResearchArticles->count() }},
+                autoplay: null,
+                startAutoplay() { this.autoplay = setInterval(() => { this.nextSlide() }, 5000); },
+                stopAutoplay() { clearInterval(this.autoplay); },
+                nextSlide() { this.currentSlide = (this.currentSlide + 1) % this.totalSlides; },
+                goToSlide(i) { this.currentSlide = i; this.stopAutoplay(); this.startAutoplay(); }
+            }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
                 <div class="relative w-full h-[400px] mb-6 overflow-hidden bg-gray-100 border border-[#C5C6CF]">
-                    <img alt="Featured Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="{{ $featuredResearch->image_url ?? 'https://lh3.googleusercontent.com/aida-public/AB6AXuCfg3t7NFKq4NmDP4lDCYPRZx3WQ8gSFSHj-oUFb4DvBvzTMd_FYnyG5NnFljmuENjsLuQSfe_kd_uPywkloyFKa8B3qjfOAQn_ldve0GSmJ83X2xetsCkd3nBLamQEj6E4jfuOPOoS_nk8V21MAzwju3IzqBoklME8dwOr50HPaEEbhG1CGGvM7WFzH_uSd3ws1rEWHDWgTvj0qdLw9NcRh9fAS9_NISw0r0-Z9uQEF4W5CBMLHKo9' }}"/>
-                    <div class="absolute top-4 left-4 bg-[#B71032] text-white px-3 py-1 font-sans font-semibold text-xs tracking-wider uppercase">
-                        ACADEMIC BREAKTHROUGH
+                    @foreach($featuredResearchArticles as $index => $slide)
+                    <div class="absolute inset-0 transition-opacity duration-700 ease-in-out"
+                         :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
+                         @if($index !== 0) x-cloak @endif>
+                        <a href="{{ route('article', $slide->slug) }}" class="block w-full h-full group">
+                            @if($slide->featured_image_path)
+                                @if(Str::startsWith($slide->featured_image_path, ['http://', 'https://']))
+                                    <img src="{{ $slide->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
+                                @else
+                                    <img src="{{ asset('storage/' . $slide->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
+                                @endif
+                            @else
+                                <img src="https://picsum.photos/seed/research{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Research">
+                            @endif
+                            <div class="absolute top-4 left-4 bg-[#B71032] text-white px-3 py-1 font-sans font-semibold text-xs tracking-wider uppercase">
+                                ACADEMIC BREAKTHROUGH
+                            </div>
+                        </a>
+                    </div>
+                    @endforeach
+
+                    <!-- Slide Indicators -->
+                    <div class="absolute bottom-4 left-4 z-20 flex items-center space-x-2">
+                        @foreach($featuredResearchArticles as $index => $slide)
+                        <button @click="goToSlide({{ $index }})" 
+                                class="w-2.5 h-2.5 rounded-full transition-all duration-300 focus:outline-none"
+                                :class="currentSlide === {{ $index }} ? 'bg-[#B71032] w-6' : 'bg-white/50 hover:bg-white/80'"></button>
+                        @endforeach
                     </div>
                 </div>
-                <div>
-                    <h2 class="font-heading font-semibold text-[32px] leading-tight text-[#00081E] mb-4 group-hover:text-[#B71032] transition-colors">
-                        {{ $featuredResearch->title }}
+
+                <!-- Dynamic text content under slider -->
+                @foreach($featuredResearchArticles as $index => $slide)
+                <div x-show="currentSlide === {{ $index }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" @if($index !== 0) x-cloak @endif>
+                    <h2 class="font-heading font-semibold text-[32px] leading-tight text-[#00081E] mb-4 hover:text-[#B71032] transition-colors">
+                        <a href="{{ route('article', $slide->slug) }}">{{ $slide->title }}</a>
                     </h2>
                     <p class="font-body text-[17px] leading-[28px] text-[#44464E] mb-6 line-clamp-3">
-                        {{ $featuredResearch->excerpt }}
+                        {{ $slide->excerpt }}
                     </p>
-                    <a href="{{ route('article', $featuredResearch->slug) }}" class="inline-block font-sans font-semibold text-sm text-[#00081E] border border-[#00081E] px-6 py-3 hover:bg-[#00081E] hover:text-white transition-colors uppercase tracking-wider">
+                    <a href="{{ route('article', $slide->slug) }}" class="inline-block font-sans font-semibold text-sm text-[#00081E] border border-[#00081E] px-6 py-3 hover:bg-[#00081E] hover:text-white transition-colors uppercase tracking-wider">
                         Read More
                     </a>
                 </div>
-            </article>
+                @endforeach
+            </div>
             @else
             <!-- Static fallback if no DB data -->
             <article class="group cursor-pointer">
@@ -56,125 +93,31 @@
 
             <hr class="border-[#C5C6CF]"/>
 
-            <!-- Research Grid with Dynamic Load More -->
-            <div x-data="{ loading: false, loaded: false }" class="relative mb-12">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 overflow-hidden transition-all duration-1000 ease-in-out"
-                     :class="loaded ? 'max-h-[5000px]' : 'max-h-[600px]'">
-                     
-                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                        <div class="h-48 overflow-hidden relative">
-                            <img alt="Public Health Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC2wXpL1P6C7B1nQG4Y4hC59u4D5E1n8-wL8105H24oB9q98gM7OqyR_-0z8vB7s3e1W50mO3jHk3F7yH_3H_Y7z7r3W3QzZ80u_b1z8kH200o_n2m1Z7fN802cE-0-WzN0YxL88uK0-NfC0o_aZ7X7tQfR9jJ_nKjP6s-M5Y6R4rN5kOqN0c"/>
-                        </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">PUBLIC HEALTH</div>
-                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">New Strategies in Epidemic Tracking</h3>
-                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">A multi-disciplinary team develops a real-time data modeling framework that improves prediction of viral spread patterns by up to 40%.</p>
-                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                                View Project 
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </div>
-                    </article>
-
-                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                        <div class="h-48 overflow-hidden relative">
-                            <img alt="AI Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZpFGSPeWsP-76HL2LAjBhT3szbaJ-iy26G_1SPXBzI9F8WgI5by5YMSnLQAbUbyGccWmH0PUqyliMtTsNd3GnGJZOI-eByI-DVj5Nzj5u_bOAypw7CmXW0vB1wq_CBls-vqDUaZbpADAhqZh6G2wONILuQYbjFyR2zNe2aFVYkd2t0FtnvhN3f0rAoExpGamqQcfV0yoKCbKo1xJIrP2Pfrk4oH2_QFNjbt8M86K_g104BpQri2L2"/>
-                        </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">ARTIFICIAL INTELLIGENCE</div>
-                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Ethical Frameworks for Autonomous Systems</h3>
-                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">The Center for Digital Ethics publishes a comprehensive guide on implementing human-centric moral reasoning algorithms into autonomous vehicles.</p>
-                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                                View Project 
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </div>
-                    </article>
-
-                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                        <div class="h-48 overflow-hidden relative">
-                            <img alt="Sustainability Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzlA8x7OQls5LI9ZZ6-2RGs8GazT3YBOkyol2naUtJLg8dQV04dPy6Zax4gDKorU1lDb7H51TReMMHDW-d826ghWpP5etvNClJ1RM4qae6MH1GFVueJBHdVeTr4t3D-L3_GdBtuoEjIqZ8QVki0XNz7yFDXmvTqJcKh9J3afcc2_hg8NJ02NnQ2qneBLB27YU3BEMSnoapqykjGUpvBJGjscKV6gxmoOvKv4dd0W9H3SCjh-2Wyjc1"/>
-                        </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">SUSTAINABILITY</div>
-                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Next-Generation Urban Water Management</h3>
-                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">Engineering faculty unveil a modular infrastructure design that reclaims and purifies urban runoff using passive, low-energy bio-filtration systems.</p>
-                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                                View Project 
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </div>
-                    </article>
-
-                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                        <div class="h-48 overflow-hidden relative">
-                            <img alt="Physics Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHFsIO7UV6UeuMGAQWscmeOrQ451xwQhDKJfbJKE93wKdkejq0W5Lbiuki3YrtjHPZOxVunRVJql7aVQ7jlNKdoW_Jd_NCzUgh6EA7ZDGCUAmT5U_br4F1VUxNgYrqMf_cCevfbxeJnIhq4LrB59BRzUP7L1a8Hwxb7ijh9pbPbf-uOL3Q-aHlXeJYLHhywzKzNRouWExTHSFWOElu8ybVbXW7y-Ek1sJP0rN4TWd-rr-nEnZd8tSb"/>
-                        </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">QUANTUM PHYSICS</div>
-                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Achieving Room-Temperature Superconductivity</h3>
-                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">Physics department claims a minor but significant leap in stabilizing superconducting materials at elevated temperatures using novel pressure techniques.</p>
-                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                                View Project 
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </div>
-                    </article>
-
-                    <!-- Dummy Article 1 -->
-                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                        <div class="h-48 overflow-hidden relative">
-                            <img alt="Medical Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop"/>
-                        </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">MEDICINE</div>
-                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Breakthrough in Cellular Regeneration</h3>
-                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">Researchers have identified a new protein pathway that significantly accelerates the healing of damaged neural tissues in preliminary trials.</p>
-                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                                View Project 
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </div>
-                    </article>
-
-                    <!-- Dummy Article 2 -->
-                    <article class="group cursor-pointer flex flex-col h-full bg-[#FCF8F9] border border-[#C5C6CF] hover:bg-white transition-colors">
-                        <div class="h-48 overflow-hidden relative">
-                            <img alt="AI Research" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=600&auto=format&fit=crop"/>
-                        </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="text-[#B71032] font-sans font-semibold text-sm mb-2 uppercase tracking-wider">ARTIFICIAL INTELLIGENCE</div>
-                            <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-3 group-hover:underline decoration-[#B71032] underline-offset-4">Ethical Frameworks in Machine Learning</h3>
-                            <p class="font-body text-[17px] text-[#44464E] mb-4 flex-grow line-clamp-3">A joint study between the philosophy and computer science departments proposes a new computable framework for embedding ethical constraints into LLMs.</p>
-                            <a class="font-sans font-semibold text-sm text-[#00081E] hover:text-[#B71032] flex items-center gap-2 mt-auto" href="#">
-                                View Project 
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </div>
-                    </article>
+            <!-- Research Grid -->
+            <div class="mb-12 min-h-[300px]">
+                <!-- Empty State -->
+                <div x-show="filteredResearch.length === 0" class="flex flex-col items-center justify-center h-64 text-center border border-[#C5C6CF] border-dashed rounded-lg bg-gray-50" x-cloak>
+                    <svg class="w-12 h-12 text-[#C5C6CF] mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <p class="text-[#44464E] font-medium font-sans">No research matches your selected filters.</p>
+                    <button @click="resetFilters" type="button" class="mt-4 text-[#B71032] text-sm font-bold uppercase tracking-wider hover:underline">Reset Filters</button>
                 </div>
 
-                <!-- Fade Overlay & Load More Button -->
-                <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end h-64 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"
-                     x-show="!loaded"
-                     x-transition.opacity.duration.500ms>
-                    
-                    <div class="pb-2 pointer-events-auto border-t border-[#C5C6CF] w-full pt-10 mt-10">
-                        <div class="flex justify-center">
-                            <button @click="loading = true; setTimeout(() => { loading = false; loaded = true; }, 1000)"
-                                    class="inline-block font-sans font-semibold text-sm text-[#00081E] border border-[#00081E] px-8 py-3 hover:bg-[#00081E] hover:text-white transition-colors uppercase tracking-wider relative min-w-[200px] bg-[#FCF8F9]"
-                                    style="font-family: 'Work Sans', sans-serif;"
-                                    :disabled="loading">
-                                <span x-show="!loading">Load More</span>
-                                <span x-show="loading" class="flex items-center justify-center">
-                                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
+                <div class="columns-1 sm:columns-2 lg:columns-3 gap-6" x-show="filteredResearch.length > 0">
+                    <template x-for="item in filteredResearch" :key="item.id">
+                        <a :href="item.url" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6 relative">
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                <img :src="item.image" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" :alt="item.title">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;" x-text="item.category"></span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;" x-text="item.date"></span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;" x-text="item.title"></h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;" x-text="item.excerpt"></p>
+                            </div>
+                        </a>
+                    </template>
                 </div>
             </div>
         </div>
@@ -184,27 +127,27 @@
             <!-- Filter Widget -->
             <div class="bg-[#FCF8F9] border border-[#C5C6CF] p-6">
                 <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-4 border-b-2 border-[#B71032] pb-2 inline-block">Filter Research</h3>
-                <form class="space-y-4">
+                <form class="space-y-4" @submit.prevent="applyFilters">
                     <div>
                         <label class="block font-sans font-semibold text-sm text-[#44464E] mb-2">Research Field</label>
-                        <select class="w-full border-[#C5C6CF] bg-white text-[#00081E] font-body text-[17px] focus:border-[#B71032] focus:ring-0 rounded-none">
-                            <option>All Fields</option>
-                            <option>Biomedical Sciences</option>
-                            <option>Engineering & Applied Science</option>
-                            <option>Social Sciences & Humanities</option>
-                            <option>Computer Science & AI</option>
+                        <select x-model="form.field" class="w-full border-[#C5C6CF] bg-white text-[#00081E] font-body text-[17px] focus:border-[#B71032] focus:ring-0 rounded-none">
+                            <option value="All Fields">All Fields</option>
+                            <option value="Biomedical Sciences">Biomedical Sciences</option>
+                            <option value="Engineering & Applied Science">Engineering & Applied Science</option>
+                            <option value="Social Sciences & Humanities">Social Sciences & Humanities</option>
+                            <option value="Computer Science & AI">Computer Science & AI</option>
                         </select>
                     </div>
                     <div>
                         <label class="block font-sans font-semibold text-sm text-[#44464E] mb-2">Research Center/Lab</label>
-                        <select class="w-full border-[#C5C6CF] bg-white text-[#00081E] font-body text-[17px] focus:border-[#B71032] focus:ring-0 rounded-none">
-                            <option>All Centers</option>
-                            <option>Institute for Sustainable Energy</option>
-                            <option>Center for Digital Ethics</option>
-                            <option>Genomics Research Institute</option>
+                        <select x-model="form.center" class="w-full border-[#C5C6CF] bg-white text-[#00081E] font-body text-[17px] focus:border-[#B71032] focus:ring-0 rounded-none">
+                            <option value="All Centers">All Centers</option>
+                            <option value="Institute for Sustainable Energy">Institute for Sustainable Energy</option>
+                            <option value="Center for Digital Ethics">Center for Digital Ethics</option>
+                            <option value="Genomics Research Institute">Genomics Research Institute</option>
                         </select>
                     </div>
-                    <button class="w-full bg-[#00081E] text-white font-sans font-semibold text-sm py-3 hover:bg-gray-800 transition-colors uppercase tracking-wider mt-2" type="button">
+                    <button type="submit" class="w-full bg-[#00081E] text-white font-sans font-semibold text-sm py-3 hover:bg-gray-800 transition-colors uppercase tracking-wider mt-2">
                         Apply Filters
                     </button>
                 </form>
@@ -214,22 +157,48 @@
             <div>
                 <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-6 border-b-2 border-[#B71032] pb-2 inline-block">Trending Research</h3>
                 <div class="space-y-6">
-                    <a class="group block border-l-[3px] border-transparent hover:border-[#B71032] pl-4 transition-all" href="#">
-                        <div class="text-[#B71032] font-sans font-semibold text-xs uppercase tracking-wider mb-1">DATA SCIENCE</div>
-                        <h4 class="font-body text-[17px] font-bold text-[#00081E] group-hover:text-[#B71032] transition-colors leading-tight">Predictive Models for Global Supply Chain Disruptions</h4>
+                    @php
+                        $trendingDummies = [
+                            [
+                                'category' => 'DATA SCIENCE',
+                                'title' => 'Predictive Models for Global Supply Chain Disruptions',
+                            ],
+                            [
+                                'category' => 'MEDICINE',
+                                'title' => 'New Pathways in Targeted Immunotherapy Discovered',
+                            ],
+                            [
+                                'category' => 'ECONOMICS',
+                                'title' => 'Analyzing the Long-term Impacts of Universal Basic Income Trials',
+                            ],
+                            [
+                                'category' => 'MATERIALS SCIENCE',
+                                'title' => 'Ultra-lightweight Polymers Developed for Aerospace Applications',
+                            ]
+                        ];
+                        
+                        // Use real articles if we have enough, otherwise fallback to dummies but with working links
+                        $trendingItems = $articles->count() >= 4 ? $articles->take(4)->map(function($a) {
+                            return [
+                                'category' => $a->category->name,
+                                'title' => $a->title,
+                                'url' => route('article', $a->slug)
+                            ];
+                        })->toArray() : array_map(function($d) use ($articles) {
+                            return [
+                                'category' => $d['category'],
+                                'title' => $d['title'],
+                                'url' => $articles->first() ? route('article', $articles->first()->slug) : '#'
+                            ];
+                        }, $trendingDummies);
+                    @endphp
+
+                    @foreach($trendingItems as $item)
+                    <a class="group block border-l-[3px] border-transparent hover:border-[#B71032] pl-4 transition-all" href="{{ $item['url'] }}">
+                        <div class="text-[#B71032] font-sans font-semibold text-xs uppercase tracking-wider mb-1">{{ $item['category'] }}</div>
+                        <h4 class="font-body text-[17px] font-bold text-[#00081E] group-hover:text-[#B71032] transition-colors leading-tight">{{ $item['title'] }}</h4>
                     </a>
-                    <a class="group block border-l-[3px] border-transparent hover:border-[#B71032] pl-4 transition-all" href="#">
-                        <div class="text-[#B71032] font-sans font-semibold text-xs uppercase tracking-wider mb-1">MEDICINE</div>
-                        <h4 class="font-body text-[17px] font-bold text-[#00081E] group-hover:text-[#B71032] transition-colors leading-tight">New Pathways in Targeted Immunotherapy Discovered</h4>
-                    </a>
-                    <a class="group block border-l-[3px] border-transparent hover:border-[#B71032] pl-4 transition-all" href="#">
-                        <div class="text-[#B71032] font-sans font-semibold text-xs uppercase tracking-wider mb-1">ECONOMICS</div>
-                        <h4 class="font-body text-[17px] font-bold text-[#00081E] group-hover:text-[#B71032] transition-colors leading-tight">Analyzing the Long-term Impacts of Universal Basic Income Trials</h4>
-                    </a>
-                    <a class="group block border-l-[3px] border-transparent hover:border-[#B71032] pl-4 transition-all" href="#">
-                        <div class="text-[#B71032] font-sans font-semibold text-xs uppercase tracking-wider mb-1">MATERIALS SCIENCE</div>
-                        <h4 class="font-body text-[17px] font-bold text-[#00081E] group-hover:text-[#B71032] transition-colors leading-tight">Ultra-lightweight Polymers Developed for Aerospace Applications</h4>
-                    </a>
+                    @endforeach
                 </div>
             </div>
 
@@ -279,4 +248,114 @@
         </aside>
     </div>
 </div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('researchSystem', () => ({
+        form: {
+            field: 'All Fields',
+            center: 'All Centers'
+        },
+        activeFilter: {
+            field: 'All Fields',
+            center: 'All Centers'
+        },
+        @php
+            $dummyVariations = [
+                [
+                    'category' => 'TECHNOLOGY',
+                    'date' => 'Nov 15',
+                    'title' => 'Robotics Lab Unveils Autonomous Campus Delivery Prototype',
+                    'excerpt' => 'A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.',
+                    'image' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop'
+                ],
+                [
+                    'category' => 'BUSINESS',
+                    'date' => 'Nov 12',
+                    'title' => 'Business School Launches New Venture Capital Fellowship',
+                    'excerpt' => 'The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.',
+                    'image' => 'https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop'
+                ],
+                [
+                    'category' => 'RESEARCH',
+                    'date' => 'Nov 10',
+                    'title' => 'New Study Links Urban Green Spaces to Lower Stress Levels in Students',
+                    'excerpt' => 'Researchers found a significant correlation between time spent in campus parks and reduced cortisol levels during finals week.',
+                    'image' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop'
+                ],
+                [
+                    'category' => 'CAMPUS LIFE',
+                    'date' => 'Nov 08',
+                    'title' => 'Annual Arts Festival Draws Record-Breaking Crowd This Weekend',
+                    'excerpt' => 'Over 10,000 students and local residents attended the three-day event featuring live music, student films, and interactive installations.',
+                    'image' => 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop'
+                ],
+                [
+                    'category' => 'ENVIRONMENT',
+                    'date' => 'Nov 05',
+                    'title' => 'Researchers Discover Novel Enzyme that Breaks Down Microplastics',
+                    'excerpt' => 'A cross-disciplinary team from Biology and Chemistry has isolated a bacteria strain capable of digesting common packaging materials.',
+                    'image' => 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop'
+                ],
+                [
+                    'category' => 'HEALTH',
+                    'date' => 'Nov 02',
+                    'title' => 'Medical School Partners with Regional Hospitals for Rural Care',
+                    'excerpt' => 'A new initiative will send final-year medical students to rural clinics to provide essential healthcare services while gaining clinical experience.',
+                    'image' => 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop'
+                ]
+            ];
+            $dummyCount = max(0, 9 - $articles->count());
+        @endphp
+        allResearch: [
+            @foreach($articles as $article)
+            {
+                id: 'db_{{ $article->id }}',
+                title: @json($article->title),
+                category: @json($article->category->name),
+                date: @json($article->published_at->format('M d')),
+                excerpt: @json($article->excerpt),
+                image: @json($article->featured_image_path ? (Str::startsWith($article->featured_image_path, ['http://', 'https://']) ? $article->featured_image_path : asset('storage/' . $article->featured_image_path)) : 'https://picsum.photos/seed/fallback/800/533'),
+                url: @json(route('article', $article->slug)),
+                field: '{{ ['Biomedical Sciences', 'Engineering & Applied Science', 'Social Sciences & Humanities', 'Computer Science & AI'][crc32($article->title) % 4] }}',
+                center: '{{ ['Institute for Sustainable Energy', 'Center for Digital Ethics', 'Genomics Research Institute', 'All Centers'][crc32($article->title) % 4] }}'
+            },
+            @endforeach
+            @for($i = 0; $i < $dummyCount; $i++)
+            @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
+            {
+                id: 'dummy_{{ $i }}',
+                title: @json($variation['title']),
+                category: @json($variation['category']),
+                date: @json($variation['date']),
+                excerpt: @json($variation['excerpt']),
+                image: @json($variation['image']),
+                url: '#',
+                field: '{{ ['Biomedical Sciences', 'Engineering & Applied Science', 'Social Sciences & Humanities', 'Computer Science & AI'][$i % 4] }}',
+                center: '{{ ['Institute for Sustainable Energy', 'Center for Digital Ethics', 'Genomics Research Institute', 'All Centers'][$i % 4] }}'
+            },
+            @endfor
+        ],
+
+        get filteredResearch() {
+            return this.allResearch.filter(item => {
+                const fieldMatch = this.activeFilter.field === 'All Fields' || item.field === this.activeFilter.field;
+                const centerMatch = this.activeFilter.center === 'All Centers' || item.center === this.activeFilter.center;
+                return fieldMatch && centerMatch;
+            });
+        },
+
+        applyFilters() {
+            this.activeFilter.field = this.form.field;
+            this.activeFilter.center = this.form.center;
+        },
+
+        resetFilters() {
+            this.form.field = 'All Fields';
+            this.form.center = 'All Centers';
+            this.applyFilters();
+        }
+    }));
+});
+</script>
 @endsection
