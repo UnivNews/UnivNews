@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Article extends Model
 {
     use HasFactory;
 
-    const STATUS_DRAFT = 'draft';
-    const STATUS_PENDING_REVIEW = 'pending_review';
-    const STATUS_PUBLISHED = 'published';
-    const STATUS_REJECTED = 'rejected';
+    const STATUS_DRAFT            = 'draft';
+    const STATUS_PENDING_REVIEW    = 'pending_review';
+    const STATUS_AWAITING_PAYMENT  = 'awaiting_payment';
+    const STATUS_PUBLISHED         = 'published';
+    const STATUS_REJECTED          = 'rejected';
 
     protected $fillable = [
         'title',
@@ -49,6 +51,11 @@ class Article extends Model
         return $this->belongsToMany(Tag::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PUBLISHED)
@@ -59,6 +66,11 @@ class Article extends Model
     public function scopePendingReview(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PENDING_REVIEW);
+    }
+
+    public function scopeAwaitingPayment(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_AWAITING_PAYMENT);
     }
 
     public function isPublished(): bool
@@ -79,5 +91,10 @@ class Article extends Model
     public function isRejected(): bool
     {
         return $this->status === self::STATUS_REJECTED;
+    }
+
+    public function isAwaitingPayment(): bool
+    {
+        return $this->status === self::STATUS_AWAITING_PAYMENT;
     }
 }

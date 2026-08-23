@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin as Admin;
 use App\Http\Controllers\Author as Author;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\AdminLoginController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WebhookController;
 
 // 1. Public Portal Routes
 Route::get('/', [PublicController::class, 'home'])->name('home');
@@ -71,12 +73,21 @@ Route::middleware(['auth'])->group(function () {
         // University Management
         Route::resource('universities', Admin\UniversityController::class)->only(['index', 'store', 'destroy']);
 
-        // Profile & Settings
+        // Profile & Settings (User Profile)
         Route::get('/profile', [Admin\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [Admin\ProfileController::class, 'update'])->name('profile.update');
         Route::get('/settings', [Admin\ProfileController::class, 'edit'])->name('settings.edit');
         Route::put('/settings', [Admin\ProfileController::class, 'update'])->name('settings.update');
+
+        // App Settings (Payment Fee, etc.)
+        Route::get('/app-settings', [Admin\AppSettingsController::class, 'index'])->name('app-settings.index');
+        Route::put('/app-settings', [Admin\AppSettingsController::class, 'update'])->name('app-settings.update');
     });
+
+    // 5. Payment Routes (author only — artikel harus awaiting_payment)
+    Route::get('/payment/{article}', [PaymentController::class, 'show'])->name('payment.show');
+    Route::post('/payment/{article}/pay', [PaymentController::class, 'pay'])->name('payment.pay');
+    Route::get('/payment/{article}/thanks', [PaymentController::class, 'thanks'])->name('payment.thanks');
 });
 
 // 5. Auth Routes (Breeze)
@@ -98,3 +109,7 @@ Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
 Route::get('/author/set-password', [Author\SetPasswordController::class, 'show'])->name('author.set-password.show');
 Route::post('/author/set-password', [Author\SetPasswordController::class, 'store'])->name('author.set-password.store');
 Route::post('/author/set-password/resend', [Author\SetPasswordController::class, 'resend'])->name('author.set-password.resend');
+
+// 9. Webhook — exclude dari CSRF di bootstrap/app.php
+// Endpoint ini dipanggil oleh server Mayar (bukan browser), sehingga tidak pakai session/CSRF.
+Route::post('/webhooks/mayar', [WebhookController::class, 'handleMayar'])->name('webhooks.mayar');
