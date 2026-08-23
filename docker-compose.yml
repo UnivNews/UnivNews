@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # 1. Backend Laravel
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: my_laravel_app
+    container_name: laravel_app
+    restart: unless-stopped
+    working_dir: /var/www
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+      - redis
+    networks:
+      - laravel_network
+
+  # 2. Frontend Node/Vite
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: laravel_node
+    volumes:
+      - ./:/var/www
+      - /var/www/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - laravel_network
+
+  # 3. Web Server Nginx
+  web:
+    image: nginx:alpine
+    container_name: laravel_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d 
+    depends_on:
+      - app
+    networks:
+      - laravel_network
+
+  # 4. Database PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: laravel_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: UnivNews
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwerty
+    ports:
+      - "5433:5432" 
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - laravel_network
+
+  # 5. Redis
+  redis:
+    image: redis:alpine
+    container_name: laravel_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - laravel_network
+
+  # 6. Queue Worker
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_queue
+    restart: unless-stopped
+    working_dir: /var/www
+    # Timpa CMD bawaan dengan perintah queue worker
+    command: php artisan queue:work --tries=3 --timeout=90
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+      - redis
+    networks:
+      - laravel_network
+
+networks:
+  laravel_network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
+  redisdata:
+    driver: local
