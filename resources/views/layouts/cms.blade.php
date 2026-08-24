@@ -96,9 +96,18 @@
                     </svg>
                     Universities
                 </a>
+
+                {{-- App Settings: payment fee, etc. (Admin only) --}}
+                <a href="{{ route('admin.app-settings.index') }}" 
+                   class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('admin.app-settings*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                    <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                    </svg>
+                    Payment Settings
+                </a>
                 @endif
 
-                <!-- Settings -->
+                <!-- Settings (User Profile) -->
                 <a href="{{ $isAdmin ? route('admin.settings.edit') : route('author.settings.edit') }}" 
                    class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('*.settings*') || request()->routeIs('*.profile*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">

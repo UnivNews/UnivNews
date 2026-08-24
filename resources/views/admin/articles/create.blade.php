@@ -190,19 +190,40 @@
                         Featured Image
                     </h3>
 
-                    <div class="relative border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors p-6 text-center cursor-pointer bg-[#fafafa]">
+                    <div class="relative border-2 border-dashed transition-colors p-6 text-center cursor-pointer bg-[#fafafa]"
+                         :class="isDragging ? 'border-[#8b1528] bg-red-50' : 'border-gray-300 hover:border-gray-400'"
+                         @dragover.prevent="isDragging = true"
+                         @dragleave.prevent="isDragging = false"
+                         @drop.prevent="handleFileDrop($event)">
+                        
                         <input type="file" 
                                name="featured_image" 
                                id="featured_image" 
                                accept="image/*" 
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                               @change="handleFileSelect"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                               :class="imagePreview ? 'hidden' : ''">
                         
-                        <div class="space-y-2">
-                            <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <!-- Upload state -->
+                        <div x-show="!imagePreview" class="space-y-2 pointer-events-none">
+                            <svg class="mx-auto h-10 w-10 text-gray-400" :class="isDragging ? 'text-[#8b1528]' : ''" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                             <p class="text-xs font-medium text-gray-700">Click to upload or drag and drop</p>
                             <p class="text-[10px] text-gray-400">SVG, PNG, JPG or GIF (max. 800&times;400px)</p>
+                        </div>
+
+                        <!-- Preview state -->
+                        <div x-show="imagePreview" style="display: none;" class="space-y-3">
+                            <div class="relative inline-block w-full h-32 overflow-hidden rounded border border-gray-200">
+                                <img :src="imagePreview" alt="Preview" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-gray-600 bg-white border border-gray-200 px-3 py-2 rounded shadow-sm relative z-10">
+                                <span class="truncate pr-2 font-medium" x-text="imageName"></span>
+                                <button type="button" @click.stop="removeImage" class="text-red-600 hover:text-red-800 font-bold shrink-0 focus:outline-none">
+                                    Remove
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -218,6 +239,38 @@ function articleFormHandler() {
     return {
         newTagInput: '',
         tags: ['Announcement', 'Research'],
+        imagePreview: null,
+        imageName: null,
+        isDragging: false,
+        handleFileDrop(e) {
+            this.isDragging = false;
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('featured_image').files = files;
+                this.updatePreview(files[0]);
+            }
+        },
+        handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                this.updatePreview(files[0]);
+            }
+        },
+        updatePreview(file) {
+            if (file.type.startsWith('image/')) {
+                this.imageName = file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.imagePreview = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeImage() {
+            this.imagePreview = null;
+            this.imageName = null;
+            document.getElementById('featured_image').value = '';
+        },
         addTag() {
             const trimmed = this.newTagInput.trim().replace(/^#/, '');
             if (trimmed && !this.tags.includes(trimmed)) {

@@ -14,7 +14,17 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
+
+        // Exclude webhook endpoint from CSRF verification
+        // Webhook dipanggil oleh server Mayar, bukan browser dengan session aktif
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/mayar',
+        ]);
+
+        // Trust all proxies (ngrok, load balancer, etc.)
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
+
