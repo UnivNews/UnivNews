@@ -11,15 +11,42 @@ class PublicController extends Controller
 {
     public function home()
     {
-        $featuredArticles = Article::where('status', 'published')
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
-            ->orderBy('published_at', 'desc')
-            ->limit(4)
+        // 1. Fetch active boosted articles
+        $activeBoosts = \App\Models\Boost::with('article')
+            ->where('status', 'active')
+            ->orderBy('start_date', 'desc')
+            ->limit(5)
             ->get();
 
+        $boostedArticles = $activeBoosts->map(fn($boost) => $boost->article);
+
+        // 2. Fetch latest articles to fill the gap if boosted articles are less than 5
+        $limit = 5 - $boostedArticles->count();
+        $latestArticles = collect();
+        if ($limit > 0) {
+            $latestArticles = Article::where('status', 'published')
+                ->whereNotNull('published_at')
+                ->where('published_at', '<=', now())
+                ->when($boostedArticles->isNotEmpty(), function ($q) use ($boostedArticles) {
+                    $q->whereNotIn('id', $boostedArticles->pluck('id'));
+                })
+                ->orderBy('published_at', 'desc')
+                ->limit($limit)
+                ->get();
+        }
+
+        $featuredArticles = $boostedArticles->merge($latestArticles);
         $featuredArticle = $featuredArticles->first();
 
+        // 3. Setup Marquee Text
+        if ($boostedArticles->isNotEmpty()) {
+            $marqueeArticles = $boostedArticles;
+        } else {
+            // Skenario 1: Belum ada yang boost, ambil artikel terbaru
+            $marqueeArticles = $featuredArticles->take(1);
+        }
+
+        // 4. Fetch Recent Articles (exclude the one currently highlighted in first spot of slider)
         $recentArticles = Article::where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
@@ -28,6 +55,7 @@ class PublicController extends Controller
             ->limit(8)
             ->get();
 
+        // 5. Fetch Trending Research
         $trendingResearch = Article::whereHas('category', function($q) {
                 $q->where('slug', 'research-innovation');
             })
@@ -38,7 +66,7 @@ class PublicController extends Controller
             ->limit(5)
             ->get();
 
-        return view('public.home', compact('featuredArticle', 'featuredArticles', 'recentArticles', 'trendingResearch'));
+        return view('public.home', compact('featuredArticle', 'featuredArticles', 'recentArticles', 'trendingResearch', 'marqueeArticles'));
     }
 
     public function research()
@@ -105,6 +133,9 @@ class PublicController extends Controller
         // Increment view count
         $article->increment('views_count');
 
+        $article->load(['user.university', 'boosts']);
+        $isBoosted = $article->isBoosted();
+
         $relatedArticles = Article::where('category_id', $article->category_id)
             ->where('id', '!=', $article->id)
             ->where('status', 'published')
@@ -113,7 +144,7 @@ class PublicController extends Controller
             ->limit(3)
             ->get();
 
-        return view('public.article', compact('article', 'relatedArticles'));
+        return view('public.article', compact('article', 'relatedArticles', 'isBoosted'));
     }
 
     public function search(Request $request)

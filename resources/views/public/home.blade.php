@@ -5,15 +5,26 @@
 @section('content')
 
 <style>
-    @keyframes marquee {
-        0% { transform: translateX(0%); }
-        100% { transform: translateX(-100%); }
+    .ticker-wrap {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
     }
-    .animate-marquee {
-        animation: marquee 20s linear infinite;
+    .ticker-track {
+        display: inline-flex;
+        animation: scroll-left 25s linear infinite;
+        will-change: transform;
     }
-    .group:hover .animate-marquee {
+    .ticker-track:hover {
         animation-play-state: paused;
+    }
+    .ticker-content {
+        display: flex;
+        align-items: center;
+    }
+    @keyframes scroll-left {
+        from { transform: translateX(0); }
+        to   { transform: translateX(-50%); }
     }
 </style>
 
@@ -122,30 +133,32 @@
 </section>
 
 <!-- News Ticker -->
-<div class="bg-crimson overflow-hidden flex items-center relative group py-2 w-full">
-    <div class="flex whitespace-nowrap animate-marquee items-center text-white text-sm font-bold uppercase tracking-widest" style="font-family: 'Work Sans', sans-serif;">
-        <!-- First set -->
-        <div class="flex items-center px-4">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            CAMPUS TRANSIT DELAYS EXPECTED ON SOUTH ROUTE TODAY
+<div class="bg-crimson ticker-wrap py-2">
+    <div class="ticker-track">
+        <!-- Content 1 -->
+        <div class="ticker-content text-white text-sm font-bold uppercase tracking-widest" style="font-family: 'Work Sans', sans-serif;">
+            @for($i = 0; $i < 6; $i++)
+                @foreach($marqueeArticles as $article)
+                <a href="{{ route('article', $article->slug) }}" class="flex items-center px-4 hover:text-gray-200 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    {{ $article->title }}
+                </a>
+                <div class="text-white mx-2">|</div>
+                @endforeach
+            @endfor
         </div>
-        <div class="text-white mx-2">|</div>
-        <div class="flex items-center px-4">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            REGISTRATION FOR FALL SEMESTER OPENS NEXT TUESDAY AT 8:00 AM
+        <!-- Content 2 -->
+        <div class="ticker-content text-white text-sm font-bold uppercase tracking-widest" style="font-family: 'Work Sans', sans-serif;" aria-hidden="true">
+            @for($i = 0; $i < 6; $i++)
+                @foreach($marqueeArticles as $article)
+                <a href="{{ route('article', $article->slug) }}" class="flex items-center px-4 hover:text-gray-200 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    {{ $article->title }}
+                </a>
+                <div class="text-white mx-2">|</div>
+                @endforeach
+            @endfor
         </div>
-        <div class="text-white mx-2">|</div>
-        <!-- Duplicate for seamless loop -->
-        <div class="flex items-center px-4">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            CAMPUS TRANSIT DELAYS EXPECTED ON SOUTH ROUTE TODAY
-        </div>
-        <div class="text-white mx-2">|</div>
-        <div class="flex items-center px-4">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            REGISTRATION FOR FALL SEMESTER OPENS NEXT TUESDAY AT 8:00 AM
-        </div>
-        <div class="text-white mx-2">|</div>
     </div>
 </div>
 
