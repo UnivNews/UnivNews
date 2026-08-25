@@ -56,6 +56,11 @@ class Article extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function boosts(): HasMany
+    {
+        return $this->hasMany(Boost::class);
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PUBLISHED)
@@ -97,4 +102,27 @@ class Article extends Model
     {
         return $this->status === self::STATUS_AWAITING_PAYMENT;
     }
+
+    public function isBoosted(): bool
+    {
+        $today = now()->toDateString();
+
+        if ($this->relationLoaded('boosts')) {
+            return $this->boosts->contains(function ($boost) use ($today) {
+                $startDate = $boost->start_date ? (\is_string($boost->start_date) ? $boost->start_date : $boost->start_date->toDateString()) : null;
+                $endDate = $boost->end_date ? (\is_string($boost->end_date) ? $boost->end_date : $boost->end_date->toDateString()) : null;
+
+                return $boost->status === 'active'
+                    && ($startDate === null || $startDate <= $today)
+                    && ($endDate === null || $endDate >= $today);
+            });
+        }
+
+        return $this->boosts()
+            ->where('status', 'active')
+            ->where('start_date', '<=', $today)
+            ->where('end_date', '>=', $today)
+            ->exists();
+    }
 }
+

@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Webhook dipanggil oleh server Mayar, bukan browser dengan session aktif
         $middleware->validateCsrfTokens(except: [
             'webhooks/mayar',
+            'webhooks/mayar/boost',
         ]);
 
         // Trust all proxies (ngrok, load balancer, etc.)

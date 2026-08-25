@@ -134,6 +134,78 @@
             </div>
         </div>
 
+        {{-- ── Section: Boost Article Prices ────────────────────────────── --}}
+        <div class="bg-white border border-gray-200 shadow-sm overflow-hidden mt-8">
+
+            {{-- Section Header --}}
+            <div class="px-6 py-4 border-b border-gray-100 bg-[#00081e] flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-[#8b1528] flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Konfigurasi Harga Boost</h2>
+                        <p class="text-xs text-[#7687B2] mt-0.5">Atur harga untuk fitur promosi artikel.</p>
+                    </div>
+                </div>
+                <button type="button" id="add-boost-btn" class="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider rounded transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Tambah
+                </button>
+            </div>
+
+            <div class="p-6 lg:p-8">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm font-sans border border-gray-200">
+                        <thead class="bg-[#f8f9fa] text-gray-500 uppercase tracking-wider text-xs border-b border-gray-200">
+                            <tr>
+                                <th class="px-4 py-3 font-bold border-r border-gray-200">Durasi</th>
+                                <th class="px-4 py-3 font-bold border-r border-gray-200">Harga (Rp)</th>
+                                <th class="px-4 py-3 font-bold text-center">Status Aktif</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @foreach($boostPrices as $bp)
+                            <tr>
+                                <td class="px-4 py-4 font-medium text-gray-800 border-r border-gray-200 bg-gray-50">
+                                    {{ str_replace('_', ' ', Str::title($bp->duration_type)) }}
+                                    <span class="block text-xs text-gray-500 font-normal mt-0.5">
+                                        ({{ $bp->duration_days }} hari)
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 border-r border-gray-200">
+                                    <div class="relative max-w-[200px]">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-500 select-none">Rp</span>
+                                        <input
+                                            type="number"
+                                            name="boost_prices[{{ $bp->id }}][price]"
+                                            value="{{ old('boost_prices.'.$bp->id.'.price', $bp->price) }}"
+                                            min="0"
+                                            step="1000"
+                                            required
+                                            class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-mono focus:border-[#8b1528] focus:ring-0 transition-colors"
+                                        >
+                                    </div>
+                                    @error('boost_prices.'.$bp->id.'.price')
+                                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </td>
+                                <td class="px-4 py-3 text-center align-middle">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="boost_prices[{{ $bp->id }}][is_active]" value="1" class="sr-only peer" {{ old('boost_prices.'.$bp->id.'.is_active', $bp->is_active) ? 'checked' : '' }}>
+                                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#8b1528]"></div>
+                                    </label>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         {{-- ── Note section ────────────────────────────────────────────────── --}}
         <div class="bg-amber-50 border border-amber-200 p-4 flex gap-3">
             <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,6 +246,47 @@
         const val = parseInt(this.value.replace(/\D/g, ''), 10) || 0;
         document.getElementById('fee-preview').textContent =
             'Rp ' + val.toLocaleString('id-ID');
+    });
+
+    // Tambah varian boost baru
+    let newBoostIndex = 0;
+    const addBoostBtn = document.getElementById('add-boost-btn');
+    if (addBoostBtn) {
+        addBoostBtn.addEventListener('click', function() {
+            const tbody = document.querySelector('table tbody');
+            const tr = document.createElement('tr');
+            tr.className = 'bg-blue-50/30';
+            tr.innerHTML = `
+                <td class="px-4 py-4 font-medium text-gray-800 border-r border-gray-200">
+                    <input type="text" name="new_boost_prices[${newBoostIndex}][duration_type]" placeholder="Nama, misal: 2_weeks" required class="w-full px-3 py-1.5 border border-gray-300 text-sm focus:border-[#8b1528] focus:ring-0 mb-2">
+                    <div class="flex items-center gap-2">
+                        <input type="number" name="new_boost_prices[${newBoostIndex}][duration_days]" placeholder="Total" required min="1" class="w-20 px-3 py-1 border border-gray-300 text-xs focus:border-[#8b1528] focus:ring-0">
+                        <span class="text-xs text-gray-500">hari</span>
+                    </div>
+                </td>
+                <td class="px-4 py-3 border-r border-gray-200 align-top pt-4">
+                    <div class="relative max-w-[200px]">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-500 select-none">Rp</span>
+                        <input type="number" name="new_boost_prices[${newBoostIndex}][price]" min="0" step="1000" required class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-mono focus:border-[#8b1528] focus:ring-0 transition-colors">
+                    </div>
+                </td>
+                <td class="px-4 py-3 text-center align-middle">
+                    <label class="inline-flex items-center cursor-pointer mb-2">
+                        <input type="checkbox" name="new_boost_prices[${newBoostIndex}][is_active]" value="1" class="sr-only peer" checked>
+                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#8b1528]"></div>
+                    </label>
+                    <button type="button" class="block mx-auto text-[10px] text-red-600 font-bold uppercase tracking-wider hover:underline remove-boost-btn">Batal</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            newBoostIndex++;
+        });
+    }
+
+    document.querySelector('table tbody').addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-boost-btn')) {
+            e.target.closest('tr').remove();
+        }
     });
 </script>
 @endsection

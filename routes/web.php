@@ -19,6 +19,9 @@ Route::get('/article/{article:slug}', [PublicController::class, 'article'])->nam
 Route::get('/search', [PublicController::class, 'search'])->name('search');
 Route::get('/tag/{name}', [PublicController::class, 'tag'])->name('tag');
 
+// Public API endpoints
+Route::get('/api/homepage/featured', [\App\Http\Controllers\HomepageController::class, 'featured'])->name('api.homepage.featured');
+
 // 2. Authenticated General Routes
 Route::middleware(['auth'])->group(function () {
     
@@ -51,6 +54,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profile', [Author\ProfileController::class, 'update'])->name('profile.update');
         Route::get('/settings', [Author\ProfileController::class, 'edit'])->name('settings.edit');
         Route::put('/settings', [Author\ProfileController::class, 'update'])->name('settings.update');
+
+        // Boost Routes
+        Route::get('/articles/{article}/boost', [Author\BoostController::class, 'create'])->name('articles.boost');
+        Route::post('/articles/{article}/boost', [Author\BoostController::class, 'store'])->name('articles.boost.store');
+        Route::get('/articles/{article}/boost/availability', [Author\BoostController::class, 'availability'])->name('articles.boost.availability');
     });
 
     // 4. Admin Area Routes
@@ -83,6 +91,10 @@ Route::middleware(['auth'])->group(function () {
         // App Settings (Payment Fee, etc.)
         Route::get('/app-settings', [Admin\AppSettingsController::class, 'index'])->name('app-settings.index');
         Route::put('/app-settings', [Admin\AppSettingsController::class, 'update'])->name('app-settings.update');
+        
+        // Boost Prices Management (API endpoints for admin panel)
+        Route::get('/api/boost-prices', [Admin\BoostPriceController::class, 'index'])->name('api.boost-prices.index');
+        Route::put('/api/boost-prices/{boostPrice}', [Admin\BoostPriceController::class, 'update'])->name('api.boost-prices.update');
     });
 
     // 5. Payment Routes (author only — artikel harus awaiting_payment)
@@ -114,3 +126,4 @@ Route::post('/author/set-password/resend', [Author\SetPasswordController::class,
 // 9. Webhook — exclude dari CSRF di bootstrap/app.php
 // Endpoint ini dipanggil oleh server Mayar (bukan browser), sehingga tidak pakai session/CSRF.
 Route::post('/webhooks/mayar', [WebhookController::class, 'handleMayar'])->name('webhooks.mayar');
+Route::post('/webhooks/mayar/boost', [WebhookController::class, 'handleMayarBoost'])->name('webhooks.mayar.boost');

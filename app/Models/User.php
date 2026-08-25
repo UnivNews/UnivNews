@@ -87,6 +87,16 @@ class User extends Authenticatable
         return $this->hasOne(AuthorApprovalToken::class);
     }
 
+    public function boosts()
+    {
+        return $this->hasMany(Boost::class);
+    }
+
+    public function boostPayments()
+    {
+        return $this->hasMany(BoostPayment::class);
+    }
+
     // ── Role Helpers ───────────────────────────────────────────────────────
 
     public function isAdmin(): bool

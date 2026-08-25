@@ -333,5 +333,10 @@ class DatabaseSeeder extends Seeder
                 $article->tags()->attach($tagIds);
             }
         }
+
+        // 7. Boost Prices
+        $this->call([
+            BoostPriceSeeder::class,
+        ]);
     }
 }

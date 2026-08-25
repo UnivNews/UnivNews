@@ -65,7 +65,7 @@ class ReviewController extends Controller
                 'name'         => $article->user->name,
                 'email'        => $article->user->email,
                 'amount'       => $amount,
-                'description'  => "Biaya Publish Artikel — {$article->title}",
+                'description'  => "Biaya Publish Artikel — {$article->title} (Ref: " . time() . ")",
                 'redirect_url' => route('payment.thanks', $article),
             ]);
 
