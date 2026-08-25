@@ -28,7 +28,9 @@
                     
                     <!-- Filter/Mega Menu Trigger -->
                     <div x-data="{ openMegaMenu: false }" @click.outside="openMegaMenu = false" class="h-full flex items-center justify-center px-1 sm:px-2 cursor-pointer z-50">
-                        <img src="{{ asset('setting-1.png') }}" alt="Filter Menu" class="w-5 h-5 sm:w-6 sm:h-6 object-contain hover:opacity-80 transition-opacity" @click="openMegaMenu = !openMegaMenu">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white hover:text-gray-300 transition-colors cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" @click="openMegaMenu = !openMegaMenu">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                        </svg>
                         
                         <!-- Mega Menu Dropdown -->
                         <div x-show="openMegaMenu" 
@@ -106,7 +108,7 @@
                         @else
                             <a href="{{ route('author.apply') }}" class="h-full flex items-center justify-center border border-white/30 text-white hover:bg-crimson hover:border-crimson px-3 sm:px-4 font-sans font-medium text-xs tracking-wider transition-colors whitespace-nowrap">Apply as Author</a>
                         @endif
-                        @if(!auth()->user()->isAuthor())
+                        @if(!auth()->user()->isAuthor() && !auth()->user()->isAdmin())
                             <a href="{{ route('profile.edit') }}" class="h-full flex items-center ml-2 focus:outline-none" title="Profile">
                                 <img src="{{ asset('user-1.png') }}" alt="Profile" class="w-8 h-8 sm:w-9 sm:h-9 object-cover rounded-full border-2 border-transparent hover:border-crimson hover:opacity-90 transition-all">
                             </a>
