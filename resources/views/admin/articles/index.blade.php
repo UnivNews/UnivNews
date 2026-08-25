@@ -108,7 +108,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($articles as $article)
-                    <tr class="hover:bg-gray-50/80 transition-colors cursor-pointer group" onclick="window.open('{{ route('article', $article->slug) }}', '_blank')">
+                    <tr class="hover:bg-gray-50/80 transition-colors cursor-pointer group" onclick="window.location='{{ route('article', $article->slug) }}?ref=admin'">
                         <!-- Title & Excerpt -->
                         <td class="px-6 py-4 max-w-sm">
                             <div class="font-bold text-gray-900 text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">
