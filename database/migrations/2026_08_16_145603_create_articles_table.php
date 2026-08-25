@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('excerpt')->nullable();
             $table->longText('content');
             $table->string('featured_image_path')->nullable();
-            $table->enum('status', ['draft', 'pending_review', 'published', 'rejected'])->default('draft');
+            $table->enum('status', ['draft', 'pending_review', 'awaiting_payment', 'published', 'rejected'])->default('draft');
             $table->text('admin_notes')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->integer('views_count')->default(0);

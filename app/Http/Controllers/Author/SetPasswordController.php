@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class SetPasswordController extends Controller
@@ -40,10 +41,14 @@ class SetPasswordController extends Controller
     {
         $request->validate([
             'token'    => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'confirmed', Password::defaults()],
         ], [
             'password.min'       => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.letters'   => 'Password harus mengandung huruf.',
+            'password.mixed'     => 'Password harus mengandung huruf besar dan huruf kecil.',
+            'password.numbers'   => 'Password harus mengandung angka.',
+            'password.symbols'   => 'Password harus mengandung karakter spesial (contoh: !@#$%).',
         ]);
 
         $tokenRecord = AuthorApprovalToken::where('token', $request->token)->first();

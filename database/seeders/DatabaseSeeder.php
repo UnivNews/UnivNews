@@ -119,11 +119,7 @@ class DatabaseSeeder extends Seeder
 
         // 3. Categories
         $categoriesList = [
-            'Science & Technology',
-            'Campus Life',
-            'Academic',
             'Events',
-            'Sports',
             'Research & Innovation',
             'Achievements',
         ];
@@ -137,7 +133,7 @@ class DatabaseSeeder extends Seeder
         });
 
         // 4. Tags
-        $tagsList = ['Physics', 'Research', 'Innovation', 'AI', 'Medicine', 'Sustainability', 'Engineering', 'Announcement', 'Quantum', 'Campus Life', 'Sports'];
+        $tagsList = ['Physics', 'Research', 'Innovation', 'AI', 'Medicine', 'Sustainability', 'Engineering', 'Announcement', 'Quantum', 'Campus Life', 'Sports', 'Academic', 'Science & Technology'];
         $tags = collect($tagsList)->mapWithKeys(function ($name) {
             $tag = Tag::create(['name' => $name]);
             return [$name => $tag];

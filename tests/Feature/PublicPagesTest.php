@@ -20,7 +20,7 @@ class PublicPagesTest extends TestCase
 
     public function test_research_page_loads_successfully()
     {
-        Category::factory()->create(['slug' => 'research-innovation', 'name' => 'Research & Innovation']);
+        Category::firstOrCreate(['slug' => 'research-innovation'], ['name' => 'Research & Innovation']);
         
         $response = $this->get('/research');
         $response->assertStatus(200);

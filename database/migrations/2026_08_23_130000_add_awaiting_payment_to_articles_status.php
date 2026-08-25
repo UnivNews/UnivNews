@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // PostgreSQL: alter enum type
-        DB::statement("ALTER TABLE articles DROP CONSTRAINT IF EXISTS articles_status_check");
-        DB::statement("ALTER TABLE articles ADD CONSTRAINT articles_status_check CHECK (status IN ('draft', 'pending_review', 'awaiting_payment', 'published', 'rejected'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // PostgreSQL: alter enum type
+            DB::statement("ALTER TABLE articles DROP CONSTRAINT IF EXISTS articles_status_check");
+            DB::statement("ALTER TABLE articles ADD CONSTRAINT articles_status_check CHECK (status IN ('draft', 'pending_review', 'awaiting_payment', 'published', 'rejected'))");
+        }
     }
 
     /**
@@ -23,9 +25,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Restore to original enum without awaiting_payment
-        DB::statement("UPDATE articles SET status = 'pending_review' WHERE status = 'awaiting_payment'");
-        DB::statement("ALTER TABLE articles DROP CONSTRAINT IF EXISTS articles_status_check");
-        DB::statement("ALTER TABLE articles ADD CONSTRAINT articles_status_check CHECK (status IN ('draft', 'pending_review', 'published', 'rejected'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Restore to original enum without awaiting_payment
+            DB::statement("UPDATE articles SET status = 'pending_review' WHERE status = 'awaiting_payment'");
+            DB::statement("ALTER TABLE articles DROP CONSTRAINT IF EXISTS articles_status_check");
+            DB::statement("ALTER TABLE articles ADD CONSTRAINT articles_status_check CHECK (status IN ('draft', 'pending_review', 'published', 'rejected'))");
+        }
     }
 };

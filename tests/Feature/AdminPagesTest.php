@@ -80,13 +80,17 @@ class AdminPagesTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Review Article');
 
+        \Illuminate\Support\Facades\Http::fake([
+            '*' => \Illuminate\Support\Facades\Http::response(['data' => ['id' => 'dummy_tx_id', 'link' => 'http://dummy.url']], 200)
+        ]);
+
         $approveResponse = $this->actingAs($admin)->post("/admin/articles/{$article->id}/approve", [
             'publish_date' => date('Y-m-d'),
             'publish_time' => '10:00',
         ]);
 
         $approveResponse->assertRedirect('/admin/articles');
-        $this->assertEquals(Article::STATUS_PUBLISHED, $article->fresh()->status);
+        $this->assertEquals(Article::STATUS_AWAITING_PAYMENT, $article->fresh()->status);
         $this->assertNotNull($article->fresh()->published_at);
     }
 }

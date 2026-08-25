@@ -143,16 +143,18 @@
                         Categories <span class="text-[#8b1528]">*</span>
                     </h3>
 
-                    <div class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+                    <div class="flex flex-wrap gap-2">
                         @foreach($categories as $category)
-                        <label class="flex items-center gap-3 text-sm text-gray-700 cursor-pointer hover:text-black select-none">
+                        <label class="cursor-pointer relative">
                             <input type="radio" 
                                    name="category_id" 
                                    value="{{ $category->id }}" 
                                    {{ (old('category_id', $article->category_id) == $category->id) ? 'checked' : '' }} 
-                                   class="text-[#8b1528] focus:ring-0 focus:ring-offset-0 border-gray-300" 
+                                   class="peer sr-only" 
                                    required>
-                            <span>{{ $category->name }}</span>
+                            <span class="inline-block px-4 py-2 text-xs font-medium border border-gray-200 text-gray-600 transition-colors peer-checked:bg-[#8b1528] peer-checked:text-white peer-checked:border-[#8b1528] hover:bg-gray-50 peer-checked:hover:bg-[#721120]">
+                                {{ $category->name }}
+                            </span>
                         </label>
                         @endforeach
                     </div>

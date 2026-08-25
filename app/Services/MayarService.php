@@ -7,12 +7,12 @@ use Illuminate\Http\Client\RequestException;
 
 class MayarService
 {
-    protected string $baseUrl;
-    protected string $apiKey;
+    protected ?string $baseUrl;
+    protected ?string $apiKey;
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('services.mayar.base_url'), '/');
+        $this->baseUrl = rtrim((string) config('services.mayar.base_url'), '/');
         $this->apiKey  = config('services.mayar.api_key');
     }
 
