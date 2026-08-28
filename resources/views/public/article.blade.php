@@ -16,7 +16,7 @@
     <header class="mb-10 text-center">
         <div class="flex flex-wrap items-center justify-center gap-3 mb-4">
             <a href="{{ route('category', $article->category->slug) }}" class="text-crimson font-heading font-bold text-sm uppercase tracking-wider hover:underline inline-block">
-                {{ $article->category->name }}
+                {{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}
             </a>
             @if($isBoosted)
                 <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-[#00081E] shadow-[0_0_15px_rgba(245,158,11,0.4)] animate-pulse">
@@ -66,6 +66,15 @@
     <div class="prose prose-lg prose-blue max-w-none font-serif text-gray-800 leading-relaxed mb-12">
         {!! $article->content !!}
     </div>
+
+    <!-- Event Registration -->
+    @if($article->category->name === 'Events' && $article->event_date && \Carbon\Carbon::parse($article->event_date)->isFuture())
+    <div class="mb-8">
+        <a href="#" class="block w-full text-center bg-[#B71032] text-white font-sans font-bold uppercase tracking-wider py-4 rounded-full hover:bg-red-800 transition-colors shadow-md text-sm">
+            Daftar Sekarang
+        </a>
+    </div>
+    @endif
 
     <!-- Tags -->
     @if($article->tags->count() > 0)

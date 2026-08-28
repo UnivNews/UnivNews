@@ -37,7 +37,7 @@
                         <!-- Content -->
                         <div class="p-6">
                             <div class="flex items-center space-x-3 mb-3">
-                                <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
+                                <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
                                 <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
                             </div>
                             <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">

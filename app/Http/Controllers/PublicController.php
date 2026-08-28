@@ -103,13 +103,48 @@ class PublicController extends Controller
 
     public function achievements()
     {
-        return view('public.achievements');
+        $category = Category::where('slug', 'achievements')->firstOrFail();
+
+        $featuredAchievementArticles = Article::where('category_id', $category->id)
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        $articles = Article::where('category_id', $category->id)
+            ->whereNotIn('id', $featuredAchievementArticles->pluck('id'))
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->get();
+
+        return view('public.achievements', compact('category', 'featuredAchievementArticles', 'articles'));
     }
 
     public function events()
     {
-        // For now, returning dummy data directly in the blade since we don't have an Event model.
-        return view('public.event');
+        $category = Category::where('slug', 'events')->firstOrFail();
+
+        $featuredEventArticles = Article::where('category_id', $category->id)
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        $articles = Article::where('category_id', $category->id)
+            ->whereNotIn('id', $featuredEventArticles->pluck('id'))
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->get();
+
+        return view('public.event', compact('category', 'featuredEventArticles', 'articles'));
     }
 
     public function category(Category $category)

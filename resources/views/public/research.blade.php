@@ -180,14 +180,16 @@
                         // Use real articles if we have enough, otherwise fallback to dummies but with working links
                         $trendingItems = $articles->count() >= 4 ? $articles->take(4)->map(function($a) {
                             return [
-                                'category' => $a->category->name,
+                                'category' => $a->tags->first() ? $a->tags->first()->name : $a->category->name,
                                 'title' => $a->title,
+                                'date' => $a->published_at->format('M d, Y'),
                                 'url' => route('article', $a->slug)
                             ];
                         })->toArray() : array_map(function($d) use ($articles) {
                             return [
                                 'category' => $d['category'],
                                 'title' => $d['title'],
+                                'date' => 'Nov 12, 2024',
                                 'url' => $articles->first() ? route('article', $articles->first()->slug) : '#'
                             ];
                         }, $trendingDummies);
@@ -195,7 +197,11 @@
 
                     @foreach($trendingItems as $item)
                     <a class="group block border-l-[3px] border-transparent hover:border-[#B71032] pl-4 transition-all" href="{{ $item['url'] }}">
-                        <div class="text-[#B71032] font-sans font-semibold text-xs uppercase tracking-wider mb-1">{{ $item['category'] }}</div>
+                        <div class="text-[#B71032] font-sans font-semibold text-xs uppercase tracking-wider mb-1 flex items-center gap-2">
+                            <span>{{ $item['category'] }}</span>
+                            <span class="text-gray-400 text-[10px]">&bull;</span>
+                            <span class="text-gray-500">{{ $item['date'] }}</span>
+                        </div>
                         <h4 class="font-body text-[17px] font-bold text-[#00081E] group-hover:text-[#B71032] transition-colors leading-tight">{{ $item['title'] }}</h4>
                     </a>
                     @endforeach
@@ -318,7 +324,7 @@ document.addEventListener('alpine:init', () => {
             {
                 id: 'db_{{ $article->id }}',
                 title: @json($article->title),
-                category: @json($article->category->name),
+                category: @json($article->tags->first() ? $article->tags->first()->name : $article->category->name),
                 date: @json($article->published_at->format('M d')),
                 excerpt: @json($article->excerpt),
                 image: @json($article->featured_image_path ? (Str::startsWith($article->featured_image_path, ['http://', 'https://']) ? $article->featured_image_path : asset('storage/' . $article->featured_image_path)) : 'https://picsum.photos/seed/fallback/800/533'),

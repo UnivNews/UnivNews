@@ -82,7 +82,7 @@
                         
                         <!-- Content -->
                         <div class="absolute bottom-0 left-0 p-8 w-full max-w-3xl">
-                            <span class="text-sm font-bold uppercase tracking-widest text-crimson mb-3 block" style="font-family: 'Work Sans', sans-serif;">{{ $slide->category->name }}</span>
+                            <span class="text-sm font-bold uppercase tracking-widest text-crimson mb-3 block" style="font-family: 'Work Sans', sans-serif;">{{ $slide->tags->first() ? $slide->tags->first()->name : $slide->category->name }}</span>
                             <h2 class="text-3xl lg:text-[32px] font-bold mb-4 text-white" style="font-family: Montserrat, sans-serif; line-height: 1.2;">
                                 {{ $slide->title }}
                             </h2>
@@ -117,7 +117,7 @@
                 @foreach($recentArticles->take(2) as $index => $article)
                 <div class="py-6 {{ $index === 0 ? 'border-b border-gray-700' : '' }}">
                     <a href="{{ route('article', $article->slug) }}" class="block group">
-                        <span class="text-xs font-bold uppercase tracking-widest text-crimson mb-2 block" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-crimson mb-2 block" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
                         <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-gray-200 transition-colors" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
                             {{ $article->title }}
                         </h3>
@@ -246,7 +246,7 @@
                             <!-- Content -->
                             <div class="p-6">
                                 <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
                                     <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
                                 </div>
                                 <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
@@ -315,7 +315,7 @@
                             <!-- Content -->
                             <div class="p-6">
                                 <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
                                     <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
                                 </div>
                                 <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
