@@ -48,13 +48,17 @@ class ArticleController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string|max:1000',
-            'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'status' => 'required|in:draft,published,pending_review',
-            'featured_image' => 'nullable|image|max:4096',
-            'tags' => 'nullable|array',
+            'title'                  => 'required|string|max:255',
+            'excerpt'                => 'nullable|string|max:1000',
+            'content'                => 'required|string',
+            'category_id'            => 'required|exists:categories,id',
+            'status'                 => 'required|in:draft,published,pending_review',
+            'featured_image'         => 'nullable|image|max:4096',
+            'tags'                   => 'nullable|array',
+            'event_type'             => 'nullable|string|max:100',
+            'event_date'             => 'nullable|date',
+            'registration_link'      => 'nullable|url|max:2048',
+            'registration_deadline'  => 'nullable|date',
         ]);
 
         $slug = Str::slug($validated['title']);
@@ -76,6 +80,20 @@ class ArticleController extends Controller
 
         if ($validated['status'] === Article::STATUS_PUBLISHED) {
             $article->published_at = now();
+        }
+
+        // Event fields
+        $eventCategory = Category::find($validated['category_id']);
+        if ($eventCategory && strtolower($eventCategory->slug) === 'events') {
+            $article->event_type            = $validated['event_type'] ?? null;
+            $article->event_date            = $validated['event_date'] ?? null;
+            $article->registration_link     = $validated['registration_link'] ?? null;
+            $article->registration_deadline = $validated['registration_deadline'] ?? null;
+        } else {
+            $article->event_type            = null;
+            $article->event_date            = null;
+            $article->registration_link     = null;
+            $article->registration_deadline = null;
         }
 
         if ($request->hasFile('featured_image')) {
@@ -109,13 +127,17 @@ class ArticleController extends Controller
     public function update(Request $request, Article $article): RedirectResponse
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string|max:1000',
-            'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'status' => 'required|in:draft,published,pending_review',
-            'featured_image' => 'nullable|image|max:4096',
-            'tags' => 'nullable|array',
+            'title'                  => 'required|string|max:255',
+            'excerpt'                => 'nullable|string|max:1000',
+            'content'                => 'required|string',
+            'category_id'            => 'required|exists:categories,id',
+            'status'                 => 'required|in:draft,published,pending_review',
+            'featured_image'         => 'nullable|image|max:4096',
+            'tags'                   => 'nullable|array',
+            'event_type'             => 'nullable|string|max:100',
+            'event_date'             => 'nullable|date',
+            'registration_link'      => 'nullable|url|max:2048',
+            'registration_deadline'  => 'nullable|date',
         ]);
 
         if ($validated['title'] !== $article->title) {
@@ -137,6 +159,20 @@ class ArticleController extends Controller
 
         if ($validated['status'] === Article::STATUS_PUBLISHED && !$article->published_at) {
             $article->published_at = now();
+        }
+
+        // Event fields
+        $eventCategory = Category::find($validated['category_id']);
+        if ($eventCategory && strtolower($eventCategory->slug) === 'events') {
+            $article->event_type            = $validated['event_type'] ?? null;
+            $article->event_date            = $validated['event_date'] ?? null;
+            $article->registration_link     = $validated['registration_link'] ?? null;
+            $article->registration_deadline = $validated['registration_deadline'] ?? null;
+        } else {
+            $article->event_type            = null;
+            $article->event_date            = null;
+            $article->registration_link     = null;
+            $article->registration_deadline = null;
         }
 
         if ($request->hasFile('featured_image')) {

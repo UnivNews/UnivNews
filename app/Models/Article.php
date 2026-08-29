@@ -29,11 +29,17 @@ class Article extends Model
         'views_count',
         'user_id',
         'category_id',
+        'event_date',
+        'event_type',
+        'registration_link',
+        'registration_deadline',
     ];
 
     protected $casts = [
-        'published_at' => 'datetime',
-        'views_count' => 'integer',
+        'published_at'          => 'datetime',
+        'views_count'           => 'integer',
+        'event_date'            => 'datetime',
+        'registration_deadline' => 'datetime',
     ];
 
     public function user()
@@ -123,6 +129,24 @@ class Article extends Model
             ->where('start_date', '<=', $today)
             ->where('end_date', '>=', $today)
             ->exists();
+    }
+
+    /**
+     * Cek apakah tombol pendaftaran event harus ditampilkan:
+     * - Ada link pendaftaran
+     * - Batas waktu pendaftaran belum terlewati (atau tidak diisi = tampilkan terus)
+     */
+    public function hasActiveRegistration(): bool
+    {
+        if (empty($this->registration_link)) {
+            return false;
+        }
+
+        if ($this->registration_deadline && $this->registration_deadline->isPast()) {
+            return false;
+        }
+
+        return true;
     }
 }
 

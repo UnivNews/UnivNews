@@ -152,14 +152,82 @@
                             <input type="radio" 
                                    name="category_id" 
                                    value="{{ $category->id }}" 
+                                   data-slug="{{ $category->slug }}"
                                    {{ (old('category_id', $article->category_id) == $category->id) ? 'checked' : '' }} 
                                    class="peer sr-only" 
+                                   @change="onCategoryChange($event)"
                                    required>
                             <span class="inline-block px-4 py-2 text-xs font-medium border border-gray-200 text-gray-600 transition-colors peer-checked:bg-[#8b1528] peer-checked:text-white peer-checked:border-[#8b1528] hover:bg-gray-50 peer-checked:hover:bg-[#721120]">
                                 {{ $category->name }}
                             </span>
                         </label>
                         @endforeach
+                    </div>
+                </div>
+
+                <!-- Event Details Panel (muncul saat kategori Events dipilih) -->
+                <div x-show="isEventCategory" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak class="bg-amber-50 border border-amber-200 p-6 shadow-sm">
+                    <h3 class="text-xs font-bold text-amber-800 uppercase tracking-wider pb-3 mb-4 border-b border-amber-200 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Event Details
+                    </h3>
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-amber-800 uppercase tracking-wider mb-3">Tipe Event</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            @php
+                                $eventTypes = [
+                                    'Campus Events' => '🏫',
+                                    'Seminar'       => '🎤',
+                                    'Sports'        => '🏆',
+                                    'Arts & Culture'=> '🎨',
+                                    'Academic'      => '📚',
+                                    'Community'     => '🤝',
+                                ];
+                                $currentEventType = old('event_type', $article->event_type);
+                            @endphp
+                            @foreach($eventTypes as $typeName => $emoji)
+                            <label class="cursor-pointer">
+                                <input type="radio" name="event_type" value="{{ $typeName }}" {{ $currentEventType === $typeName ? 'checked' : '' }} class="peer sr-only">
+                                <span class="flex items-center gap-2 px-3 py-2 text-xs font-medium border border-amber-300 text-amber-800 bg-white transition-all peer-checked:bg-[#8b1528] peer-checked:text-white peer-checked:border-[#8b1528] hover:bg-amber-100 rounded">
+                                    <span>{{ $emoji }}</span>
+                                    <span>{{ $typeName }}</span>
+                                </span>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="mb-5">
+                        <label for="event_date" class="block text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">Tanggal Event</label>
+                        <input type="datetime-local" name="event_date" id="event_date"
+                               value="{{ old('event_date', $article->event_date ? $article->event_date->format('Y-m-d\TH:i') : '') }}"
+                               class="w-full bg-white border border-amber-300 px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
+                    </div>
+                    <div x-data="{ hasRegistration: {{ (old('registration_link', $article->registration_link)) ? 'true' : 'false' }} }" class="mb-1">
+                        <label class="flex items-center gap-3 cursor-pointer mb-4">
+                            <div class="relative">
+                                <input type="checkbox" class="sr-only" x-model="hasRegistration">
+                                <div class="w-10 h-5 rounded-full transition-colors" :class="hasRegistration ? 'bg-[#8b1528]' : 'bg-gray-300'"></div>
+                                <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform" :class="hasRegistration ? 'translate-x-5' : 'translate-x-0'"></div>
+                            </div>
+                            <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Event Ini Membuka Pendaftaran</span>
+                        </label>
+                        <div x-show="hasRegistration" x-transition class="space-y-4 pl-2 border-l-2 border-amber-300">
+                            <div>
+                                <label for="registration_link" class="block text-xs font-semibold text-amber-700 mb-1">URL / Link Pendaftaran</label>
+                                <input type="url" name="registration_link" id="registration_link"
+                                       value="{{ old('registration_link', $article->registration_link) }}"
+                                       placeholder="https://forms.gle/..."
+                                       class="w-full bg-white border border-amber-300 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
+                                <p class="mt-1 text-[10px] text-amber-600">Pembaca akan diarahkan ke URL ini saat menekan tombol "Daftar Sekarang".</p>
+                            </div>
+                            <div>
+                                <label for="registration_deadline" class="block text-xs font-semibold text-amber-700 mb-1">Batas Akhir Pendaftaran <span class="font-normal">(Opsional)</span></label>
+                                <input type="datetime-local" name="registration_deadline" id="registration_deadline"
+                                       value="{{ old('registration_deadline', $article->registration_deadline ? $article->registration_deadline->format('Y-m-d\TH:i') : '') }}"
+                                       class="w-full bg-white border border-amber-300 px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
+                                <p class="mt-1 text-[10px] text-amber-600">Tombol "Daftar Sekarang" akan otomatis disembunyikan setelah tanggal ini.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -235,6 +303,16 @@ function articleEditFormHandler() {
     return {
         newTagInput: '',
         tags: @json($article->tags->pluck('name')),
+        isEventCategory: false,
+        init() {
+            const checked = document.querySelector('input[name="category_id"]:checked');
+            if (checked) {
+                this.isEventCategory = (checked.dataset.slug === 'events');
+            }
+        },
+        onCategoryChange(e) {
+            this.isEventCategory = (e.target.dataset.slug === 'events');
+        },
         addTag() {
             const trimmed = this.newTagInput.trim().replace(/^#/, '');
             if (trimmed && !this.tags.includes(trimmed)) {

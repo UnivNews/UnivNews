@@ -356,7 +356,7 @@ document.addEventListener('alpine:init', () => {
             {
                 id: 'db_{{ $article->id }}',
                 title: @json($article->title),
-                category: @json($article->tags->first() ? $article->tags->first()->name : $article->category->name),
+                category: @json($article->event_type ?: ($article->tags->first() ? $article->tags->first()->name : $article->category->name)),
                 date: @json($article->published_at->format('M d')),
                 day: @json((int)$article->published_at->format('j')),
                 month: @json($article->published_at->format('M')),

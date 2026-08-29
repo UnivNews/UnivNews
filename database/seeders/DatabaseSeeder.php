@@ -125,24 +125,24 @@ class DatabaseSeeder extends Seeder
         ];
 
         $categories = collect($categoriesList)->mapWithKeys(function ($name) {
-            $cat = Category::create([
-                'name' => $name,
-                'slug' => Str::slug($name),
-            ]);
+            $cat = Category::firstOrCreate(
+                ['slug' => Str::slug($name)],
+                ['name' => $name]
+            );
             return [$name => $cat];
         });
 
         // 4. Tags
         $tagsList = ['Physics', 'Research', 'Innovation', 'AI', 'Medicine', 'Sustainability', 'Engineering', 'Announcement', 'Quantum', 'Campus Life', 'Sports', 'Academic', 'Science & Technology'];
         $tags = collect($tagsList)->mapWithKeys(function ($name) {
-            $tag = Tag::create(['name' => $name]);
+            $tag = Tag::firstOrCreate(['name' => $name]);
             return [$name => $tag];
         });
 
         // 5. Featured Article for Review (matching screenshot 3)
         $quantumArticle = Article::create([
             'user_id' => $authorElena->id,
-            'category_id' => $categories['Science & Technology']->id,
+            'category_id' => $categories['Research & Innovation']->id,
             'title' => 'Breakthrough in Quantum Computing',
             'slug' => 'breakthrough-in-quantum-computing',
             'excerpt' => "Researchers at the University's Advanced Physics Laboratory have announced a significant breakthrough in quantum entanglement stabilization, potentially paving the way for commercially viable quantum computing within the decade.",
@@ -214,7 +214,7 @@ class DatabaseSeeder extends Seeder
             // 6 Extra Duplicate Articles to fill out the homepage masonry grid
             [
                 'user_id' => $admin->id,
-                'category_id' => $categories['Science & Technology']->id,
+                'category_id' => $categories['Research & Innovation']->id,
                 'title' => 'New Quantum Labs Open for Undergraduate Research',
                 'slug' => 'new-quantum-labs-open',
                 'excerpt' => 'Undergraduates will now have access to state-of-the-art quantum computing facilities.',
@@ -227,7 +227,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'user_id' => $staffWriter->id,
-                'category_id' => $categories['Campus Life']->id,
+                'category_id' => $categories['Events']->id,
                 'title' => 'Cafeteria Adds Vegan and Gluten-Free Options',
                 'slug' => 'cafeteria-adds-vegan-options',
                 'excerpt' => 'Responding to student feedback, the main dining hall has revamped its menu.',
@@ -240,7 +240,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'user_id' => $staffWriter->id,
-                'category_id' => $categories['Sports']->id,
+                'category_id' => $categories['Achievements']->id,
                 'title' => 'Varsity Basketball Team Secures Regional Championship',
                 'slug' => 'basketball-regional-championship',
                 'excerpt' => 'A thrilling overtime victory propels the team to the national tournament.',
@@ -253,7 +253,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'user_id' => $admin->id,
-                'category_id' => $categories['Academic']->id,
+                'category_id' => $categories['Events']->id,
                 'title' => 'New Scholarships Available for International Students',
                 'slug' => 'new-scholarships-international',
                 'excerpt' => 'The university announces a $5 million fund to support global talent.',
@@ -292,7 +292,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'user_id' => $staffWriter->id,
-                'category_id' => $categories['Campus Life']->id,
+                'category_id' => $categories['Events']->id,
                 'title' => 'Upcoming Library Digital Transformation',
                 'slug' => 'upcoming-library-digital-transformation',
                 'excerpt' => 'Plans are underway for a major upgrade to the central library digital archival facilities.',
@@ -305,7 +305,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'user_id' => $authorElena->id,
-                'category_id' => $categories['Academic']->id,
+                'category_id' => $categories['Research & Innovation']->id,
                 'title' => 'Curriculum Modernization for STEM Programs',
                 'slug' => 'curriculum-modernization-for-stem-programs',
                 'excerpt' => 'Faculty senate reviews updated syllabus for advanced physics and computational mathematics.',
