@@ -163,15 +163,15 @@
                 </div>
 
                 <!-- Event Details Panel (muncul saat kategori Events dipilih) -->
-                <div x-show="isEventCategory" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak class="bg-amber-50 border border-amber-200 p-6 shadow-sm">
-                    <h3 class="text-xs font-bold text-amber-800 uppercase tracking-wider pb-3 mb-4 border-b border-amber-200 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <div x-show="isEventCategory" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak class="bg-white border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-4 border-b border-gray-100 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         Event Details
                     </h3>
 
                     <!-- Sub-kategori Event -->
                     <div class="mb-5">
-                        <label class="block text-xs font-bold text-amber-800 uppercase tracking-wider mb-3">Tipe Event</label>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Tipe Event</label>
                         <div class="grid grid-cols-2 gap-2">
                             @php
                                 $eventTypes = [
@@ -187,7 +187,7 @@
                             @foreach($eventTypes as $typeName => $emoji)
                             <label class="cursor-pointer">
                                 <input type="radio" name="event_type" value="{{ $typeName }}" {{ $currentEventType === $typeName ? 'checked' : '' }} class="peer sr-only">
-                                <span class="flex items-center gap-2 px-3 py-2 text-xs font-medium border border-amber-300 text-amber-800 bg-white transition-all peer-checked:bg-[#8b1528] peer-checked:text-white peer-checked:border-[#8b1528] hover:bg-amber-100 rounded">
+                                <span class="flex items-center gap-2 px-3 py-2 text-xs font-medium border border-gray-200 text-gray-700 bg-white transition-all peer-checked:bg-[#8b1528] peer-checked:text-white peer-checked:border-[#8b1528] hover:bg-gray-50 rounded">
                                     <span>{{ $emoji }}</span>
                                     <span>{{ $typeName }}</span>
                                 </span>
@@ -198,10 +198,10 @@
 
                     <!-- Tanggal Event -->
                     <div class="mb-5">
-                        <label for="event_date" class="block text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">Tanggal Event</label>
+                        <label for="event_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Tanggal Event</label>
                         <input type="datetime-local" name="event_date" id="event_date"
                                value="{{ old('event_date', $article->event_date ? $article->event_date->format('Y-m-d\TH:i') : '') }}"
-                               class="w-full bg-white border border-amber-300 px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
+                               class="w-full bg-[#f8f9fa] border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
                     </div>
 
                     <!-- Toggle Link Pendaftaran -->
@@ -212,25 +212,78 @@
                                 <div class="w-10 h-5 rounded-full transition-colors" :class="hasRegistration ? 'bg-[#8b1528]' : 'bg-gray-300'"></div>
                                 <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform" :class="hasRegistration ? 'translate-x-5' : 'translate-x-0'"></div>
                             </div>
-                            <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Event Ini Membuka Pendaftaran</span>
+                            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Event Ini Membuka Pendaftaran</span>
                         </label>
 
-                        <div x-show="hasRegistration" x-transition class="space-y-4 pl-2 border-l-2 border-amber-300">
+                        <div x-show="hasRegistration" x-transition class="space-y-4 pl-2 border-l-2 border-gray-200">
                             <div>
-                                <label for="registration_link" class="block text-xs font-semibold text-amber-700 mb-1">URL / Link Pendaftaran</label>
+                                <label for="registration_link" class="block text-xs font-semibold text-gray-700 mb-1">URL / Link Pendaftaran</label>
                                 <input type="url" name="registration_link" id="registration_link"
                                        value="{{ old('registration_link', $article->registration_link) }}"
                                        placeholder="https://forms.gle/..."
-                                       class="w-full bg-white border border-amber-300 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
-                                <p class="mt-1 text-[10px] text-amber-600">Pembaca akan diarahkan ke URL ini saat menekan tombol "Daftar Sekarang".</p>
+                                       class="w-full bg-[#f8f9fa] border border-gray-300 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
+                                <p class="mt-1 text-[10px] text-gray-500">Pembaca akan diarahkan ke URL ini saat menekan tombol "Daftar Sekarang".</p>
                             </div>
                             <div>
-                                <label for="registration_deadline" class="block text-xs font-semibold text-amber-700 mb-1">Batas Akhir Pendaftaran <span class="font-normal">(Opsional)</span></label>
+                                <label for="registration_deadline" class="block text-xs font-semibold text-gray-700 mb-1">Batas Akhir Pendaftaran <span class="font-normal">(Opsional)</span></label>
                                 <input type="datetime-local" name="registration_deadline" id="registration_deadline"
                                        value="{{ old('registration_deadline', $article->registration_deadline ? $article->registration_deadline->format('Y-m-d\TH:i') : '') }}"
-                                       class="w-full bg-white border border-amber-300 px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
-                                <p class="mt-1 text-[10px] text-amber-600">Tombol "Daftar Sekarang" akan otomatis disembunyikan setelah tanggal ini. Kosongkan agar tombol tampil terus.</p>
+                                       class="w-full bg-[#f8f9fa] border border-gray-300 px-4 py-2.5 text-sm text-gray-900 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0 rounded">
+                                <p class="mt-1 text-[10px] text-gray-500">Tombol "Daftar Sekarang" akan otomatis disembunyikan setelah tanggal ini. Kosongkan agar tombol tampil terus.</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Details Panel (muncul saat kategori Research & Innovation dipilih) -->
+                <div x-show="isResearchCategory" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak class="bg-white border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-4 border-b border-gray-100 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                        Research Details
+                    </h3>
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Research Field</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            @php
+                                $researchFields = [
+                                    'Biomedical Sciences'           => '🧬',
+                                    'Engineering & Applied Science' => '⚙️',
+                                    'Social Sciences & Humanities'  => '🏛️',
+                                    'Computer Science & AI'         => '🤖',
+                                ];
+                                $currentResearchField = old('research_field', $article->research_field);
+                            @endphp
+                            @foreach($researchFields as $fieldName => $emoji)
+                            <label class="cursor-pointer">
+                                <input type="radio" name="research_field" value="{{ $fieldName }}" {{ $currentResearchField === $fieldName ? 'checked' : '' }} class="peer sr-only">
+                                <span class="flex items-center gap-2 px-3 py-2 text-xs font-medium border border-gray-200 text-gray-700 bg-white transition-all peer-checked:bg-[#8b1528] peer-checked:text-white peer-checked:border-[#8b1528] hover:bg-gray-50 rounded">
+                                    <span>{{ $emoji }}</span>
+                                    <span>{{ $fieldName }}</span>
+                                </span>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Research Center / Lab</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            @php
+                                $researchCenters = [
+                                    'Institute for Sustainable Energy' => '⚡',
+                                    'Center for Digital Ethics'        => '💡',
+                                    'Genomics Research Institute'      => '🔬',
+                                ];
+                                $currentResearchCenter = old('research_center', $article->research_center);
+                            @endphp
+                            @foreach($researchCenters as $centerName => $emoji)
+                            <label class="cursor-pointer">
+                                <input type="radio" name="research_center" value="{{ $centerName }}" {{ $currentResearchCenter === $centerName ? 'checked' : '' }} class="peer sr-only">
+                                <span class="flex items-center gap-2 px-3 py-2 text-xs font-medium border border-gray-200 text-gray-700 bg-white transition-all peer-checked:bg-[#8b1528] peer-checked:text-white peer-checked:border-[#8b1528] hover:bg-gray-50 rounded">
+                                    <span>{{ $emoji }}</span>
+                                    <span>{{ $centerName }}</span>
+                                </span>
+                            </label>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -308,14 +361,17 @@ function authorArticleEditFormHandler() {
         newTagInput: '',
         tags: @json($article->tags->pluck('name')),
         isEventCategory: false,
+        isResearchCategory: false,
         init() {
             const checked = document.querySelector('input[name="category_id"]:checked');
             if (checked) {
-                this.isEventCategory = (checked.dataset.slug === 'events');
+                this.isEventCategory    = (checked.dataset.slug === 'events');
+                this.isResearchCategory = (checked.dataset.slug === 'research-innovation');
             }
         },
         onCategoryChange(e) {
-            this.isEventCategory = (e.target.dataset.slug === 'events');
+            this.isEventCategory    = (e.target.dataset.slug === 'events');
+            this.isResearchCategory = (e.target.dataset.slug === 'research-innovation');
         },
         addTag() {
             const trimmed = this.newTagInput.trim().replace(/^#/, '');

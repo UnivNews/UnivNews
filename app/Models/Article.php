@@ -33,6 +33,8 @@ class Article extends Model
         'event_type',
         'registration_link',
         'registration_deadline',
+        'research_field',
+        'research_center',
     ];
 
     protected $casts = [

@@ -59,6 +59,8 @@ class ArticleController extends Controller
             'event_date'             => 'nullable|date',
             'registration_link'      => 'nullable|url|max:2048',
             'registration_deadline'  => 'nullable|date',
+            'research_field'         => 'nullable|string|max:100',
+            'research_center'        => 'nullable|string|max:150',
         ]);
 
         $slug = Str::slug($validated['title']);
@@ -94,6 +96,15 @@ class ArticleController extends Controller
             $article->event_date            = null;
             $article->registration_link     = null;
             $article->registration_deadline = null;
+        }
+
+        // Research fields
+        if ($eventCategory && strtolower($eventCategory->slug) === 'research-innovation') {
+            $article->research_field  = $validated['research_field'] ?? null;
+            $article->research_center = $validated['research_center'] ?? null;
+        } else {
+            $article->research_field  = null;
+            $article->research_center = null;
         }
 
         if ($request->hasFile('featured_image')) {
@@ -138,6 +149,8 @@ class ArticleController extends Controller
             'event_date'             => 'nullable|date',
             'registration_link'      => 'nullable|url|max:2048',
             'registration_deadline'  => 'nullable|date',
+            'research_field'         => 'nullable|string|max:100',
+            'research_center'        => 'nullable|string|max:150',
         ]);
 
         if ($validated['title'] !== $article->title) {
@@ -173,6 +186,15 @@ class ArticleController extends Controller
             $article->event_date            = null;
             $article->registration_link     = null;
             $article->registration_deadline = null;
+        }
+
+        // Research fields
+        if ($eventCategory && strtolower($eventCategory->slug) === 'research-innovation') {
+            $article->research_field  = $validated['research_field'] ?? null;
+            $article->research_center = $validated['research_center'] ?? null;
+        } else {
+            $article->research_field  = null;
+            $article->research_center = null;
         }
 
         if ($request->hasFile('featured_image')) {
