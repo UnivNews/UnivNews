@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
+            'guest.admin_aware' => \App\Http\Middleware\GuestOrAdmin::class,
         ]);
 
         // Exclude webhook endpoint from CSRF verification

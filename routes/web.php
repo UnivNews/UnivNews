@@ -86,6 +86,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profile', [Admin\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [Admin\ProfileController::class, 'update'])->name('profile.update');
         Route::get('/settings', [Admin\ProfileController::class, 'edit'])->name('settings.edit');
+        Route::put('/settings/password', [Admin\ProfileController::class, 'updatePassword'])->name('settings.password');
         Route::put('/settings', [Admin\ProfileController::class, 'update'])->name('settings.update');
 
         // App Settings (Payment Fee, etc.)
@@ -107,13 +108,13 @@ Route::middleware(['auth'])->group(function () {
 require __DIR__.'/auth.php';
 
 // 6. Google OAuth Routes
-Route::middleware('guest')->group(function () {
+Route::middleware('guest.admin_aware')->group(function () {
     Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('auth.google.redirect');
     Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 });
 
 // 7. Admin Login Routes
-Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware('guest.admin_aware')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/sign-in', [AdminLoginController::class, 'create'])->name('login');
     Route::post('/sign-in', [AdminLoginController::class, 'store']);
 });

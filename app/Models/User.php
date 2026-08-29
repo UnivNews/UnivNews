@@ -40,6 +40,7 @@ class User extends Authenticatable
         'author_bio',
         'page_name',
         'avatar_path',
+        'social_links',
         'provider',
         'provider_id',
         'author_applied_at',
@@ -67,6 +68,7 @@ class User extends Authenticatable
             'email_verified_at'  => 'datetime',
             'author_applied_at'  => 'datetime',
             'password'           => 'hashed',
+            'social_links'       => 'array',
         ];
     }
 

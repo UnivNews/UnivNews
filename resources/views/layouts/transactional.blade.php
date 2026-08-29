@@ -52,11 +52,29 @@
                     </ul>
                 </div>
                 <div>
+                    @php
+                        $adminUser = \App\Models\User::where('role', 'admin')->first();
+                        $socials = $adminUser ? ($adminUser->social_links ?? []) : [];
+                    @endphp
                     <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">SOCIAL</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
+                        @if(!empty($socials['instagram']))
+                        <li><a href="https://instagram.com/{{ ltrim($socials['instagram'], '@') }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">Instagram</a></li>
+                        @endif
+                        @if(!empty($socials['twitter']))
+                        <li><a href="https://x.com/{{ ltrim($socials['twitter'], '@') }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">X / Twitter</a></li>
+                        @endif
+                        @if(!empty($socials['threads']))
+                        <li><a href="https://threads.net/@{{ ltrim($socials['threads'], '@') }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">Threads</a></li>
+                        @endif
+                        @if(!empty($socials['linkedin']))
+                        <li><a href="https://linkedin.com/in/{{ $socials['linkedin'] }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">LinkedIn</a></li>
+                        @endif
+                        @if(empty($socials['instagram']) && empty($socials['twitter']) && empty($socials['threads']) && empty($socials['linkedin']))
                         <li><a href="#" class="hover:text-white transition-colors">Newsletter</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Podcasts</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Events</a></li>
+                        @endif
                     </ul>
                 </div>
                 <div>
