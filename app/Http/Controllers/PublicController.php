@@ -192,7 +192,8 @@ class PublicController extends Controller
             ->where(function($q) use ($query) {
                 $q->where('title', 'like', "%{$query}%")
                   ->orWhere('excerpt', 'like', "%{$query}%")
-                  ->orWhere('content', 'like', "%{$query}%");
+                  ->orWhere('content', 'like', "%{$query}%")
+                  ->orWhereHas('tags', fn($t) => $t->where('name', 'like', "%{$query}%"));
             })
             ->orderBy('published_at', 'desc')
             ->paginate(10);

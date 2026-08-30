@@ -294,18 +294,41 @@
                         Tags
                     </h3>
 
-                    <!-- Add Tag Input Row -->
-                    <div class="flex items-center gap-2 mb-4">
-                        <input type="text" 
-                               x-model="newTagInput" 
-                               @keydown.enter.prevent="addTag()" 
-                               placeholder="Add a tag..." 
-                               class="flex-1 bg-[#f8f9fa] border border-gray-300 px-3 py-2 text-xs text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">
-                        <button type="button" 
-                                @click="addTag()" 
-                                class="px-4 py-2 bg-[#6b0f1f] hover:bg-[#520a17] text-white text-xs font-bold uppercase tracking-wider transition-colors">
-                            Add
-                        </button>
+                    <!-- Add Tag Input Row with Suggestions -->
+                    <div class="relative mb-4" @click.outside="showSuggestions = false">
+                        <div class="flex items-center gap-2">
+                            <input type="text" 
+                                   x-model="newTagInput" 
+                                   @focus="showSuggestions = true"
+                                   @input="showSuggestions = true"
+                                   @keydown.escape="showSuggestions = false"
+                                   @keydown.enter.prevent="addTag()" 
+                                   placeholder="Add a tag..." 
+                                   class="flex-1 bg-[#f8f9fa] border border-gray-300 px-3 py-2 text-xs text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">
+                            <button type="button" 
+                                    @click="addTag()" 
+                                    class="px-4 py-2 bg-[#6b0f1f] hover:bg-[#520a17] text-white text-xs font-bold uppercase tracking-wider transition-colors">
+                                Add
+                            </button>
+                        </div>
+
+                        <!-- Suggestions Dropdown List -->
+                        <div x-show="showSuggestions && filteredSuggestions.length > 0" 
+                             x-transition
+                             x-cloak
+                             class="absolute z-20 w-full bg-white border border-gray-200 shadow-lg max-h-48 overflow-y-auto mt-1 left-0 rounded-sm">
+                            <div class="px-3 py-1.5 bg-gray-50 border-b border-gray-100 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                                Tag Suggestions
+                            </div>
+                            <template x-for="suggestion in filteredSuggestions" :key="suggestion">
+                                <button type="button" 
+                                        @click="selectTag(suggestion)" 
+                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-[#8b1528]/10 hover:text-[#8b1528] flex items-center justify-between border-b border-gray-50 last:border-0 transition-colors">
+                                    <span class="font-medium" x-text="'#' + suggestion"></span>
+                                    <span class="text-[10px] text-gray-400">existing tag</span>
+                                </button>
+                            </template>
+                        </div>
                     </div>
 
                     <!-- Selected Tag Badges Container -->
@@ -359,7 +382,9 @@
 function authorArticleEditFormHandler() {
     return {
         newTagInput: '',
-        tags: @json($article->tags->pluck('name')),
+        showSuggestions: false,
+        availableTags: @json($allTags ?? []),
+        tags: @json(old('tags', $article->tags->pluck('name'))),
         isEventCategory: false,
         isResearchCategory: false,
         init() {
@@ -373,12 +398,29 @@ function authorArticleEditFormHandler() {
             this.isEventCategory    = (e.target.dataset.slug === 'events');
             this.isResearchCategory = (e.target.dataset.slug === 'research-innovation');
         },
+        get filteredSuggestions() {
+            if (!this.newTagInput || !this.newTagInput.trim()) {
+                return this.availableTags.filter(t => !this.tags.includes(t)).slice(0, 6);
+            }
+            const q = this.newTagInput.trim().toLowerCase().replace(/^#/, '');
+            return this.availableTags.filter(t => 
+                t.toLowerCase().includes(q) && !this.tags.includes(t)
+            ).slice(0, 8);
+        },
+        selectTag(tagName) {
+            if (tagName && !this.tags.includes(tagName)) {
+                this.tags.push(tagName);
+            }
+            this.newTagInput = '';
+            this.showSuggestions = false;
+        },
         addTag() {
             const trimmed = this.newTagInput.trim().replace(/^#/, '');
             if (trimmed && !this.tags.includes(trimmed)) {
                 this.tags.push(trimmed);
             }
             this.newTagInput = '';
+            this.showSuggestions = false;
         },
         removeTag(index) {
             this.tags.splice(index, 1);

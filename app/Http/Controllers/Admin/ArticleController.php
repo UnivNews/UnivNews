@@ -43,7 +43,8 @@ class ArticleController extends Controller
     public function create(): View
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.articles.create', compact('categories'));
+        $allTags = Tag::orderBy('name')->pluck('name');
+        return view('admin.articles.create', compact('categories', 'allTags'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -115,8 +116,8 @@ class ArticleController extends Controller
 
         $article->save();
 
+        $tagIds = [];
         if (!empty($validated['tags'])) {
-            $tagIds = [];
             foreach ($validated['tags'] as $tagName) {
                 $trimmed = trim(str_replace('#', '', $tagName));
                 if ($trimmed) {
@@ -124,8 +125,8 @@ class ArticleController extends Controller
                     $tagIds[] = $tag->id;
                 }
             }
-            $article->tags()->sync($tagIds);
         }
+        $article->tags()->sync($tagIds);
 
         return redirect()->route('admin.articles.index')->with('success', 'Article created successfully.');
     }
@@ -133,7 +134,8 @@ class ArticleController extends Controller
     public function edit(Article $article): View
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.articles.edit', compact('article', 'categories'));
+        $allTags = Tag::orderBy('name')->pluck('name');
+        return view('admin.articles.edit', compact('article', 'categories', 'allTags'));
     }
 
     public function update(Request $request, Article $article): RedirectResponse
@@ -205,8 +207,8 @@ class ArticleController extends Controller
 
         $article->save();
 
-        if (isset($validated['tags'])) {
-            $tagIds = [];
+        $tagIds = [];
+        if (!empty($validated['tags'])) {
             foreach ($validated['tags'] as $tagName) {
                 $trimmed = trim(str_replace('#', '', $tagName));
                 if ($trimmed) {
@@ -214,8 +216,8 @@ class ArticleController extends Controller
                     $tagIds[] = $tag->id;
                 }
             }
-            $article->tags()->sync($tagIds);
         }
+        $article->tags()->sync($tagIds);
 
         return redirect()->route('admin.articles.index')->with('success', 'Article updated successfully.');
     }
