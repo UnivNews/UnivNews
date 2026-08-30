@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -77,7 +78,7 @@ class ArticleController extends Controller
         $article->excerpt = $validated['excerpt'] ?? Str::limit(strip_tags($validated['content']), 160);
         $article->content = $validated['content'];
         $article->category_id = $validated['category_id'];
-        $article->user_id = auth()->id();
+        $article->user_id = Auth::guard('admin')->id();
         $article->status = $validated['status'];
 
         if ($validated['status'] === Article::STATUS_PUBLISHED) {

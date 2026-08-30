@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class AdminController extends Controller
@@ -53,7 +54,7 @@ class AdminController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = Auth::guard('admin')->id();
         
         if ($validated['status'] === 'published') {
             $validated['published_at'] = now();

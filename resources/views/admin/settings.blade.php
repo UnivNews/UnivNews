@@ -49,8 +49,8 @@
             <div class="bg-white border border-gray-200 p-6 text-center shadow-sm">
                 <!-- Avatar -->
                 <div class="w-32 h-40 mx-auto bg-gray-100 border border-gray-200 overflow-hidden shadow-inner flex items-center justify-center mb-4">
-                    @if(auth()->user()->avatar_path)
-                        <img src="{{ asset(auth()->user()->avatar_path) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                    @if(Auth::guard('admin')->user()->avatar_path)
+                        <img src="{{ asset(Auth::guard('admin')->user()->avatar_path) }}" alt="{{ Auth::guard('admin')->user()->name }}" class="w-full h-full object-cover">
                     @else
                         <div class="w-full h-full bg-slate-200 flex flex-col items-center justify-center text-slate-400">
                             <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
                 </div>
 
                 <!-- User Name & Role Badge -->
-                <h2 class="text-xl font-bold font-heading text-[#00081e]">{{ auth()->user()->name }}</h2>
+                <h2 class="text-xl font-bold font-heading text-[#00081e]">{{ Auth::guard('admin')->user()->name }}</h2>
                 <div class="mt-1.5 inline-block">
                     <span class="px-2.5 py-0.5 bg-[#8b1528]/10 text-[#8b1528] text-xs font-semibold uppercase tracking-wider border border-[#8b1528]/20">
                         Administrator
@@ -74,15 +74,15 @@
                         <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
-                        <span class="truncate">{{ auth()->user()->email }}</span>
+                        <span class="truncate">{{ Auth::guard('admin')->user()->email }}</span>
                     </div>
 
-                    @if(auth()->user()->phone_number)
+                    @if(Auth::guard('admin')->user()->phone_number)
                     <div class="flex items-center gap-3">
                         <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                         </svg>
-                        <span>{{ auth()->user()->phone_number }}</span>
+                        <span>{{ Auth::guard('admin')->user()->phone_number }}</span>
                     </div>
                     @endif
 
@@ -90,11 +90,11 @@
                         <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>Joined {{ auth()->user()->created_at->format('F Y') }}</span>
+                        <span>Joined {{ Auth::guard('admin')->user()->created_at->format('F Y') }}</span>
                     </div>
 
                     <!-- Social Media Links -->
-                    @php $socials = auth()->user()->social_links ?? []; @endphp
+                    @php $socials = Auth::guard('admin')->user()->social_links ?? []; @endphp
                     @if(!empty($socials))
                     <div class="pt-3 border-t border-gray-100">
                         <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2.5">Social</p>
@@ -176,7 +176,7 @@
                                 <input type="text" 
                                        name="name" 
                                        id="name" 
-                                       value="{{ old('name', auth()->user()->name) }}" 
+                                       value="{{ old('name', Auth::guard('admin')->user()->name) }}" 
                                        class="w-full bg-[#f8f9fa] border border-gray-300 px-3.5 py-2.5 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0" 
                                        required>
                             </div>
@@ -186,7 +186,7 @@
                                 <input type="text" 
                                        name="preferred_name" 
                                        id="preferred_name" 
-                                       value="{{ old('preferred_name', auth()->user()->preferred_name ?? '') }}" 
+                                       value="{{ old('preferred_name', Auth::guard('admin')->user()->preferred_name ?? '') }}" 
                                        class="w-full bg-[#f8f9fa] border border-gray-300 px-3.5 py-2.5 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">
                             </div>
                         </div>
@@ -198,7 +198,7 @@
                                 <input type="email" 
                                        name="email" 
                                        id="email" 
-                                       value="{{ old('email', auth()->user()->email) }}" 
+                                       value="{{ old('email', Auth::guard('admin')->user()->email) }}" 
                                        class="w-full bg-[#f8f9fa] border border-gray-300 px-3.5 py-2.5 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0" 
                                        required>
                             </div>
@@ -208,7 +208,7 @@
                                 <input type="text" 
                                        name="phone_number" 
                                        id="phone_number" 
-                                       value="{{ old('phone_number', auth()->user()->phone_number ?? '') }}" 
+                                       value="{{ old('phone_number', Auth::guard('admin')->user()->phone_number ?? '') }}" 
                                        placeholder="+62 812 3456 7890" 
                                        class="w-full bg-[#f8f9fa] border border-gray-300 px-3.5 py-2.5 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">
                             </div>
@@ -222,7 +222,7 @@
                                 </svg>
                                 Social Media Links
                             </h3>
-                            @php $socials = auth()->user()->social_links ?? []; @endphp
+                            @php $socials = Auth::guard('admin')->user()->social_links ?? []; @endphp
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
                                     <label for="social_instagram" class="block text-xs font-medium text-gray-500 mb-1.5">
@@ -344,7 +344,7 @@
                             <!-- Alternative: Reset via Email -->
                             <form method="POST" action="{{ route('password.email') }}" class="inline">
                                 @csrf
-                                <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                                <input type="hidden" name="email" value="{{ Auth::guard('admin')->user()->email }}">
                                 <button type="submit" class="text-xs text-gray-500 hover:text-[#8b1528] underline underline-offset-2 transition-colors">
                                     Or send reset link via email
                                 </button>

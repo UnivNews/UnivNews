@@ -31,7 +31,6 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
         if ($user && $user->isAdmin()) {
             Auth::guard('web')->logout();
-            $request->session()->invalidate();
             $request->session()->regenerateToken();
             
             return redirect()->route('login')->withErrors([
@@ -49,8 +48,8 @@ class AuthenticatedSessionController extends Controller
     {
         Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-
+        // Hanya regenerate token, jangan invalidate seluruh session
+        // agar session admin guard tidak terganggu jika admin juga login
         $request->session()->regenerateToken();
 
         return redirect('/');

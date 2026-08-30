@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\Boost;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
@@ -15,7 +16,7 @@ class ProfileController extends Controller
 {
     public function edit(): View
     {
-        $user = auth()->user();
+        $user = Auth::guard('admin')->user();
 
         // ── Activity Log ──────────────────────────────────────────────
         // Recent articles that need/had review (pending, approved, rejected)
@@ -87,7 +88,7 @@ class ProfileController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
-        $user = $request->user();
+        $user = Auth::guard('admin')->user();
 
         $validated = $request->validate([
             'name'            => 'required|string|max:255',
@@ -122,11 +123,11 @@ class ProfileController extends Controller
     public function updatePassword(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'current_password' => 'required|current_password',
+            'current_password' => 'required|current_password:admin',
             'password'         => ['required', 'confirmed', Password::min(8)],
         ]);
 
-        $request->user()->update([
+        Auth::guard('admin')->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
 

@@ -25,12 +25,10 @@ Route::get('/api/homepage/featured', [\App\Http\Controllers\HomepageController::
 // 2. Authenticated General Routes
 Route::middleware(['auth'])->group(function () {
     
-    // Generic Dashboard fallback route
+    // Generic Dashboard fallback route (untuk web guard: author/reader)
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->isAuthor()) {
+        if ($user->isAuthor()) {
             return redirect()->route('author.dashboard');
         }
         return redirect()->route('home');
@@ -61,42 +59,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/articles/{article}/boost/availability', [Author\BoostController::class, 'availability'])->name('articles.boost.availability');
     });
 
-    // 4. Admin Area Routes
-    Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(function () {
-        Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
-        
-        // Article Review Workflow
-        Route::get('/articles/{article}/review', [Admin\ReviewController::class, 'show'])->name('articles.review');
-        Route::post('/articles/{article}/approve', [Admin\ReviewController::class, 'approve'])->name('articles.approve');
-        Route::post('/articles/{article}/reject', [Admin\ReviewController::class, 'reject'])->name('articles.reject');
 
-        // Articles Resource
-        Route::resource('articles', Admin\ArticleController::class)->except(['show']);
-
-        // Author Management
-        Route::get('/authors', [Admin\AuthorManagementController::class, 'index'])->name('authors.index');
-        Route::post('/authors/{user}/approve', [Admin\AuthorManagementController::class, 'approve'])->name('authors.approve');
-        Route::post('/authors/{user}/reject', [Admin\AuthorManagementController::class, 'reject'])->name('authors.reject');
-        Route::post('/authors/{user}/suspend', [Admin\AuthorManagementController::class, 'suspend'])->name('authors.suspend');
-
-        // University Management
-        Route::resource('universities', Admin\UniversityController::class)->only(['index', 'store', 'destroy']);
-
-        // Profile & Settings (User Profile)
-        Route::get('/profile', [Admin\ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('/profile', [Admin\ProfileController::class, 'update'])->name('profile.update');
-        Route::get('/settings', [Admin\ProfileController::class, 'edit'])->name('settings.edit');
-        Route::put('/settings/password', [Admin\ProfileController::class, 'updatePassword'])->name('settings.password');
-        Route::put('/settings', [Admin\ProfileController::class, 'update'])->name('settings.update');
-
-        // App Settings (Payment Fee, etc.)
-        Route::get('/app-settings', [Admin\AppSettingsController::class, 'index'])->name('app-settings.index');
-        Route::put('/app-settings', [Admin\AppSettingsController::class, 'update'])->name('app-settings.update');
-        
-        // Boost Prices Management (API endpoints for admin panel)
-        Route::get('/api/boost-prices', [Admin\BoostPriceController::class, 'index'])->name('api.boost-prices.index');
-        Route::put('/api/boost-prices/{boostPrice}', [Admin\BoostPriceController::class, 'update'])->name('api.boost-prices.update');
-    });
 
     // 5. Payment Routes (author only — artikel harus awaiting_payment)
     Route::get('/payment/{article}', [PaymentController::class, 'show'])->name('payment.show');
@@ -117,6 +80,48 @@ Route::middleware('guest.admin_aware')->group(function () {
 Route::middleware('guest.admin_aware')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/sign-in', [AdminLoginController::class, 'create'])->name('login');
     Route::post('/sign-in', [AdminLoginController::class, 'store']);
+});
+
+// 7b. Admin Logout Route (tidak perlu middleware role, hanya butuh CSRF)
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
+});
+
+// 7c. Admin Area Routes (menggunakan admin guard terpisah via role:admin middleware)
+Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(function () {
+    Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
+    
+    // Article Review Workflow
+    Route::get('/articles/{article}/review', [Admin\ReviewController::class, 'show'])->name('articles.review');
+    Route::post('/articles/{article}/approve', [Admin\ReviewController::class, 'approve'])->name('articles.approve');
+    Route::post('/articles/{article}/reject', [Admin\ReviewController::class, 'reject'])->name('articles.reject');
+
+    // Articles Resource
+    Route::resource('articles', Admin\ArticleController::class)->except(['show']);
+
+    // Author Management
+    Route::get('/authors', [Admin\AuthorManagementController::class, 'index'])->name('authors.index');
+    Route::post('/authors/{user}/approve', [Admin\AuthorManagementController::class, 'approve'])->name('authors.approve');
+    Route::post('/authors/{user}/reject', [Admin\AuthorManagementController::class, 'reject'])->name('authors.reject');
+    Route::post('/authors/{user}/suspend', [Admin\AuthorManagementController::class, 'suspend'])->name('authors.suspend');
+
+    // University Management
+    Route::resource('universities', Admin\UniversityController::class)->only(['index', 'store', 'destroy']);
+
+    // Profile & Settings (User Profile)
+    Route::get('/profile', [Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/settings', [Admin\ProfileController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings/password', [Admin\ProfileController::class, 'updatePassword'])->name('settings.password');
+    Route::put('/settings', [Admin\ProfileController::class, 'update'])->name('settings.update');
+
+    // App Settings (Payment Fee, etc.)
+    Route::get('/app-settings', [Admin\AppSettingsController::class, 'index'])->name('app-settings.index');
+    Route::put('/app-settings', [Admin\AppSettingsController::class, 'update'])->name('app-settings.update');
+    
+    // Boost Prices Management (API endpoints for admin panel)
+    Route::get('/api/boost-prices', [Admin\BoostPriceController::class, 'index'])->name('api.boost-prices.index');
+    Route::put('/api/boost-prices/{boostPrice}', [Admin\BoostPriceController::class, 'update'])->name('api.boost-prices.update');
 });
 
 // 8. Author Password Setup (token-based, no auth required)

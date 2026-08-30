@@ -101,12 +101,9 @@
                     </form>
                     
                     @auth
-                        @if(auth()->user()->isAdmin())
-                            {{-- Admin disembunyikan dari navbar publik untuk keamanan --}}
-                            {{-- Admin hanya bisa akses dashboard via URL langsung: /admin/dashboard --}}
-                            <a href="{{ route('login') }}" class="h-full flex items-center text-xs sm:text-sm font-sans font-medium text-white hover:text-crimson transition-colors px-2">Login</a>
-                            <a href="{{ route('register') }}" class="h-full flex items-center bg-crimson hover:bg-red-700 text-white px-3 sm:px-4 text-xs font-heading font-bold uppercase tracking-wider transition-colors whitespace-nowrap">Register</a>
-                        @elseif(auth()->user()->isAuthor())
+                        {{-- @auth hanya mendeteksi web guard (author/reader) --}}
+                        {{-- Admin menggunakan guard terpisah, tidak terdeteksi di sini --}}
+                        @if(auth()->user()->isAuthor())
                             <a href="{{ route('author.dashboard') }}" class="h-full flex items-center bg-crimson hover:bg-red-700 text-white px-3 sm:px-4 font-heading font-bold text-xs uppercase tracking-wider transition-colors whitespace-nowrap">Author Desk</a>
                         @else
                             <a href="{{ route('author.apply') }}" class="h-full flex items-center justify-center border border-white/30 text-white hover:bg-crimson hover:border-crimson px-3 sm:px-4 font-sans font-medium text-xs tracking-wider transition-colors whitespace-nowrap">Apply as Author</a>
