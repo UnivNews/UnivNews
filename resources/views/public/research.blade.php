@@ -318,6 +318,8 @@ document.addEventListener('alpine:init', () => {
                 ]
             ];
             $dummyCount = max(0, 9 - $articles->count());
+            $researchFields = ['Biomedical Sciences', 'Engineering & Applied Science', 'Social Sciences & Humanities', 'Computer Science & AI'];
+            $researchCenters = ['Institute for Sustainable Energy', 'Center for Digital Ethics', 'Genomics Research Institute', 'All Centers'];
         @endphp
         allResearch: [
             @foreach($articles as $article)
@@ -329,8 +331,8 @@ document.addEventListener('alpine:init', () => {
                 excerpt: @json($article->excerpt),
                 image: @json($article->featured_image_path ? (Str::startsWith($article->featured_image_path, ['http://', 'https://']) ? $article->featured_image_path : asset('storage/' . $article->featured_image_path)) : 'https://picsum.photos/seed/fallback/800/533'),
                 url: @json(route('article', $article->slug)),
-                field: @json($article->research_field ?: ['Biomedical Sciences', 'Engineering & Applied Science', 'Social Sciences & Humanities', 'Computer Science & AI'][crc32($article->title) % 4]),
-                center: @json($article->research_center ?: ['Institute for Sustainable Energy', 'Center for Digital Ethics', 'Genomics Research Institute', 'All Centers'][crc32($article->title) % 4])
+                field: @json($article->research_field ?: $researchFields[crc32($article->title) % 4]),
+                center: @json($article->research_center ?: $researchCenters[crc32($article->title) % 4])
             },
             @endforeach
             @for($i = 0; $i < $dummyCount; $i++)
@@ -343,8 +345,8 @@ document.addEventListener('alpine:init', () => {
                 excerpt: @json($variation['excerpt']),
                 image: @json($variation['image']),
                 url: '#',
-                field: '{{ ['Biomedical Sciences', 'Engineering & Applied Science', 'Social Sciences & Humanities', 'Computer Science & AI'][$i % 4] }}',
-                center: '{{ ['Institute for Sustainable Energy', 'Center for Digital Ethics', 'Genomics Research Institute', 'All Centers'][$i % 4] }}'
+                field: @json($researchFields[$i % 4]),
+                center: @json($researchCenters[$i % 4])
             },
             @endfor
         ],
