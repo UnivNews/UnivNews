@@ -30,6 +30,12 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
+        $user = \App\Models\User::where('email', $request->email)->first();
+        if ($user && $user->provider === 'google' && is_null($user->password)) {
+            return back()->withInput($request->only('email'))
+                         ->withErrors(['email' => 'This account currently uses Google Sign-In. Please continue with Google, or create a local password after signing in.']);
+        }
+
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we
         // need to show to the user. Finally, we'll send out a proper response.

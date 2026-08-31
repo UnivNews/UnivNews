@@ -18,7 +18,7 @@
                     Dashboard
                 </a>
 
-                @if(auth()->user()->role === 'admin' || auth()->user()->role === 'editor')
+                @if(Auth::guard('admin')->user()->role === 'admin' || Auth::guard('admin')->user()->role === 'editor')
                 <div class="px-4 mt-6 mb-2 text-xs font-heading font-bold uppercase tracking-wider text-gray-400">Content</div>
                 <a href="{{ route('admin.articles') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.articles*') ? 'bg-crimson text-white border-l-4 border-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white border-l-4 border-transparent transition-colors' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v10a2 2 0 01-2 2z"></path></svg>
@@ -32,7 +32,7 @@
             </nav>
             
             <div class="p-4 border-t border-gray-800">
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button type="submit" class="flex items-center w-full px-4 py-2 text-gray-400 hover:text-white transition-colors text-sm">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -52,7 +52,7 @@
                     <span class="font-heading font-bold text-navy uppercase tracking-wider text-sm hidden sm:block">@yield('title', 'Admin Panel')</span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600 font-sans hidden sm:inline-block">Logged in as: <strong class="text-navy">{{ auth()->user()->name ?? 'Guest' }}</strong></span>
+                    <span class="text-sm text-gray-600 font-sans hidden sm:inline-block">Logged in as: <strong class="text-navy">{{ Auth::guard('admin')->user()->name ?? 'Guest' }}</strong></span>
                 </div>
             </header>
             

@@ -1,0 +1,755 @@
+# =========================================================
+# University News Portal — UI/UX Design Spec (cleaned)
+# Page: HOMEPAGE — v2 (supersedes the previous "For You" list version;
+#       layout changed to a 2x2 card grid + sidebar with trending/ad slots)
+# Shares tokens with: design-spec.yaml (Research & Innovation page)
+# =========================================================
+
+
+meta:
+  name: University News Portal
+  page: Homepage
+  version_note: >
+    This replaces the earlier homepage spec that used a single-column
+    "For You" article list. The new source data shows "Recent News" as a
+    2x2 card grid with a sidebar (Trending News + Advertisement slot) —
+    same pattern as the Research & Innovation page's sidebar.
+  style: editorial / academic / newsroom, sharp corners, minimal shadow
+
+# ---------------------------------------------------------
+# ⚠️ COLOR DRIFT — FLAGGED, NOT AUTO-MERGED
+# ---------------------------------------------------------
+# This export introduces near-duplicate colors that are close to, but not
+# identical to, tokens already established. Likely cause: re-exported from
+# Figma in a different session where the color picker landed a few values
+# off. Recommend consolidating to ONE canonical set before handing to the
+# coding agent — otherwise Tailwind config ends up with near-duplicate
+# color utilities that are impossible to tell apart later.
+color_drift_flags:
+  - new: "#0A1F44"
+    used_for: "Header/TopNavBar background (this file)"
+    conflicts_with: "primary_navy #00081E (used everywhere else: breaking news bg, footer bg, pagination active state)"
+    recommendation: "Almost certainly should just BE primary_navy. Confirm with design source; if no intentional reason, replace with #00081E."
+  - new: "#F6F3F4"
+    used_for: "Sidebar 'Aside' widget background (trending news container) on homepage"
+    conflicts_with: "surface_alt #F0EDEE (used for card backgrounds, filter dropdown bg elsewhere)"
+    recommendation: "Close enough to be a rounding difference — consolidate to surface_alt unless there's a deliberate reason for a 2nd neutral tone."
+  - new: "#EAE7E8"
+    used_for: "Advertisement placeholder box background"
+    conflicts_with: "surface_alt #F0EDEE"
+    recommendation: "Same as above — likely should be surface_alt, or if a 3rd neutral tone is genuinely wanted, name it explicitly (e.g. surface_muted) instead of letting it float as an unnamed one-off."
+  - new: "#4C5E86"
+    used_for: "Pagination 'NEWER' link icon + text color"
+    conflicts_with: "text_secondary_on_dark #7687B2 (used for excerpt/footer text on dark bg) — different context here since pagination sits on light background, so this may legitimately need its own token"
+    recommendation: "This one might be intentional (muted blue for a light-bg context vs the dark-bg one) — but name it as its own token rather than an unlabeled hex, e.g. text_muted_link."
+
+# ---------------------------------------------------------
+# DESIGN TOKENS
+# ---------------------------------------------------------
+tokens:
+  color:
+    primary_navy: "#00081E"
+    header_navy: "#0A1F44"          # ⚠️ see color_drift_flags — confirm vs primary_navy
+    crimson: "#B71032"
+    background: "#FCF8F9"
+    surface: "#FFFFFF"
+    surface_alt: "#F0EDEE"
+    surface_alt_2: "#F6F3F4"        # ⚠️ near-duplicate of surface_alt, see flags
+    surface_muted: "#EAE7E8"        # ⚠️ near-duplicate of surface_alt, see flags
+    text_primary: "#1B1B1C"
+    text_secondary: "#44464E"
+    text_secondary_on_dark: "#7687B2"
+    text_muted_link: "#4C5E86"      # ⚠️ near-duplicate of text_secondary_on_dark, see flags
+    border: "#C5C6CF"
+
+  typography:
+    heading_font: "Montserrat"
+    body_font: "Source Serif 4"
+    utility_font: "Work Sans"
+
+  radius:
+    default: 0px
+    pagination_button: 4px          # deviation from global 0px rule — carried over from prior spec
+    widget_card: 8px                # NEW deviation — Aside/Trending widget + Ad box both use 8px here
+    circular: 9999px
+
+  border:
+    default: "1px solid #C5C6CF"
+
+# ---------------------------------------------------------
+# ⚠️ RESPONSIVE CONTAINER STRATEGY (fixes the "too big/small on
+# different laptops at 100% zoom" problem)
+# ---------------------------------------------------------
+responsive_container:
+  problem: >
+    The raw Figma export encodes FIXED pixel widths (1280px for the page,
+    1200px for inner sections) because that's the artboard size at design
+    time — it is a reference size, not a literal CSS width. Implemented
+    as-is (fixed px container), the page renders correctly ONLY at exactly
+    that browser width: it floats tiny in a sea of white space on wider
+    laptops/monitors, and forces horizontal scroll on narrower ones. This
+    is the direct cause of the "kebesaran/kekecilan" issue.
+  fix:
+    page_container:
+      max_width: 1280px
+      width: 100%
+      margin_inline: auto            # centers on any screen wider than max_width
+      padding_inline: 40px           # matches the 40px side padding used throughout the source data
+      tailwind_equivalent: 'className="max-w-[1280px] w-full mx-auto px-6 md:px-10"'
+    inner_sections:
+      note: >
+        Sections like "Research Archive Section" (width:1200 in source) are
+        just this same container with slightly less internal padding — do
+        NOT give them their own separate fixed width. Nest them inside the
+        same page_container and let padding_inline handle the difference.
+    behavior_across_laptops:
+      - screen: "13\" laptop (~1280px logical width, e.g. MacBook Air)"
+        result: "container hits max_width almost exactly — minimal/no side margin"
+      - screen: "14–16\" laptop (~1440–1512px logical width)"
+        result: "container caps at 1280px, centered, ~80–120px margin each side — this is expected and correct, not a bug"
+      - screen: "external monitor / 1920px+"
+        result: "container still caps at 1280px, centered — content never stretches full-bleed, keeping line-length readable"
+      rule: "Because it's max-width + mx-auto, the page renders IDENTICALLY across all of these — never bigger, never smaller, just more/less side margin. This is what makes it 'rapih' at 100% zoom on any laptop."
+    below_max_width:
+      breakpoint: "< 1280px"
+      behavior: "container naturally shrinks to width:100% with the same padding_inline; grid columns collapse per component (see recent_news_section.main_grid.responsive)"
+
+# ---------------------------------------------------------
+# HEADER / NAV
+# ---------------------------------------------------------
+header_nav:
+  background: header_navy    # ⚠️ flagged — see color_drift_flags, likely should be primary_navy
+  container: page_container (see responsive_container)
+  layout: [nav_links, spacer, search_input, divider, login_link]
+
+  nav_links:
+    - label: "HOME"
+      state: active
+      active_style: { color: crimson, border_bottom: "1px solid crimson" }
+    - label: "ACHIEVEMENTS"
+      style: { color: "#FFFFFF" }
+    - label: "EVENTS"
+      style: { color: "#FFFFFF" }
+    - label: "RESEARCH & INNOVATION"
+      style: { color: "#FFFFFF" }
+
+  search_input:
+    placeholder: "Search news..."
+    background: surface
+    icon: search, color: text_secondary_on_dark
+    radius: 0
+
+  divider: { style: "1px solid border", vertical: true }
+
+  login_link:
+    label: "Login"
+    style: { font: utility_font, weight: 600, color: "#FFFFFF" }
+
+  responsive:
+    tablet_and_below: "collapse nav_links into hamburger; search collapses to icon-only that expands on tap"
+
+# ---------------------------------------------------------
+# BREAKING NEWS SECTION (hero area) — unchanged from prior version
+# ---------------------------------------------------------
+breaking_news_section:
+  background: primary_navy
+  container: page_container
+  padding_block: "32px 48px"
+
+  label:
+    icon: { shape: dot, color: crimson }
+    text: "BREAKING FOCUS"
+    style: { font: utility_font, weight: 600, color: crimson, uppercase: true }
+
+  layout: 2-column, [hero_article (wide, left), sidebar_articles (narrow, right)]
+
+  hero_article:
+    image:
+      fill: true, aspect: wide
+      overlay: gradient (dark, bottom-to-transparent)
+    content:
+      position: overlay, bottom-left
+      category: { text: "Campus Development", color: crimson, style: uppercase, weight: 600 }
+      headline:
+        text: "University Unveils Comprehensive Master Plan for Innovation District"
+        style: { font: heading_font, weight: 700, size: 32px, color: "#FFFFFF" }
+      excerpt:
+        text: "The ambitious 10-year initiative aims to bridge historical academic precincts with cutting-edge industry partnerships, transforming the campus output into a hub for…"
+        style: { font: body_font, size: 17px, color: text_secondary_on_dark }
+
+  sidebar_articles:
+    layout: vertical list, divided by bottom border (except last item)
+    item:
+      category: { style: { font: utility_font, weight: 600, color: crimson, uppercase: true } }
+      headline: { style: { font: heading_font, weight: 600, size: 24px, color: "#FFFFFF" } }
+      excerpt: { style: { font: body_font, size: 14px, color: text_secondary_on_dark } }
+    items:
+      - category: "RESEARCH"
+        headline: "Breakthrough in Quantum Computing Lab Announced"
+        excerpt: "Researchers have stabilized a qubit state at room temperature, a significant step forward in practical quantum applications."
+      - category: "ADMINISTRATION"
+        headline: "New Dean Appointed for the College of Arts and Letters"
+        excerpt: "Dr. Elena Restova brings over two decades of interdisciplinary humanities expertise to the institution."
+
+  responsive:
+    tablet_and_below: "hero_article stacks above sidebar_articles, both full width"
+
+# ---------------------------------------------------------
+# NEWS TICKER — ⚠️ ANIMATED, KEEP THE MOTION (per earlier request, unchanged)
+# ---------------------------------------------------------
+news_ticker:
+  background: crimson
+  full_bleed: true   # this bar spans full browser width, NOT capped by page_container
+  behavior: >
+    MOVING MARQUEE, NOT STATIC TEXT. Horizontally auto-scrolling, continuous,
+    infinite loop, constant speed. Do NOT render as a fixed static row.
+  implementation_note: >
+    CSS keyframe translateX on a flex row duplicating its content once for a
+    seamless loop; pause on hover for readability. Pure CSS is enough —
+    Alpine.js only if you want a manual pause/play toggle.
+  accessibility_note: "Respect prefers-reduced-motion — fall back to static or slow scroll."
+  item:
+    icon: small icon per item
+    text_style: { font: utility_font, weight: 600, color: "#FFFFFF", uppercase: true }
+    separator: "|" character, color: "#FFFFFF"
+  items:
+    - "CAMPUS TRANSIT DELAYS EXPECTED ON SOUTH ROUTE TODAY"
+    - "REGISTRATION FOR FALL SEMESTER OPENS NEXT TUESDAY AT 8:00 AM"
+
+# ---------------------------------------------------------
+# "RECENT NEWS" SECTION — ⚠️ CHANGED from previous "For You" vertical
+# list layout to a 2x2 card grid + sidebar (trending + ad slot)
+# ---------------------------------------------------------
+recent_news_section:
+  container: page_container
+  padding_block: "80px 40px"
+
+  section_header:
+    text: "Recent News"
+    style: { font: heading_font, weight: 600, size: 32px, color: primary_navy }
+    border_bottom: default
+
+  layout:
+    desktop: "2-column: main_grid (fill) + sidebar (fixed reference ~360px, but see responsive)"
+    tailwind_equivalent: 'className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-12"'
+
+  main_grid:
+    columns: { desktop: 2, tablet: 2, mobile: 1 }
+    tailwind_equivalent: 'className="columns-1 sm:columns-2 gap-6 space-y-6"'
+    layout_type: masonry
+    gap: default
+    card:
+      background: surface
+      border: default
+      layout: vertical (image on top, content below, dynamic height with break-inside-avoid)
+      image: { aspect: "dynamic", fill: true }
+      content:
+        padding: large (24px)
+        meta_row: { category: { color: crimson, uppercase: true, weight: 600, size: 12px }, date: { color: text_secondary, size: 12px } }
+        headline: { style: { font: heading_font, weight: 600, size: 18px, color: primary_navy } }
+        excerpt: { style: { font: body_font, size: 14px, color: text_secondary } }
+    sample_items:
+      - category: "STUDENT ACHIEVEMENTS", date: "Oct 26", title: "Urban Ecology Study Reveals Surprising Biodiversity"
+      - category: "EVENTS", date: "Oct 25", title: "New Pathways in Memory Formation Discovered"
+      - category: "RESEARCH & INNOVATION", date: "Oct 24", title: "Sustainable Robotics Initiative Receives Major Grant"
+    note: >
+      6 cards in this version using a masonry layout (CSS columns) instead of a strict 2x2 grid. 
+      Card heights dynamically adjust to image thumbnails to prevent empty gaps.
+
+  pagination:
+    prev: { label: "NEWER", icon: arrow_left, color: text_muted_link }
+    pages:
+      - { label: "1", state: active, background: primary_navy, text_color: "#FFFFFF", size: "40x40", radius: pagination_button, align: center }
+      - { label: "2", size: "40x40", radius: pagination_button, align: center }
+      - { label: "3", size: "40x40", radius: pagination_button, align: center }
+      - { label: "...", disabled: true }
+      - { label: "12", size: "40x40", radius: pagination_button, align: center }
+    next: { label: "OLDER", icon: arrow_right, color: primary_navy }
+    divider: border-top
+    tailwind_equivalent: 'each page button: className="w-10 h-10 flex items-center justify-center rounded"'
+
+  sidebar:
+    trending_news_widget:
+      background: surface_alt_2   # ⚠️ flagged — likely should just be surface_alt (#F0EDEE), see color_drift_flags
+      radius: widget_card          # ⚠️ 8px — deviates from global 0px rule, flagged
+      padding: large
+      header:
+        bullet: { shape: dot, color: crimson }
+        title: "TRENDING NEWS"
+        style: { font: heading_font, weight: 700, color: primary_navy }
+      item:
+        index: { format: "01", color: text_secondary_on_dark, weight: 700 }
+        title: { font: heading_font, weight: 600, size: 15px, color: primary_navy }
+        tag: { font: utility_font, color: text_secondary, uppercase: true }
+      items:
+        - { index: "01", title: "Breakthrough in Quantum Computing Achieved by Engineering Faculty", tag: "Technology" }
+        - { index: "02", title: "New Study Links Urban Green Spaces to Lower Stress Levels in Students", tag: "Health & Wellness" }
+        - { index: "03", title: "Annual Arts Festival Draws Record-Breaking Crowd This Weekend", tag: "Campus Life" }
+        - { index: "04", title: "Researchers Discover Novel Enzyme that Breaks Down Microplastics", tag: "Environment" }
+        - { index: "05", title: "University Announces Groundbreaking $50M Endowment for Scholarships", tag: "Administration" }
+      note: >
+        This is the SAME widget component/content as the "Trending Research"
+        sidebar on the Research & Innovation page — build it once as a
+        reusable Blade component (e.g. <x-trending-widget :items="$items"
+        :title="$title" />) fed by different data/title per page, rather
+        than duplicating markup.
+
+    advertisement_slot:
+      label:
+        bullet: { shape: dot, color: crimson }
+        text: "ADVERTISEMENT"
+        style: { font: utility_font, weight: 600, color: text_secondary, uppercase: true }
+      box:
+        background: surface_muted   # ⚠️ flagged — likely should be surface_alt, see color_drift_flags
+        border: default
+        radius: widget_card          # ⚠️ 8px, flagged
+        content_placeholder: "SPONSOR CONTENT"
+        icon: muted, color: border
+      implementation_note: >
+        Build as a Blade component accepting ad creative (image/HTML/embed
+        code) rather than hardcoding placeholder text — this is a real ad
+        slot, not decorative content.
+
+  responsive:
+    below_lg: "sidebar moves below main_grid, full width; trending_news_widget and advertisement_slot stack vertically"
+    mobile: "main_grid collapses to 1 column; card image stays full width above content"
+
+# ---------------------------------------------------------
+# FOOTER — unchanged from prior version
+# ---------------------------------------------------------
+footer:
+  background: primary_navy
+  border_top: "1px solid crimson"
+  container: page_container
+  columns:
+    branding:
+      title: { text: "University News", color: "#FFFFFF" }
+      text:
+        content: "Providing authoritative reporting and intellectual discourse for the academic community since 1893."
+        color: text_secondary_on_dark
+    resources:
+      heading: { text: "RESOURCES", color: crimson }
+      links: ["Faculty Experts", "Media Relations", "Archives"]
+    social:
+      heading: { text: "SOCIAL", color: crimson }
+      links: ["Newsletter", "Podcasts", "Events"]
+    institution:
+      heading: { text: "INSTITUTION", color: crimson }
+      links: ["About the University", "Admissions", "Giving"]
+  bottom_bar:
+    border_top: default
+    copyright:
+      text: "© 2024 University News Portal. All academic rights reserved."
+      color: text_secondary_on_dark
+    links: ["Privacy Policy", "Accessibility"]
+
+# ---------------------------------------------------------
+# GENERAL RESPONSIVE RULES (applies site-wide)
+# ---------------------------------------------------------
+responsive:
+  rule_1: "Every section's outer wrapper uses page_container (max-w-[1280px] mx-auto) — never a raw fixed px width."
+  rule_2: "News ticker and header/footer backgrounds are full-bleed (100% viewport width); only their INNER content row is capped by page_container."
+  rule_3: "Never allow horizontal overflow from fixed desktop widths carried over from the Figma export — those numbers are reference sizes, not CSS values."
+  rule_4: "Test at minimum: 1280px, 1440px, 1536px, 1920px logical widths — container size and grid columns should look identical in proportion at all of them, per responsive_container.behavior_across_laptops."
+
+  # =========================================================
+# University News Portal — UI/UX Design Spec (cleaned)
+# Page: EVENTS
+# Shares tokens with: design-spec.yaml (Research & Innovation page)
+# =========================================================
+
+# =========================================================
+# University News Portal — UI/UX Design Spec (cleaned)
+# Page: EVENTS
+# Shares tokens + components with: design-spec.yaml (Research & Innovation),
+# home-design-spec.yaml (Homepage)
+# =========================================================
+
+meta:
+  name: University News Portal
+  page: Events
+  visual_verification: >
+    Cross-checked against the rendered reference screenshot. Confirmed
+    matching: header active-tab style (text color + underline, no pill),
+    featured/date badge corner placement, calendar day-cell states,
+    sidebar panel background spanning calendar through ad slot as one
+    continuous rounded container, pagination active-button style, and
+    footer. One correction made from the earlier draft: date_badge
+    position (see main_content.featured_event and main_content.event_list
+    below) — was previously described as near the ribbon, corrected to
+    top-right / opposite corner.
+  style: editorial / academic / newsroom, sharp corners (mostly), minimal shadow
+  content_language_note: >
+    Source content on this page is in Indonesian (category names, "DAFTAR"
+    = Register, "SEBELUMNYA"/"BERIKUTNYA" = Previous/Next, calendar day
+    labels Mo/Tu/We...). Section title "EVENTS" itself stayed in English —
+    confirm with design source whether the whole site is meant to be
+    bilingual/localized or if "EVENTS" should also become "ACARA" for
+    consistency.
+
+# ---------------------------------------------------------
+# RADIUS SCALE - now 4 distinct values in circulation
+# ---------------------------------------------------------
+radius_scale_in_use:
+  - value: 0px
+    usage: "cards, buttons, inputs, nav - the stated global default"
+  - value: 2px
+    usage: "date badge (day/month chip on event cards) - NEW on this page"
+  - value: 4px
+    usage: "pagination number buttons, calendar day cells"
+  - value: 8px
+    usage: "sidebar 'Aside' widget containers, advertisement box"
+  recommendation: >
+    Formalize this as an explicit scale in the design tokens
+    (radius.none:0, radius.sm:2, radius.md:4, radius.lg:8) and document
+    which kind of element gets which tier, rather than letting it stay
+    incidental per-component.
+
+# ---------------------------------------------------------
+# DESIGN TOKENS (consistent with prior pages - no new colors this time,
+# color_1B1B1C used here matches text_primary exactly, no drift)
+# ---------------------------------------------------------
+tokens:
+  color:
+    primary_navy: "#00081E"
+    header_navy: "#0A1F44"        # still flagged from before - now used consistently across 3 pages, more likely intentional than a mistake
+    crimson: "#B71032"
+    background: "#FCF8F9"
+    surface: "#FFFFFF"
+    surface_alt: "#F0EDEE"
+    surface_alt_2: "#F6F3F4"      # Aside sidebar bg - same as home page sidebar, consistent reuse
+    surface_muted: "#EAE7E8"      # Ad box bg - same as home page ad slot, consistent reuse
+    text_primary: "#1B1B1C"       # calendar day numbers - matches token exactly, no drift
+    text_secondary: "#44464E"
+    text_secondary_on_dark: "#7687B2"
+    text_muted_link: "#4C5E86"
+    border: "#C5C6CF"
+
+  typography:
+    heading_font: "Montserrat"
+    body_font: "Source Serif 4"
+    utility_font: "Work Sans"
+
+  radius:
+    none: 0px
+    sm: 2px       # date badges
+    md: 4px       # pagination, calendar cells
+    lg: 8px       # sidebar widget containers
+    circular: 9999px
+
+  border:
+    default: "1px solid #C5C6CF"
+
+# ---------------------------------------------------------
+# HEADER / NAV - reuse global component, active tab = EVENTS
+# ---------------------------------------------------------
+header_nav:
+  reuse_component: "header_nav from home-design-spec.yaml"
+  background: header_navy
+  active_link: "EVENTS"
+  note: "Third page in a row using this exact header - safe to treat as the final global nav component now."
+
+# ---------------------------------------------------------
+# PAGE HEADER
+# ---------------------------------------------------------
+page_header:
+  title:
+    text: "EVENTS"
+    style: { font: heading_font, weight: 700, size: 48px, color: primary_navy }
+  border_bottom: default
+  container: "page_container (max-width 1280/1200, see responsive_container in home-design-spec.yaml)"
+
+# ---------------------------------------------------------
+# MAIN LAYOUT: 2-column [main_content, sidebar]
+# ---------------------------------------------------------
+layout:
+  desktop: "grid-cols-[1fr_360px] gap-12, same pattern as Recent News section on homepage"
+
+main_content:
+
+  featured_event:
+    card:
+      image: { aspect: wide, overlay: "gradient dark-to-transparent bottom" }
+      ribbon_badge:
+        position: "top-left corner of image"
+        text: "FEATURED"
+        style: { background: crimson, color: "#FFFFFF", font: utility_font, weight: 600, uppercase: true }
+      date_badge:
+        position: "top-right corner of image - OPPOSITE corner from the FEATURED ribbon (which sits top-left). Confirmed from reference screenshot."
+        shape: { background: crimson, radius: "radius.sm" }
+        decorative_ring: "thin white inset border/ring behind the badge for contrast against the photo - purely decorative"
+        content: { day: "15", month: "NOV", text_color: "#FFFFFF" }
+      content:
+        position: "overlay bottom-left of image"
+        category: { text: "SENI & BUDAYA", color: crimson, uppercase: true, weight: 600 }
+        headline:
+          text: "Konser Orkestra Simfoni Universitas Musim Gugur"
+          style: { font: heading_font, weight: 600, size: 24px, color: "#FFFFFF" }
+        excerpt:
+          text: "Pertunjukan istimewa menampilkan karya-karya klasik dan kontemporer oleh mahasiswa fakultas seni pertunjukan."
+          style: { font: body_font, size: 14px, color: text_secondary_on_dark }
+
+  event_list:
+    layout: "vertical stack, each row: thumbnail image (left, fixed ref width) + content (right, fill)"
+    card:
+      border: default
+      date_badge:
+        position: "top-right corner of thumbnail image (no ribbon on these cards, unlike featured_event) - confirmed from reference screenshot"
+        shape: { background: crimson, radius: "radius.sm" }
+      content:
+        category: { color: crimson, uppercase: true, weight: 600, size: 12px }
+        headline: { style: { font: heading_font, weight: 600, size: "18-20px", color: primary_navy } }
+        cta:
+          label: "DAFTAR"
+          style: { font: utility_font, weight: 600, color: crimson, uppercase: true }
+    sample_items:
+      - date: { day: "18", month: "NOV" }
+        category: "PAMERAN"
+        title: "Pameran Karya Akhir Mahasiswa Arsitektur 2024"
+      - date: { day: "20", month: "NOV" }
+        category: "OLAHRAGA"
+        title: "Final Kejuaraan Bola Basket Antar Fakultas"
+      - date: { day: "22", month: "NOV" }
+        category: "SEMINAR"
+        title: "Seminar Terbuka: Inovasi Bioteknologi Medis"
+      - date: { day: "25", month: "NOV" }
+        category: "DISKUSI"
+        title: "Forum Diskusi Terbuka BEM Seluruh Indonesia"
+    note: >
+      Each card has its own "DAFTAR" (Register) CTA - implies events have a
+      registration flow per event, not just "read more" like regular
+      articles. MVP-safe default: link to event detail page, add real
+      registration/RSVP later.
+
+  pagination:
+    prev: { label: "SEBELUMNYA", icon: arrow_left, color: text_muted_link }
+    pages:
+      - { label: "1", state: active, background: primary_navy, text_color: "#FFFFFF", radius: "radius.md", size: "40x40" }
+      - { label: "2", radius: "radius.md", size: "40x40" }
+      - { label: "3", radius: "radius.md", size: "40x40" }
+      - { label: "...", disabled: true }
+      - { label: "12", radius: "radius.md", size: "40x40" }
+    next: { label: "BERIKUTNYA", icon: arrow_right, color: primary_navy }
+    divider: border-top
+
+sidebar:
+  container: { background: surface_alt_2, radius: "radius.lg" }
+
+  # ---------------------------------------------------------
+  # FUNCTIONAL CALENDAR - needs real data binding, not decorative
+  # ---------------------------------------------------------
+  calendar_widget:
+    title: { text: "November 2024", style: { font: heading_font, weight: 600, color: primary_navy } }
+    behavior: >
+      THIS IS A REAL MINI CALENDAR TIED TO EVENT DATES, not a static image.
+      Generate dynamically from the current month + actual events table
+      data (event date column), with 3 visual states per day cell:
+        1. default - text_primary color, no background, radius.md on hover
+        2. has_event (outlined) - 1px crimson border, crimson text,
+           radius.md - used for days 18, 20, 22, 25 (each has a
+           registered event that day)
+        3. featured_or_selected (filled) - crimson background, white text,
+           radius.md - used for day 15 (matches the featured_event date)
+      Days belonging to the previous/next month (28-31 leading, 1 trailing)
+      render muted (border color, no interaction) to show grid continuity
+      without implying they're clickable.
+    weekday_header:
+      labels: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+      style: { color: border, uppercase: true }
+    implementation_note: >
+      Build as a reusable Blade/Alpine component taking a month + an array
+      of event dates as props. This same widget likely belongs on the
+      admin CMS side too (e.g. scheduled publishing calendar) - don't
+      build it as a one-off hardcoded grid.
+
+  categories_filter:
+    title: { text: "Filter Kategori", border_bottom: default }
+    item: { icon: muted, text_color: text_secondary, style: utility_font }
+    items: ["Akademik", "Olahraga", "Seni & Budaya", "Kemahasiswaan", "Seminar Umum"]
+    behavior: "clicking a category filters event_list - should update the query/URL (e.g. ?kategori=olahraga), not just client-side hide/show, so it's linkable and paginatable"
+
+  key_events_list:
+    title: { text: "Acara Utama Pekan Ini", border_bottom: default }
+    item:
+      date_chip: { month: { color: varies, uppercase: true }, day: { color: varies, weight: 700 } }
+      title: { style: { font: heading_font, weight: 600, size: 14px, color: primary_navy } }
+    items:
+      - date: { day: "15", month: "NOV" }
+        color: crimson
+        title: "Konser Orkestra Simfoni Universitas Musim Gugur"
+      - date: { day: "18", month: "NOV" }
+        color: text_muted_link
+        title: "Pameran Karya Akhir Mahasiswa Arsitektur 2024"
+      - date: { day: "20", month: "NOV" }
+        color: text_muted_link
+        title: "Final Kejuaraan Bola Basket Antar Fakultas"
+    note: >
+      Only the nearest/featured event (Nov 15) uses crimson; the other two
+      use the muted text_muted_link color. Likely logic: "next upcoming
+      event" gets emphasis - implement as a computed state (closest
+      upcoming date = emphasized), not a hardcoded style per item.
+
+  advertisement_slot:
+    reuse_component: "advertisement_slot from home-design-spec.yaml - identical structure (label + SPONSOR CONTENT box, surface_muted bg, radius.lg)"
+    note: "Confirms this should be a shared Blade component, not duplicated markup, across Homepage and Events."
+
+# ---------------------------------------------------------
+# FOOTER - identical to Homepage footer, confirmed reused as-is
+# ---------------------------------------------------------
+footer:
+  reuse_component: "footer from home-design-spec.yaml - no changes on this page"
+
+# ---------------------------------------------------------
+# RESPONSIVE
+# ---------------------------------------------------------
+responsive:
+  container: "same page_container strategy as other pages (max-w-[1280px] mx-auto px-10) - see home-design-spec.yaml for full rationale"
+  below_lg: "sidebar (calendar + filters + key events + ad) moves below main_content, full width"
+  mobile: "event_list cards stack thumbnail above content instead of side-by-side; calendar_widget stays a full 7-column grid but shrinks cell padding rather than dropping to a list"
+
+# =========================================================
+# University News Portal — UI/UX Design Spec (cleaned)
+# Page: PROFILE (Account Settings)
+# Shares tokens with: global design spec
+# =========================================================
+
+meta:
+  name: University News Portal
+  page: Profile / Account Settings
+  visual_verification: >
+    Cross-checked against the rendered reference screenshot. Includes a
+    simplified "transactional" header (no main navigation links, only Logo,
+    "Settings", and a red "Log Out" button). Main content area has a strong
+    240px inline padding (on 1280px container) to keep forms narrow and readable.
+  style: minimal / clean, sharp corners (0px default), distinct "Danger Zone" block
+
+header_nav_transactional:
+  background: primary_navy
+  container: page_container
+  layout: [brand_logo, spacer, settings_label, logout_button]
+  
+  brand_logo:
+    icon: { shape: square, color: crimson, letter: "U" }
+    text: { label: "UniversityNews", color: "#FFFFFF", font: body_font, size: 24px }
+  
+  settings_label:
+    text: "Settings"
+    style: { font: utility_font, color: "#FFFFFF", weight: 600, size: 14px }
+    
+  logout_button:
+    label: "LOG OUT"
+    icon: arrow_right_bracket (optional)
+    style: { background: crimson, color: "#FFFFFF", font: utility_font, weight: 600, uppercase: true, padding: "8px 24px" }
+
+main_content:
+  container: 
+    width: "fill (within page_container max 1280px)"
+    padding_inline: 240px # Constrains forms to a comfortable reading width
+    padding_block: "80px 40px"
+    
+  page_title:
+    text: "Account Settings"
+    style: { font: heading_font, weight: 600, size: 32px, color: primary_navy }
+  page_description:
+    text: "Manage your profile, security, and account preferences."
+    style: { font: body_font, size: 17px, color: text_secondary }
+
+  sections:
+    common_layout: "vertical stack, gap 32px, top border #C5C6CF on each section (except top)"
+    
+    profile_information:
+      title: "Profile Information"
+      description: "Update your account's profile information and email address."
+      fields_layout: "grid, label on left (width ~200px), input on right (fill)"
+      fields:
+        - label: "FULL NAME"
+          input: { value: "Public Reader", border: default, bg: surface, radius: 0 }
+        - label: "EMAIL ADDRESS"
+          input: { value: "public@university.edu", border: default, bg: surface, radius: 0 }
+      action:
+        button: "SAVE CHANGES"
+        style: { bg: primary_navy, color: "#FFFFFF", align: right }
+
+    security:
+      title: "Security"
+      description: "Ensure your account is using a long, random password to stay secure."
+      fields_layout: "grid, label on left, input on right"
+      fields:
+        - label: "CURRENT PASSWORD"
+        - label: "NEW PASSWORD"
+        - label: "CONFIRM PASSWORD"
+      action:
+        button: "UPDATE PASSWORD"
+        style: { bg: primary_navy, color: "#FFFFFF", align: right }
+
+    danger_zone:
+      border_left: "2px solid crimson"
+      padding_left: 32px
+      title: 
+        icon: warning_triangle (crimson)
+        text: "Danger Zone"
+        color: crimson
+      description: "Once your account is deleted, all of its resources and data will be permanently deleted. This action cannot be undone."
+      actions:
+        layout: row, gap 16px
+        button_delete:
+          label: "PERMANENTLY DELETE ACCOUNT"
+          style: { border: "1px solid crimson", color: crimson, bg: transparent }
+# =========================================================
+# Page: RESEARCH & INNOVATION
+# =========================================================
+
+page_research_and_innovation:
+  meta:
+    name: Research & Innovation
+    description: "2-column layout: Left column for articles (Featured + 2x2 Grid), Right column for sidebar widgets (Filters, Trending, Metrics, Ad). Uses the global page_container (max-w-[1280px])."
+
+  components:
+    hero_article:
+      layout: "Image top, text bottom. Image takes full width."
+      elements:
+        image_container: { height: 400px, border: "1px solid #C5C6CF", background: "#F3F4F6" } # gray-100
+        tag: { position: absolute, top: 16px, left: 16px, bg: crimson, text: white, typography: utility_font, uppercase: true }
+        title: { typography: heading_font, size: 32px, color: primary_navy, hover: crimson }
+        excerpt: { typography: body_font, size: 17px, line_height: 28px, color: text_secondary, line_clamp: 3 }
+        button: { style: outline, border: primary_navy, text: primary_navy, hover_bg: primary_navy, hover_text: white }
+
+    research_grid:
+      layout: "2 columns on tablet/desktop. CSS Grid."
+      card:
+        bg: background
+        border: "1px solid #C5C6CF"
+        hover_bg: white
+        image: { height: 192px } # h-48
+        category_tag: { typography: utility_font, size: 14px, color: crimson, uppercase: true }
+        title: { typography: heading_font, size: 24px, color: primary_navy, hover: underline (crimson) }
+        excerpt: { typography: body_font, size: 17px, color: text_secondary, line_clamp: 3 }
+        link: { typography: utility_font, size: 14px, color: primary_navy, hover: crimson, icon: arrow_forward }
+
+    sidebar_filter:
+      bg: background
+      border: "1px solid #C5C6CF"
+      title_border_bottom: "2px solid crimson"
+      select_input: { border: "#C5C6CF", bg: white, focus_border: crimson, radius: 0px }
+      button: { bg: primary_navy, text: white, hover_bg: gray-800 }
+
+    sidebar_trending:
+      item:
+        border_left: "3px solid transparent"
+        hover_border_left: crimson
+        category: { typography: utility_font, size: 12px, color: crimson, uppercase: true }
+        title: { typography: body_font, size: 17px, weight: bold, color: primary_navy, hover: crimson }
+
+    sidebar_metrics:
+      bg: primary_navy
+      text: white
+      icon_color: crimson
+      title_border_bottom: "1px solid rgba(255,255,255,0.2)"
+      number: { typography: heading_font, size: 24px, weight: bold }
+      label: { typography: utility_font, size: 12px, color: gray-300, uppercase: true }
+
+    sidebar_ad_slot:
+      bg: gray-100
+      border: "1px solid #C5C6CF"
+      label: { typography: utility_font, size: 12px, color: text_secondary, uppercase: true, letter_spacing: widest }
+      content_box: { bg: white, border: "1px solid #C5C6CF", height: 250px, relative: true }

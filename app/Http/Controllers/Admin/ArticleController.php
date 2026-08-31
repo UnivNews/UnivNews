@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -42,19 +43,26 @@ class ArticleController extends Controller
     public function create(): View
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.articles.create', compact('categories'));
+        $allTags = Tag::orderBy('name')->pluck('name');
+        return view('admin.articles.create', compact('categories', 'allTags'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string|max:1000',
-            'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'status' => 'required|in:draft,published,pending_review',
-            'featured_image' => 'nullable|image|max:4096',
-            'tags' => 'nullable|array',
+            'title'                  => 'required|string|max:255',
+            'excerpt'                => 'nullable|string|max:1000',
+            'content'                => 'required|string',
+            'category_id'            => 'required|exists:categories,id',
+            'status'                 => 'required|in:draft,published,pending_review',
+            'featured_image'         => 'nullable|image|max:4096',
+            'tags'                   => 'nullable|array',
+            'event_type'             => 'nullable|string|max:100',
+            'event_date'             => 'nullable|date',
+            'registration_link'      => 'nullable|url|max:2048',
+            'registration_deadline'  => 'nullable|date',
+            'research_field'         => 'nullable|string|max:100',
+            'research_center'        => 'nullable|string|max:150',
         ]);
 
         $slug = Str::slug($validated['title']);
@@ -71,11 +79,34 @@ class ArticleController extends Controller
         $article->excerpt = $validated['excerpt'] ?? Str::limit(strip_tags($validated['content']), 160);
         $article->content = $validated['content'];
         $article->category_id = $validated['category_id'];
-        $article->user_id = auth()->id();
+        $article->user_id = Auth::guard('admin')->id();
         $article->status = $validated['status'];
 
         if ($validated['status'] === Article::STATUS_PUBLISHED) {
             $article->published_at = now();
+        }
+
+        // Event fields
+        $eventCategory = Category::find($validated['category_id']);
+        if ($eventCategory && strtolower($eventCategory->slug) === 'events') {
+            $article->event_type            = $validated['event_type'] ?? null;
+            $article->event_date            = $validated['event_date'] ?? null;
+            $article->registration_link     = $validated['registration_link'] ?? null;
+            $article->registration_deadline = $validated['registration_deadline'] ?? null;
+        } else {
+            $article->event_type            = null;
+            $article->event_date            = null;
+            $article->registration_link     = null;
+            $article->registration_deadline = null;
+        }
+
+        // Research fields
+        if ($eventCategory && strtolower($eventCategory->slug) === 'research-innovation') {
+            $article->research_field  = $validated['research_field'] ?? null;
+            $article->research_center = $validated['research_center'] ?? null;
+        } else {
+            $article->research_field  = null;
+            $article->research_center = null;
         }
 
         if ($request->hasFile('featured_image')) {
@@ -85,8 +116,8 @@ class ArticleController extends Controller
 
         $article->save();
 
+        $tagIds = [];
         if (!empty($validated['tags'])) {
-            $tagIds = [];
             foreach ($validated['tags'] as $tagName) {
                 $trimmed = trim(str_replace('#', '', $tagName));
                 if ($trimmed) {
@@ -94,8 +125,8 @@ class ArticleController extends Controller
                     $tagIds[] = $tag->id;
                 }
             }
-            $article->tags()->sync($tagIds);
         }
+        $article->tags()->sync($tagIds);
 
         return redirect()->route('admin.articles.index')->with('success', 'Article created successfully.');
     }
@@ -103,19 +134,26 @@ class ArticleController extends Controller
     public function edit(Article $article): View
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.articles.edit', compact('article', 'categories'));
+        $allTags = Tag::orderBy('name')->pluck('name');
+        return view('admin.articles.edit', compact('article', 'categories', 'allTags'));
     }
 
     public function update(Request $request, Article $article): RedirectResponse
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string|max:1000',
-            'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'status' => 'required|in:draft,published,pending_review',
-            'featured_image' => 'nullable|image|max:4096',
-            'tags' => 'nullable|array',
+            'title'                  => 'required|string|max:255',
+            'excerpt'                => 'nullable|string|max:1000',
+            'content'                => 'required|string',
+            'category_id'            => 'required|exists:categories,id',
+            'status'                 => 'required|in:draft,published,pending_review',
+            'featured_image'         => 'nullable|image|max:4096',
+            'tags'                   => 'nullable|array',
+            'event_type'             => 'nullable|string|max:100',
+            'event_date'             => 'nullable|date',
+            'registration_link'      => 'nullable|url|max:2048',
+            'registration_deadline'  => 'nullable|date',
+            'research_field'         => 'nullable|string|max:100',
+            'research_center'        => 'nullable|string|max:150',
         ]);
 
         if ($validated['title'] !== $article->title) {
@@ -139,6 +177,29 @@ class ArticleController extends Controller
             $article->published_at = now();
         }
 
+        // Event fields
+        $eventCategory = Category::find($validated['category_id']);
+        if ($eventCategory && strtolower($eventCategory->slug) === 'events') {
+            $article->event_type            = $validated['event_type'] ?? null;
+            $article->event_date            = $validated['event_date'] ?? null;
+            $article->registration_link     = $validated['registration_link'] ?? null;
+            $article->registration_deadline = $validated['registration_deadline'] ?? null;
+        } else {
+            $article->event_type            = null;
+            $article->event_date            = null;
+            $article->registration_link     = null;
+            $article->registration_deadline = null;
+        }
+
+        // Research fields
+        if ($eventCategory && strtolower($eventCategory->slug) === 'research-innovation') {
+            $article->research_field  = $validated['research_field'] ?? null;
+            $article->research_center = $validated['research_center'] ?? null;
+        } else {
+            $article->research_field  = null;
+            $article->research_center = null;
+        }
+
         if ($request->hasFile('featured_image')) {
             $path = $request->file('featured_image')->store('articles', 'public');
             $article->featured_image_path = 'storage/' . $path;
@@ -146,8 +207,8 @@ class ArticleController extends Controller
 
         $article->save();
 
-        if (isset($validated['tags'])) {
-            $tagIds = [];
+        $tagIds = [];
+        if (!empty($validated['tags'])) {
             foreach ($validated['tags'] as $tagName) {
                 $trimmed = trim(str_replace('#', '', $tagName));
                 if ($trimmed) {
@@ -155,8 +216,8 @@ class ArticleController extends Controller
                     $tagIds[] = $tag->id;
                 }
             }
-            $article->tags()->sync($tagIds);
         }
+        $article->tags()->sync($tagIds);
 
         return redirect()->route('admin.articles.index')->with('success', 'Article updated successfully.');
     }

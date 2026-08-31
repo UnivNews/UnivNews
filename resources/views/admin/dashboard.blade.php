@@ -14,7 +14,7 @@
                 Live Metrics
             </p>
             <h1 class="text-4xl font-extrabold font-heading text-[#00081e] tracking-tight leading-none">Dashboard Overview</h1>
-            <p class="text-gray-500 font-sans text-sm mt-2">Welcome back, {{ auth()->user()->name }} &bull; {{ ucfirst(auth()->user()->role) }}</p>
+            <p class="text-gray-500 font-sans text-sm mt-2">Welcome back, {{ Auth::guard('admin')->user()->name }} &bull; {{ ucfirst(Auth::guard('admin')->user()->role) }}</p>
         </div>
 
         <div class="flex items-center gap-3 shrink-0">

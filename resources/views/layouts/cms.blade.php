@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'CMS Portal - University News')</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23B71032'/><text x='50' y='50' font-family='sans-serif' font-weight='bold' font-size='70' fill='white' dominant-baseline='central' text-anchor='middle'>U</text></svg>">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,8 +55,17 @@
             <!-- Navigation Links -->
             <nav class="flex-1 overflow-y-auto py-6 space-y-1.5 px-0">
                 @php
-                    $isAdmin = auth()->user()->isAdmin();
-                    $isAuthor = auth()->user()->isAuthor();
+                    // Determine user from the correct guard based on current route context
+                    $isAdminRoute = request()->routeIs('admin.*');
+                    if ($isAdminRoute) {
+                        $currentUser = Auth::guard('admin')->user();
+                        $isAdmin = true;
+                        $isAuthor = false;
+                    } else {
+                        $currentUser = Auth::guard('web')->user();
+                        $isAdmin = false;
+                        $isAuthor = $currentUser && $currentUser->isAuthor();
+                    }
                 @endphp
 
                 <!-- Dashboard -->
@@ -96,9 +106,18 @@
                     </svg>
                     Universities
                 </a>
+
+                {{-- App Settings: payment fee, etc. (Admin only) --}}
+                <a href="{{ route('admin.app-settings.index') }}" 
+                   class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('admin.app-settings*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                    <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                    </svg>
+                    Payment Settings
+                </a>
                 @endif
 
-                <!-- Settings -->
+                <!-- Settings (User Profile) -->
                 <a href="{{ $isAdmin ? route('admin.settings.edit') : route('author.settings.edit') }}" 
                    class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('*.settings*') || request()->routeIs('*.profile*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +130,7 @@
 
             <!-- Bottom Log Out -->
             <div class="p-4 border-t border-gray-800/80">
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ $isAdmin ? route('admin.logout') : route('logout') }}">
                     @csrf
                     <button type="submit" class="flex items-center w-full px-4 py-2.5 text-gray-400 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium">
                         <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,12 +195,12 @@
 
                     <!-- User Pill -->
                     <div class="flex items-center gap-2.5">
-                        <span class="text-xs font-sans text-gray-600 hidden sm:inline-block">Logged in as: <strong class="text-navy font-semibold text-gray-900">{{ auth()->user()->name }}</strong></span>
+                        <span class="text-xs font-sans text-gray-600 hidden sm:inline-block">Logged in as: <strong class="text-navy font-semibold text-gray-900">{{ $currentUser->name }}</strong></span>
                         <div class="w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center font-bold text-xs overflow-hidden border border-gray-200">
-                            @if(auth()->user()->avatar_path)
-                                <img src="{{ asset(auth()->user()->avatar_path) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                            @if($currentUser->avatar_path)
+                                <img src="{{ asset($currentUser->avatar_path) }}" alt="{{ $currentUser->name }}" class="w-full h-full object-cover">
                             @else
-                                <span class="uppercase">{{ substr(auth()->user()->name, 0, 2) }}</span>
+                                <span class="uppercase">{{ substr($currentUser->name, 0, 2) }}</span>
                             @endif
                         </div>
                     </div>

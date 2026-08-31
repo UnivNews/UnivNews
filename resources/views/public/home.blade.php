@@ -5,15 +5,26 @@
 @section('content')
 
 <style>
-    @keyframes marquee {
-        0% { transform: translateX(0%); }
-        100% { transform: translateX(-100%); }
+    .ticker-wrap {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
     }
-    .animate-marquee {
-        animation: marquee 20s linear infinite;
+    .ticker-track {
+        display: inline-flex;
+        animation: scroll-left 25s linear infinite;
+        will-change: transform;
     }
-    .group:hover .animate-marquee {
+    .ticker-track:hover {
         animation-play-state: paused;
+    }
+    .ticker-content {
+        display: flex;
+        align-items: center;
+    }
+    @keyframes scroll-left {
+        from { transform: translateX(0); }
+        to   { transform: translateX(-50%); }
     }
 </style>
 
@@ -27,36 +38,78 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Hero Article (Left, wide) -->
-            <div class="lg:col-span-8">
-                @if($featuredArticle)
-                <a href="{{ route('article', $featuredArticle->slug) }}" class="block group relative w-full h-[400px] lg:h-[500px]">
-                    <!-- Check if article has featured image path -->
-                    @if($featuredArticle->featured_image_path)
-                        @if(Str::startsWith($featuredArticle->featured_image_path, ['http://', 'https://']))
-                            <img src="{{ $featuredArticle->featured_image_path }}" class="w-full h-full object-cover" alt="{{ $featuredArticle->title }}">
+            <!-- Hero Slider (Left, wide) -->
+            <div class="lg:col-span-8" x-data="{ 
+                currentSlide: 0, 
+                totalSlides: {{ $featuredArticles->count() }},
+                autoplay: null,
+                startAutoplay() {
+                    this.autoplay = setInterval(() => { this.nextSlide() }, 5000);
+                },
+                stopAutoplay() {
+                    clearInterval(this.autoplay);
+                },
+                nextSlide() {
+                    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+                },
+                prevSlide() {
+                    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+                },
+                goToSlide(i) {
+                    this.currentSlide = i;
+                    this.stopAutoplay();
+                    this.startAutoplay();
+                }
+            }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
+                <div class="relative w-full h-[400px] lg:h-[500px] overflow-hidden">
+                    @foreach($featuredArticles as $index => $slide)
+                    <a href="{{ route('article', $slide->slug) }}" 
+                       class="absolute inset-0 block group transition-opacity duration-700 ease-in-out"
+                       :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
+                       @if($index !== 0) x-cloak @endif>
+                        @if($slide->featured_image_path)
+                            @if(Str::startsWith($slide->featured_image_path, ['http://', 'https://']))
+                                <img src="{{ $slide->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
+                            @else
+                                <img src="{{ asset('storage/' . $slide->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
+                            @endif
                         @else
-                            <img src="{{ asset('storage/' . $featuredArticle->featured_image_path) }}" class="w-full h-full object-cover" alt="{{ $featuredArticle->title }}">
+                            <img src="https://picsum.photos/seed/hero{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Featured">
                         @endif
-                    @else
-                        <img src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover" alt="Featured">
-                    @endif
-                    
-                    <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#00081E] via-[#00081E]/80 to-transparent"></div>
-                    
-                    <!-- Content -->
-                    <div class="absolute bottom-0 left-0 p-8 w-full max-w-3xl">
-                        <span class="text-sm font-bold uppercase tracking-widest text-crimson mb-3 block" style="font-family: 'Work Sans', sans-serif;">{{ $featuredArticle->category->name }}</span>
-                        <h2 class="text-3xl lg:text-[32px] font-bold mb-4 text-white group-hover:text-gray-200 transition-colors" style="font-family: Montserrat, sans-serif; line-height: 1.2;">
-                            {{ $featuredArticle->title }}
-                        </h2>
-                        <p class="text-[17px] text-[#7687B2] line-clamp-2" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                            {{ $featuredArticle->excerpt }}
-                        </p>
+                        
+                        <!-- Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#00081E] via-[#00081E]/80 to-transparent"></div>
+                        
+                        <!-- Content -->
+                        <div class="absolute bottom-0 left-0 p-8 w-full max-w-3xl">
+                            <span class="text-sm font-bold uppercase tracking-widest text-crimson mb-3 block" style="font-family: 'Work Sans', sans-serif;">{{ $slide->tags->first() ? $slide->tags->first()->name : $slide->category->name }}</span>
+                            <h2 class="text-3xl lg:text-[32px] font-bold mb-4 text-white" style="font-family: Montserrat, sans-serif; line-height: 1.2;">
+                                {{ $slide->title }}
+                            </h2>
+                            <p class="text-[17px] text-[#7687B2] line-clamp-2" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                {{ $slide->excerpt }}
+                            </p>
+                        </div>
+                    </a>
+                    @endforeach
+
+                    <!-- Slide Indicators -->
+                    <div class="absolute bottom-4 right-4 z-20 flex items-center space-x-2">
+                        @foreach($featuredArticles as $index => $slide)
+                        <button @click="goToSlide({{ $index }})" 
+                                class="w-2.5 h-2.5 rounded-full transition-all duration-300 focus:outline-none"
+                                :class="currentSlide === {{ $index }} ? 'bg-crimson w-6' : 'bg-white/50 hover:bg-white/80'"></button>
+                        @endforeach
                     </div>
-                </a>
-                @endif
+
+                    <!-- Navigation Arrows (Desktop only to prevent mobile text overlap) -->
+                    <button @click="prevSlide(); stopAutoplay(); startAutoplay();" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button @click="nextSlide(); stopAutoplay(); startAutoplay();" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Sidebar Articles (Right, narrow) -->
@@ -64,7 +117,7 @@
                 @foreach($recentArticles->take(2) as $index => $article)
                 <div class="py-6 {{ $index === 0 ? 'border-b border-gray-700' : '' }}">
                     <a href="{{ route('article', $article->slug) }}" class="block group">
-                        <span class="text-xs font-bold uppercase tracking-widest text-crimson mb-2 block" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-crimson mb-2 block" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
                         <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-gray-200 transition-colors" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
                             {{ $article->title }}
                         </h3>
@@ -80,30 +133,32 @@
 </section>
 
 <!-- News Ticker -->
-<div class="bg-crimson overflow-hidden flex items-center relative group py-2 w-full">
-    <div class="flex whitespace-nowrap animate-marquee items-center text-white text-sm font-bold uppercase tracking-widest" style="font-family: 'Work Sans', sans-serif;">
-        <!-- First set -->
-        <div class="flex items-center px-4">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            CAMPUS TRANSIT DELAYS EXPECTED ON SOUTH ROUTE TODAY
+<div class="bg-crimson ticker-wrap py-2">
+    <div class="ticker-track">
+        <!-- Content 1 -->
+        <div class="ticker-content text-white text-sm font-bold uppercase tracking-widest" style="font-family: 'Work Sans', sans-serif;">
+            @for($i = 0; $i < 6; $i++)
+                @foreach($marqueeArticles as $article)
+                <a href="{{ route('article', $article->slug) }}" class="flex items-center px-4 hover:text-gray-200 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    {{ $article->title }}
+                </a>
+                <div class="text-white mx-2">|</div>
+                @endforeach
+            @endfor
         </div>
-        <div class="text-white mx-2">|</div>
-        <div class="flex items-center px-4">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            REGISTRATION FOR FALL SEMESTER OPENS NEXT TUESDAY AT 8:00 AM
+        <!-- Content 2 -->
+        <div class="ticker-content text-white text-sm font-bold uppercase tracking-widest" style="font-family: 'Work Sans', sans-serif;" aria-hidden="true">
+            @for($i = 0; $i < 6; $i++)
+                @foreach($marqueeArticles as $article)
+                <a href="{{ route('article', $article->slug) }}" class="flex items-center px-4 hover:text-gray-200 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    {{ $article->title }}
+                </a>
+                <div class="text-white mx-2">|</div>
+                @endforeach
+            @endfor
         </div>
-        <div class="text-white mx-2">|</div>
-        <!-- Duplicate for seamless loop -->
-        <div class="flex items-center px-4">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            CAMPUS TRANSIT DELAYS EXPECTED ON SOUTH ROUTE TODAY
-        </div>
-        <div class="text-white mx-2">|</div>
-        <div class="flex items-center px-4">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            REGISTRATION FOR FALL SEMESTER OPENS NEXT TUESDAY AT 8:00 AM
-        </div>
-        <div class="text-white mx-2">|</div>
     </div>
 </div>
 
@@ -120,54 +175,184 @@
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-12">
             <!-- Main Grid -->
             <div>
-                <div class="columns-1 sm:columns-2 gap-6 space-y-6 mb-12">
-                    @foreach($recentArticles->skip(2)->take(6) as $article)
-                    <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid">
-                        <!-- Thumbnail -->
-                        <div class="w-full bg-gray-100 border-b border-[#C5C6CF]">
-                            @if($article->featured_image_path)
-                                @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                    <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover" alt="{{ $article->title }}">
+                <div class="mb-12">
+                    <!-- Recent News Grid -->
+                    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
+                        @php
+                            $recentList = $recentArticles->skip(2)->take(6);
+                            $recentDummyCount = 6 - $recentList->count();
+                            
+                            $dummyVariations = [
+                                [
+                                    'category' => 'RESEARCH & INNOVATION',
+                                    'date' => 'Nov 15',
+                                    'title' => 'Robotics Lab Unveils Autonomous Campus Delivery Prototype',
+                                    'excerpt' => 'A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.',
+                                    'image' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'ACHIEVEMENTS',
+                                    'date' => 'Nov 12',
+                                    'title' => 'Business School Launches New Venture Capital Fellowship',
+                                    'excerpt' => 'The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.',
+                                    'image' => 'https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'RESEARCH & INNOVATION',
+                                    'date' => 'Nov 10',
+                                    'title' => 'New Study Links Urban Green Spaces to Lower Stress Levels in Students',
+                                    'excerpt' => 'Researchers found a significant correlation between time spent in campus parks and reduced cortisol levels during finals week.',
+                                    'image' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'EVENTS',
+                                    'date' => 'Nov 08',
+                                    'title' => 'Annual Arts Festival Draws Record-Breaking Crowd This Weekend',
+                                    'excerpt' => 'Over 10,000 students and local residents attended the three-day event featuring live music, student films, and interactive installations.',
+                                    'image' => 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'EVENTS',
+                                    'date' => 'Nov 05',
+                                    'title' => 'Researchers Discover Novel Enzyme that Breaks Down Microplastics',
+                                    'excerpt' => 'A cross-disciplinary team from Biology and Chemistry has isolated a bacteria strain capable of digesting common packaging materials.',
+                                    'image' => 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop'
+                                ],
+                                [
+                                    'category' => 'ACHIEVEMENTS',
+                                    'date' => 'Nov 02',
+                                    'title' => 'Varsity Basketball Team Secures Regional Championship',
+                                    'excerpt' => 'A thrilling overtime victory propels the team to the national tournament while breaking several school records.',
+                                    'image' => 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop'
+                                ]
+                            ];
+                        @endphp
+
+                        @foreach($recentList as $article)
+                        <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <!-- Thumbnail -->
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                @if($article->featured_image_path)
+                                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
+                                        <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @else
+                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @endif
                                 @else
-                                    <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover" alt="{{ $article->title }}">
+                                    <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
                                 @endif
-                            @else
-                                <img src="https://images.unsplash.com/photo-1507668077129-56e32842fceb?q=80&w=800&auto=format&fit=crop" class="w-full h-auto object-cover" alt="Article">
-                            @endif
-                        </div>
-                        
-                        <!-- Content -->
-                        <div class="p-6">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->category->name }}</span>
-                                <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
                             </div>
-                            <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                {{ $article->title }}
-                            </h3>
-                            <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                {{ $article->excerpt }}
-                            </p>
-                        </div>
-                    </a>
-                    @endforeach
+                            
+                            <!-- Content -->
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    {{ $article->title }}
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    {{ $article->excerpt }}
+                                </p>
+                            </div>
+                        </a>
+                        @endforeach
+
+                        @php
+                            $fallbackArticleUrl = $recentArticles->first() ? route('article', $recentArticles->first()->slug) : route('home');
+                        @endphp
+                        @for($i = 0; $i < $recentDummyCount; $i++)
+                        @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
+                        <a href="{{ $fallbackArticleUrl }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $variation['category'] }}</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $variation['date'] }}</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    {{ $variation['title'] }}
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    {{ $variation['excerpt'] }}
+                                </p>
+                            </div>
+                        </a>
+                        @endfor
+                    </div>
                 </div>
 
-                <!-- Pagination -->
-                <div class="flex items-center justify-between border-t pt-8 border-[#C5C6CF]">
-                    <a href="#" class="text-sm font-bold uppercase tracking-widest flex items-center hover:opacity-80 text-[#4C5E86]" style="font-family: 'Work Sans', sans-serif;">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> NEWER
-                    </a>
-                    <div class="flex space-x-2" style="font-family: 'Work Sans', sans-serif;">
-                        <span class="w-10 h-10 flex items-center justify-center font-bold text-sm text-white bg-navy rounded-[4px]">1</span>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center font-bold text-sm text-[#44464E] rounded-[4px] hover:bg-gray-100">2</a>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center font-bold text-sm text-[#44464E] rounded-[4px] hover:bg-gray-100">3</a>
-                        <span class="w-10 h-10 flex items-center justify-center font-bold text-sm text-[#C5C6CF]">...</span>
-                        <a href="#" class="w-10 h-10 flex items-center justify-center font-bold text-sm text-[#44464E] rounded-[4px] hover:bg-gray-100">12</a>
+                <!-- Others Section Header -->
+                <div class="mb-8 border-b pb-4 border-[#C5C6CF] mt-16">
+                    <h2 class="text-[32px] font-bold text-navy" style="font-family: Montserrat, sans-serif;">
+                        Others
+                    </h2>
+                </div>
+
+                <div class="mb-12">
+                    <!-- Others Grid (15 items) -->
+                    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
+                        @php
+                            $otherArticles = $recentArticles->skip(8)->take(15);
+                            $dummyCount = 15 - $otherArticles->count();
+                        @endphp
+
+                        @foreach($otherArticles as $article)
+                        <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <!-- Thumbnail -->
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                @if($article->featured_image_path)
+                                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
+                                        <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @else
+                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @endif
+                                @else
+                                    <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
+                                @endif
+                            </div>
+                            
+                            <!-- Content -->
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    {{ $article->title }}
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    {{ $article->excerpt }}
+                                </p>
+                            </div>
+                        </a>
+                        @endforeach
+
+                        @for($i = 0; $i < $dummyCount; $i++)
+                        @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
+                        <!-- Dummy Card -->
+                        <a href="{{ $fallbackArticleUrl }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                                <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $variation['category'] }}</span>
+                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $variation['date'] }}</span>
+                                </div>
+                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
+                                    {{ $variation['title'] }}
+                                </h3>
+                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                                    {{ $variation['excerpt'] }}
+                                </p>
+                            </div>
+                        </a>
+                        @endfor
                     </div>
-                    <a href="#" class="text-sm font-bold uppercase tracking-widest flex items-center hover:opacity-80 text-navy" style="font-family: 'Work Sans', sans-serif;">
-                        OLDER <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
                 </div>
             </div>
 
@@ -179,67 +364,37 @@
                         <span class="w-2 h-2 rounded-full mr-3 bg-crimson"></span> TRENDING NEWS
                     </h3>
                     <div class="space-y-5">
-                        
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">01</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        Breakthrough in Quantum Computing Achieved by Engineering Faculty
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Technology</span>
-                            </div>
-                        </div>
+                        @php
+                            $trendingNewsList = ($trendingResearch ?? collect())->concat($recentArticles ?? collect())->unique('id')->take(5);
+                        @endphp
 
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">02</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        New Study Links Urban Green Spaces to Lower Stress Levels in Students
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Health & Wellness</span>
+                        @if($trendingNewsList->isNotEmpty())
+                            @foreach($trendingNewsList as $idx => $tArticle)
+                            <div class="flex gap-4 group items-start">
+                                <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">{{ sprintf('%02d', $idx + 1) }}</span>
+                                <div>
+                                    <a href="{{ route('article', $tArticle->slug) }}">
+                                        <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
+                                            {{ $tArticle->title }}
+                                        </h4>
+                                    </a>
+                                    <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">{{ $tArticle->category?->name ?? 'General' }}</span>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">03</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        Annual Arts Festival Draws Record-Breaking Crowd This Weekend
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Campus Life</span>
+                            @endforeach
+                        @else
+                            <div class="flex gap-4 group items-start">
+                                <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">01</span>
+                                <div>
+                                    <a href="{{ route('home') }}">
+                                        <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
+                                            Breakthrough in Quantum Computing Achieved by Engineering Faculty
+                                        </h4>
+                                    </a>
+                                    <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Technology</span>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">04</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        Researchers Discover Novel Enzyme that Breaks Down Microplastics
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Environment</span>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">05</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        University Announces Groundbreaking $50M Endowment for Scholarships
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Administration</span>
-                            </div>
-                        </div>
-
+                        @endif
                     </div>
                 </div>
 

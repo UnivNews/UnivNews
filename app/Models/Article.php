@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Article extends Model
 {
     use HasFactory;
 
-    const STATUS_DRAFT = 'draft';
-    const STATUS_PENDING_REVIEW = 'pending_review';
-    const STATUS_PUBLISHED = 'published';
-    const STATUS_REJECTED = 'rejected';
+    const STATUS_DRAFT            = 'draft';
+    const STATUS_PENDING_REVIEW    = 'pending_review';
+    const STATUS_AWAITING_PAYMENT  = 'awaiting_payment';
+    const STATUS_PUBLISHED         = 'published';
+    const STATUS_REJECTED          = 'rejected';
 
     protected $fillable = [
         'title',
@@ -27,11 +29,19 @@ class Article extends Model
         'views_count',
         'user_id',
         'category_id',
+        'event_date',
+        'event_type',
+        'registration_link',
+        'registration_deadline',
+        'research_field',
+        'research_center',
     ];
 
     protected $casts = [
-        'published_at' => 'datetime',
-        'views_count' => 'integer',
+        'published_at'          => 'datetime',
+        'views_count'           => 'integer',
+        'event_date'            => 'datetime',
+        'registration_deadline' => 'datetime',
     ];
 
     public function user()
@@ -49,6 +59,16 @@ class Article extends Model
         return $this->belongsToMany(Tag::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function boosts(): HasMany
+    {
+        return $this->hasMany(Boost::class);
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PUBLISHED)
@@ -59,6 +79,11 @@ class Article extends Model
     public function scopePendingReview(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PENDING_REVIEW);
+    }
+
+    public function scopeAwaitingPayment(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_AWAITING_PAYMENT);
     }
 
     public function isPublished(): bool
@@ -80,4 +105,50 @@ class Article extends Model
     {
         return $this->status === self::STATUS_REJECTED;
     }
+
+    public function isAwaitingPayment(): bool
+    {
+        return $this->status === self::STATUS_AWAITING_PAYMENT;
+    }
+
+    public function isBoosted(): bool
+    {
+        $today = now()->toDateString();
+
+        if ($this->relationLoaded('boosts')) {
+            return $this->boosts->contains(function ($boost) use ($today) {
+                $startDate = $boost->start_date ? (\is_string($boost->start_date) ? $boost->start_date : $boost->start_date->toDateString()) : null;
+                $endDate = $boost->end_date ? (\is_string($boost->end_date) ? $boost->end_date : $boost->end_date->toDateString()) : null;
+
+                return $boost->status === 'active'
+                    && ($startDate === null || $startDate <= $today)
+                    && ($endDate === null || $endDate >= $today);
+            });
+        }
+
+        return $this->boosts()
+            ->where('status', 'active')
+            ->where('start_date', '<=', $today)
+            ->where('end_date', '>=', $today)
+            ->exists();
+    }
+
+    /**
+     * Cek apakah tombol pendaftaran event harus ditampilkan:
+     * - Ada link pendaftaran
+     * - Batas waktu pendaftaran belum terlewati (atau tidak diisi = tampilkan terus)
+     */
+    public function hasActiveRegistration(): bool
+    {
+        if (empty($this->registration_link)) {
+            return false;
+        }
+
+        if ($this->registration_deadline && $this->registration_deadline->isPast()) {
+            return false;
+        }
+
+        return true;
+    }
 }
+

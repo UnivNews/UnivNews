@@ -6,15 +6,23 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'University News Portal') }} - Authentication</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23B71032'/><text x='50' y='50' font-family='sans-serif' font-weight='bold' font-size='70' fill='white' dominant-baseline='central' text-anchor='middle'>U</text></svg>">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans text-text-main antialiased bg-background min-h-screen flex flex-col">
+<body class="font-sans text-text-main antialiased bg-navy min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <div class="flex-grow flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Fullscreen Background Image Layer -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <img src="https://images.unsplash.com/photo-1713633053651-0bb16c6dfa55?q=80&w=1920&auto=format&fit=crop" 
+             alt="Background" 
+             class="w-full h-full object-cover opacity-20">
+    </div>
+
+    <div class="w-full flex-grow flex flex-col py-12 px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-center gap-12">
+        <div class="w-full max-w-7xl m-auto flex flex-col md:flex-row items-center justify-center gap-12">
             
             @if(isset($support))
             <!-- Support Center (Desktop left side, mobile stacked below or above depending on view) -->
@@ -37,18 +45,5 @@
         </div>
 
     </div>
-
-    <!-- Footer -->
-    <footer class="py-8 border-t border-border-main mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="text-sm text-gray-500 text-center md:text-left">
-                &copy; {{ date('Y') }} {{ config('app.name', 'University News') }}. All rights reserved.
-            </div>
-            <div class="flex space-x-6 text-sm text-gray-500">
-                <a href="{{ config('support.privacy_url', '#') }}" class="hover:text-navy transition-colors">Privacy Policy</a>
-                <a href="{{ config('support.terms_url', '#') }}" class="hover:text-navy transition-colors">Terms of Service</a>
-            </div>
-        </div>
-    </footer>
 </body>
 </html>

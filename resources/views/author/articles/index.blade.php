@@ -73,8 +73,12 @@
     </div>
 
     <!-- Articles Table Card -->
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden relative">
+        @php
+            $hasAnyBoosted = false;
+        @endphp
+        
+        <div class="overflow-x-auto relative z-10">
             <table class="w-full text-left text-xs font-sans">
                 <thead class="bg-[#f8f9fa] text-gray-500 uppercase tracking-wider border-b border-gray-200">
                     <tr>
@@ -88,7 +92,11 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($articles as $article)
-                    <tr class="hover:bg-gray-50/80 transition-colors">
+                        @php
+                            $isBoosted = $article->isBoosted();
+                            if ($isBoosted) $hasAnyBoosted = true;
+                        @endphp
+                    <tr class="transition-colors {{ $isBoosted ? 'bg-transparent' : 'bg-white hover:bg-gray-50/80' }}">
                         <!-- Title & Excerpt -->
                         <td class="px-6 py-4 max-w-sm">
                             <div class="font-bold text-gray-900 text-sm line-clamp-1">
@@ -107,7 +115,7 @@
 
                         <!-- Category -->
                         <td class="px-6 py-4 text-gray-600">
-                            <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-700 text-[11px]">
+                            <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-700 text-[11px] whitespace-nowrap">
                                 {{ $article->category->name ?? '-' }}
                             </span>
                         </td>
@@ -139,19 +147,29 @@
                         <td class="px-6 py-4 text-right space-x-2">
                             @if($article->isDraft() || $article->isRejected())
                                 <a href="{{ route('author.articles.edit', $article) }}" 
-                                   class="text-[#8b1528] font-bold hover:underline">
-                                    Edit
+                                   class="text-blue-600 hover:text-blue-800 transition-colors inline-block" title="Edit">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                 </a>
 
-                                <form action="{{ route('author.articles.destroy', $article) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this draft?');">
+                                <form action="{{ route('author.articles.destroy', $article) }}" method="POST" class="inline-block ml-2" onsubmit="return confirm('Delete this draft?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-800 font-semibold">
-                                        Delete
+                                    <button type="submit" class="text-red-600 hover:text-red-800 transition-colors" title="Delete">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                 </form>
                             @elseif($article->isPublished())
-                                <a href="{{ route('article', $article->slug) }}" target="_blank" class="text-blue-600 font-semibold hover:underline">
+                                @if($isBoosted)
+                                    <span class="text-amber-600 font-bold mr-2 text-[11px] uppercase tracking-wider bg-amber-100 px-2 py-1 rounded">
+                                        ⚡ Boosted
+                                    </span>
+                                @else
+                                    <a href="{{ route('author.articles.boost', $article) }}" class="text-gray-600 hover:text-yellow-600 font-semibold mr-2 transition-colors">
+                                        ⚡ Boost
+                                    </a>
+                                @endif
+
+                                <a href="{{ route('article', $article->slug) }}" target="_blank" class="text-[#8b1528] font-semibold hover:underline border-l border-gray-300 pl-2">
                                     View Live
                                 </a>
                             @else
@@ -169,9 +187,93 @@
         </div>
 
         @if($articles->hasPages())
-        <div class="p-4 border-t border-gray-200 bg-[#f8f9fa]">
+        <div class="p-4 border-t border-gray-200 bg-[#f8f9fa] relative z-10">
             {{ $articles->links() }}
         </div>
+        @endif
+        
+        @if($hasAnyBoosted)
+            <!-- WebGL Gold Shader Script for Boosted Rows -->
+            <div class="absolute inset-0 z-0 pointer-events-none opacity-40">
+                <canvas id="shader-canvas-ANIMATION_21" style="display:block;width:100%;height:100%"></canvas>
+            </div>
+            <script>
+            (function() {
+              const canvas = document.getElementById('shader-canvas-ANIMATION_21');
+              if (!canvas) return;
+
+              function syncSize() {
+                const rect = canvas.getBoundingClientRect();
+                const w = Math.floor(rect.width || canvas.clientWidth || canvas.parentElement?.clientWidth || 800);
+                const h = Math.floor(rect.height || canvas.clientHeight || canvas.parentElement?.clientHeight || 250);
+                if (canvas.width !== w || canvas.height !== h) {
+                  canvas.width  = w;
+                  canvas.height = h;
+                }
+              }
+              if (typeof ResizeObserver !== 'undefined') {
+                new ResizeObserver(syncSize).observe(canvas);
+              }
+              syncSize();
+
+              const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+              if (!gl) return;
+              const vs = `attribute vec2 a_position;
+            varying vec2 v_texCoord;
+            void main() {
+              v_texCoord = a_position * 0.5 + 0.5;
+              gl_Position = vec4(a_position, 0.0, 1.0);
+            }`;
+              const fs = `precision highp float;
+            varying vec2 v_texCoord;
+            uniform float u_time;
+            uniform vec2 u_resolution;
+
+            void main() {
+                vec2 uv = v_texCoord;
+                float slowTime = u_time * 0.35;
+                float wave = sin(uv.x * 10.0 + slowTime * 2.0) * 0.05;
+                vec3 baseGold = vec3(1.0, 0.84, 0.0);
+                vec3 deepGold = vec3(0.85, 0.65, 0.13);
+                vec3 highlight = vec3(1.0, 0.95, 0.8);
+                float glow = smoothstep(0.4, 0.6, sin(uv.x * 3.0 + slowTime + wave) * 0.5 + 0.5);
+                vec3 color = mix(deepGold, baseGold, uv.x + wave);
+                color = mix(color, highlight, glow * 0.4);
+                float sweep = smoothstep(0.0, 0.1, abs(sin(uv.x * 2.0 - slowTime * 3.0) - 0.5) - 0.45);
+                color += highlight * sweep * 0.3;
+                gl_FragColor = vec4(color, 1.0);
+            }`;
+              function cs(type, src) {
+                const s = gl.createShader(type);
+                gl.shaderSource(s, src);
+                gl.compileShader(s);
+                return s;
+              }
+              const prog = gl.createProgram();
+              gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+              gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+              gl.linkProgram(prog);
+              gl.useProgram(prog);
+              const buf = gl.createBuffer();
+              gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+              gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+              const pos = gl.getAttribLocation(prog, 'a_position');
+              gl.enableVertexAttribArray(pos);
+              gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+              const uTime = gl.getUniformLocation(prog, 'u_time');
+              const uRes = gl.getUniformLocation(prog, 'u_resolution');
+
+              function render(t) {
+                if (typeof ResizeObserver === 'undefined') syncSize();
+                gl.viewport(0, 0, canvas.width, canvas.height);
+                if (uTime) gl.uniform1f(uTime, t * 0.001);
+                if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                requestAnimationFrame(render);
+              }
+              render(0);
+            })();
+            </script>
         @endif
     </div>
 

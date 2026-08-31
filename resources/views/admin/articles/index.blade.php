@@ -38,6 +38,10 @@
            class="px-4 py-2.5 border-b-2 transition-colors {{ $currentStatus === 'published' ? 'border-[#8b1528] text-[#8b1528] font-bold' : 'border-transparent text-gray-500 hover:text-gray-900' }}">
             Published
         </a>
+        <a href="{{ route('admin.articles.index', ['status' => 'awaiting_payment']) }}" 
+           class="px-4 py-2.5 border-b-2 transition-colors {{ $currentStatus === 'awaiting_payment' ? 'border-[#8b1528] text-[#8b1528] font-bold' : 'border-transparent text-gray-500 hover:text-gray-900' }}">
+            Awaiting Payment
+        </a>
         <a href="{{ route('admin.articles.index', ['status' => 'draft']) }}" 
            class="px-4 py-2.5 border-b-2 transition-colors {{ $currentStatus === 'draft' ? 'border-[#8b1528] text-[#8b1528] font-bold' : 'border-transparent text-gray-500 hover:text-gray-900' }}">
             Drafts
@@ -104,10 +108,10 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($articles as $article)
-                    <tr class="hover:bg-gray-50/80 transition-colors">
+                    <tr class="hover:bg-gray-50/80 transition-colors cursor-pointer group" onclick="window.location='{{ route('article', $article->slug) }}?ref=admin'">
                         <!-- Title & Excerpt -->
                         <td class="px-6 py-4 max-w-sm">
-                            <div class="font-bold text-gray-900 text-sm line-clamp-1">
+                            <div class="font-bold text-gray-900 text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">
                                 {{ $article->title }}
                             </div>
                             <div class="text-[11px] text-gray-400 mt-0.5 line-clamp-1 font-serif-content">
@@ -123,7 +127,7 @@
 
                         <!-- Category -->
                         <td class="px-6 py-4 text-gray-600">
-                            <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-700 text-[11px]">
+                            <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-700 text-[11px] whitespace-nowrap">
                                 {{ $article->category->name ?? '-' }}
                             </span>
                         </td>
@@ -131,13 +135,15 @@
                         <!-- Status Badge -->
                         <td class="px-6 py-4">
                             @if($article->status === 'published')
-                                <span class="px-2.5 py-0.5 bg-green-100 text-green-800 font-semibold border border-green-200 text-[11px]">Published</span>
+                                <span class="px-2.5 py-0.5 bg-green-100 text-green-800 font-semibold border border-green-200 text-[11px] whitespace-nowrap">Published</span>
                             @elseif($article->status === 'pending_review')
-                                <span class="px-2.5 py-0.5 bg-yellow-100 text-yellow-800 font-semibold border border-yellow-300 text-[11px] animate-pulse">Pending Review</span>
+                                <span class="px-2.5 py-0.5 bg-yellow-100 text-yellow-800 font-semibold border border-yellow-300 text-[11px] whitespace-nowrap animate-pulse">Pending Review</span>
+                            @elseif($article->status === 'awaiting_payment')
+                                <span class="px-2.5 py-0.5 bg-blue-100 text-blue-800 font-semibold border border-blue-200 text-[11px] whitespace-nowrap">Awaiting Payment</span>
                             @elseif($article->status === 'rejected')
-                                <span class="px-2.5 py-0.5 bg-red-100 text-red-800 font-semibold border border-red-200 text-[11px]">Rejected</span>
+                                <span class="px-2.5 py-0.5 bg-red-100 text-red-800 font-semibold border border-red-200 text-[11px] whitespace-nowrap">Rejected</span>
                             @else
-                                <span class="px-2.5 py-0.5 bg-gray-100 text-gray-700 font-semibold border border-gray-200 text-[11px]">Draft</span>
+                                <span class="px-2.5 py-0.5 bg-gray-100 text-gray-700 font-semibold border border-gray-200 text-[11px] whitespace-nowrap">Draft</span>
                             @endif
                         </td>
 
@@ -147,35 +153,33 @@
                         </td>
 
                         <!-- Date -->
-                        <td class="px-6 py-4 text-gray-500">
+                        <td class="px-6 py-4 text-gray-500 whitespace-nowrap">
                             {{ $article->created_at->format('M j, Y') }}
                         </td>
 
                         <!-- Actions -->
-                        <td class="px-6 py-4 text-right space-x-2">
-                            @if($article->isPendingReview())
-                                <a href="{{ route('admin.articles.review', $article) }}" 
-                                   class="px-2.5 py-1 bg-[#8b1528] text-white hover:bg-[#721120] text-[11px] font-bold uppercase tracking-wider inline-block">
-                                    Review
-                                </a>
-                            @else
-                                <a href="{{ route('admin.articles.edit', $article) }}" 
-                                   class="text-gray-700 font-semibold hover:text-[#00081e]">
-                                    Edit
-                                </a>
-                            @endif
+                        <td class="px-6 py-4 text-right" onclick="event.stopPropagation()">
+                            <div class="flex items-center justify-end gap-3 flex-nowrap">
+                                @if($article->isPendingReview())
+                                    <a href="{{ route('admin.articles.review', $article) }}" 
+                                       class="text-[#8b1528] hover:text-[#721120] transition-colors" title="Review">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                                    </a>
+                                @else
+                                    <a href="{{ route('admin.articles.edit', $article) }}" 
+                                       class="text-blue-600 hover:text-blue-800 transition-colors" title="Edit">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                    </a>
+                                @endif
 
-                            <a href="{{ route('article', $article->slug) }}" target="_blank" class="text-blue-600 font-semibold hover:underline">
-                                View
-                            </a>
-
-                            <form action="{{ route('admin.articles.destroy', $article) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this article?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-800 font-semibold">
-                                    Delete
-                                </button>
-                            </form>
+                                <form action="{{ route('admin.articles.destroy', $article) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this article?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-800 transition-colors" title="Delete">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty

@@ -28,6 +28,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+        if ($user && $user->isAdmin()) {
+            Auth::guard('web')->logout();
+            $request->session()->regenerateToken();
+            
+            return redirect()->route('login')->withErrors([
+                'email' => 'Admin authentication must use the dedicated admin login page.',
+            ]);
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -38,8 +48,8 @@ class AuthenticatedSessionController extends Controller
     {
         Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-
+        // Hanya regenerate token, jangan invalidate seluruh session
+        // agar session admin guard tidak terganggu jika admin juga login
         $request->session()->regenerateToken();
 
         return redirect('/');

@@ -119,34 +119,30 @@ class DatabaseSeeder extends Seeder
 
         // 3. Categories
         $categoriesList = [
-            'Science & Technology',
-            'Campus Life',
-            'Academic',
             'Events',
-            'Sports',
             'Research & Innovation',
             'Achievements',
         ];
 
         $categories = collect($categoriesList)->mapWithKeys(function ($name) {
-            $cat = Category::create([
-                'name' => $name,
-                'slug' => Str::slug($name),
-            ]);
+            $cat = Category::firstOrCreate(
+                ['slug' => Str::slug($name)],
+                ['name' => $name]
+            );
             return [$name => $cat];
         });
 
         // 4. Tags
-        $tagsList = ['Physics', 'Research', 'Innovation', 'AI', 'Medicine', 'Sustainability', 'Engineering', 'Announcement', 'Quantum', 'Campus Life', 'Sports'];
+        $tagsList = ['Physics', 'Research', 'Innovation', 'AI', 'Medicine', 'Sustainability', 'Engineering', 'Announcement', 'Quantum', 'Campus Life', 'Sports', 'Academic', 'Science & Technology'];
         $tags = collect($tagsList)->mapWithKeys(function ($name) {
-            $tag = Tag::create(['name' => $name]);
+            $tag = Tag::firstOrCreate(['name' => $name]);
             return [$name => $tag];
         });
 
         // 5. Featured Article for Review (matching screenshot 3)
         $quantumArticle = Article::create([
             'user_id' => $authorElena->id,
-            'category_id' => $categories['Science & Technology']->id,
+            'category_id' => $categories['Research & Innovation']->id,
             'title' => 'Breakthrough in Quantum Computing',
             'slug' => 'breakthrough-in-quantum-computing',
             'excerpt' => "Researchers at the University's Advanced Physics Laboratory have announced a significant breakthrough in quantum entanglement stabilization, potentially paving the way for commercially viable quantum computing within the decade.",
@@ -175,7 +171,7 @@ class DatabaseSeeder extends Seeder
                 'published_at' => now()->subDays(2),
                 'views_count' => 3420,
                 'tags' => ['AI', 'Research', 'Innovation'],
-                'featured_image_path' => 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=800&auto=format&fit=crop',
+                'featured_image_path' => 'https://picsum.photos/seed/ai/800/533',
             ],
             [
                 'user_id' => $staffWriter->id,
@@ -188,7 +184,7 @@ class DatabaseSeeder extends Seeder
                 'published_at' => now()->subDays(5),
                 'views_count' => 2190,
                 'tags' => ['Sustainability', 'Engineering', 'Research'],
-                'featured_image_path' => 'https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop',
+                'featured_image_path' => 'https://picsum.photos/seed/energy/800/533',
             ],
             [
                 'user_id' => $staffWriter->id,
@@ -201,11 +197,7 @@ class DatabaseSeeder extends Seeder
                 'published_at' => now()->subDays(8),
                 'views_count' => 1840,
                 'tags' => ['Engineering', 'Innovation'],
-                'content' => '<p>After months of preparation, our student engineering team emerged victorious at the National Robotics Showcase.</p><p>Their autonomous rescue robot outperformed 50 other teams in simulated disaster scenarios.</p>',
-                'category_id' => $categories->where('name', 'Achievements')->first()->id,
-                'status' => 'published',
-                'published_at' => now()->subDays(10),
-                'featured_image_path' => 'https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?q=80&w=800&auto=format&fit=crop',
+                'featured_image_path' => 'https://picsum.photos/seed/robotics/800/1000',
             ],
             [
                 'user_id' => $staffWriter->id,
@@ -219,9 +211,88 @@ class DatabaseSeeder extends Seeder
                 'views_count' => 950,
                 'tags' => ['Campus Life', 'Announcement'],
             ],
+            // 6 Extra Duplicate Articles to fill out the homepage masonry grid
+            [
+                'user_id' => $admin->id,
+                'category_id' => $categories['Research & Innovation']->id,
+                'title' => 'New Quantum Labs Open for Undergraduate Research',
+                'slug' => 'new-quantum-labs-open',
+                'excerpt' => 'Undergraduates will now have access to state-of-the-art quantum computing facilities.',
+                'content' => '<p>We are excited to announce...</p>',
+                'status' => Article::STATUS_PUBLISHED,
+                'published_at' => now()->subDays(3),
+                'views_count' => 500,
+                'tags' => ['Physics', 'Innovation'],
+                'featured_image_path' => 'https://picsum.photos/seed/quantum/800/600',
+            ],
             [
                 'user_id' => $staffWriter->id,
-                'category_id' => $categories['Campus Life']->id,
+                'category_id' => $categories['Events']->id,
+                'title' => 'Cafeteria Adds Vegan and Gluten-Free Options',
+                'slug' => 'cafeteria-adds-vegan-options',
+                'excerpt' => 'Responding to student feedback, the main dining hall has revamped its menu.',
+                'content' => '<p>More options are coming to campus...</p>',
+                'status' => Article::STATUS_PUBLISHED,
+                'published_at' => now()->subDays(4),
+                'views_count' => 300,
+                'tags' => ['Campus Life'],
+                'featured_image_path' => 'https://picsum.photos/seed/vegan/800/800',
+            ],
+            [
+                'user_id' => $staffWriter->id,
+                'category_id' => $categories['Achievements']->id,
+                'title' => 'Varsity Basketball Team Secures Regional Championship',
+                'slug' => 'basketball-regional-championship',
+                'excerpt' => 'A thrilling overtime victory propels the team to the national tournament.',
+                'content' => '<p>What a game it was...</p>',
+                'status' => Article::STATUS_PUBLISHED,
+                'published_at' => now()->subDays(6),
+                'views_count' => 1200,
+                'tags' => ['Sports', 'Achievements'],
+                'featured_image_path' => 'https://picsum.photos/seed/basketball/800/533',
+            ],
+            [
+                'user_id' => $admin->id,
+                'category_id' => $categories['Events']->id,
+                'title' => 'New Scholarships Available for International Students',
+                'slug' => 'new-scholarships-international',
+                'excerpt' => 'The university announces a $5 million fund to support global talent.',
+                'content' => '<p>Apply now for the new scholarships...</p>',
+                'status' => Article::STATUS_PUBLISHED,
+                'published_at' => now()->subDays(7),
+                'views_count' => 4500,
+                'tags' => ['Announcement'],
+                'featured_image_path' => 'https://picsum.photos/seed/scholarship/800/1000',
+            ],
+            [
+                'user_id' => $authorElena->id,
+                'category_id' => $categories['Research & Innovation']->id,
+                'title' => 'Study Reveals Surprising Biodiversity in Urban Areas',
+                'slug' => 'biodiversity-urban-areas',
+                'excerpt' => 'Urban ecology study finds rare species thriving in campus green spaces.',
+                'content' => '<p>Nature finds a way...</p>',
+                'status' => Article::STATUS_PUBLISHED,
+                'published_at' => now()->subDays(8),
+                'views_count' => 850,
+                'tags' => ['Research', 'Sustainability'],
+                'featured_image_path' => 'https://picsum.photos/seed/biodiv/800/533',
+            ],
+            [
+                'user_id' => $staffWriter->id,
+                'category_id' => $categories['Achievements']->id,
+                'title' => 'Alumni Network Reaches 100,000 Members',
+                'slug' => 'alumni-network-reaches-100k',
+                'excerpt' => 'A major milestone for the university community worldwide.',
+                'content' => '<p>We are proud to announce...</p>',
+                'status' => Article::STATUS_PUBLISHED,
+                'published_at' => now()->subDays(9),
+                'views_count' => 200,
+                'tags' => ['Achievements'],
+                'featured_image_path' => 'https://picsum.photos/seed/alumni/800/533',
+            ],
+            [
+                'user_id' => $staffWriter->id,
+                'category_id' => $categories['Events']->id,
                 'title' => 'Upcoming Library Digital Transformation',
                 'slug' => 'upcoming-library-digital-transformation',
                 'excerpt' => 'Plans are underway for a major upgrade to the central library digital archival facilities.',
@@ -234,7 +305,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'user_id' => $authorElena->id,
-                'category_id' => $categories['Academic']->id,
+                'category_id' => $categories['Research & Innovation']->id,
                 'title' => 'Curriculum Modernization for STEM Programs',
                 'slug' => 'curriculum-modernization-for-stem-programs',
                 'excerpt' => 'Faculty senate reviews updated syllabus for advanced physics and computational mathematics.',
@@ -248,29 +319,20 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($articles as $data) {
-            $tagNames = $data['tags'];
+            $tagNames = $data['tags'] ?? [];
             unset($data['tags']);
-                'featured_image_path' => 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=800&auto=format&fit=crop',
-            ],
-        ];
-
-        foreach ($articleData as $data) {
-            $article = Article::create([
-                'title' => $data['title'],
-                'slug' => Str::slug($data['title']),
-                'excerpt' => $data['excerpt'],
-                'content' => $data['content'],
-                'status' => $data['status'],
-                'published_at' => $data['published_at'],
-                'user_id' => $author->id,
-                'category_id' => $data['category_id'],
-                'views_count' => rand(100, 5000),
-                'featured_image_path' => $data['featured_image_path'] ?? null,
-            ]);
 
             $article = Article::create($data);
-            $tagIds = collect($tagNames)->map(fn ($name) => $tags[$name]->id ?? null)->filter();
-            $article->tags()->attach($tagIds);
+            
+            if (!empty($tagNames)) {
+                $tagIds = collect($tagNames)->map(fn ($name) => $tags[$name]->id ?? null)->filter();
+                $article->tags()->attach($tagIds);
+            }
         }
+
+        // 7. Boost Prices
+        $this->call([
+            BoostPriceSeeder::class,
+        ]);
     }
 }

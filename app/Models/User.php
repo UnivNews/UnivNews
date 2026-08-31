@@ -40,6 +40,11 @@ class User extends Authenticatable
         'author_bio',
         'page_name',
         'avatar_path',
+        'social_links',
+        'provider',
+        'provider_id',
+        'author_applied_at',
+        'author_rejection_reason',
     ];
 
     /**
@@ -60,10 +65,14 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at'  => 'datetime',
+            'author_applied_at'  => 'datetime',
+            'password'           => 'hashed',
+            'social_links'       => 'array',
         ];
     }
+
+    // ── Relationships ──────────────────────────────────────────────────────
 
     public function university()
     {
@@ -74,6 +83,23 @@ class User extends Authenticatable
     {
         return $this->hasMany(Article::class);
     }
+
+    public function approvalToken()
+    {
+        return $this->hasOne(AuthorApprovalToken::class);
+    }
+
+    public function boosts()
+    {
+        return $this->hasMany(Boost::class);
+    }
+
+    public function boostPayments()
+    {
+        return $this->hasMany(BoostPayment::class);
+    }
+
+    // ── Role Helpers ───────────────────────────────────────────────────────
 
     public function isAdmin(): bool
     {
@@ -90,8 +116,21 @@ class User extends Authenticatable
         return $this->role === self::ROLE_PUBLIC;
     }
 
+    // ── Author Status Helpers ──────────────────────────────────────────────
+
     public function isAuthorApproved(): bool
     {
         return $this->isAuthor() && $this->author_status === self::STATUS_APPROVED;
     }
+
+    public function isAuthorPending(): bool
+    {
+        return $this->author_status === self::STATUS_PENDING;
+    }
+
+    public function isAuthorRejected(): bool
+    {
+        return $this->author_status === self::STATUS_REJECTED;
+    }
 }
+
