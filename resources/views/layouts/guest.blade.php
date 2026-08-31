@@ -11,7 +11,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans text-text-main antialiased bg-navy min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
+<body class="font-sans text-text-main antialiased bg-navy min-h-screen flex flex-col relative overflow-x-hidden">
 
     <!-- Fullscreen Background Image Layer -->
     <div class="fixed inset-0 z-0 pointer-events-none">
@@ -20,9 +20,9 @@
              class="w-full h-full object-cover opacity-20">
     </div>
 
-    <div class="w-full flex-grow flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="w-full flex-grow flex flex-col py-12 px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-12">
+        <div class="w-full max-w-7xl m-auto flex flex-col md:flex-row items-center justify-center gap-12">
             
             @if(isset($support))
             <!-- Support Center (Desktop left side, mobile stacked below or above depending on view) -->

@@ -95,9 +95,12 @@
                         </div>
                     </div>
 
-                    <!-- Desktop Search Form (No icon, desktop only) -->
-                    <form action="{{ route('search') }}" method="GET" class="hidden lg:block relative h-full">
+                    <!-- Desktop Search Form -->
+                    <form action="{{ route('search') }}" method="GET" class="hidden lg:flex relative h-full items-center">
                         <input type="text" name="q" value="{{ request('q') }}" placeholder="Search news..." class="bg-[#0A1F44] text-white placeholder-[#7687B2] border border-transparent focus:border-crimson px-4 h-full focus:outline-none w-44 xl:w-56 transition-all rounded-none font-sans text-sm">
+                        <button type="submit" class="bg-crimson hover:bg-red-700 text-white px-3 h-full flex items-center justify-center transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </button>
                     </form>
                     
                     @auth
@@ -119,10 +122,13 @@
             </div>
         </div>
 
-        <!-- Mobile Search Bar (Below main navbar row, no icon) -->
+        <!-- Mobile Search Bar -->
         <div class="block lg:hidden bg-[#0A1F44] border-t border-white/10 px-4 py-2">
-            <form action="{{ route('search') }}" method="GET" class="w-full">
-                <input type="text" name="q" value="{{ request('q') }}" placeholder="Search news..." class="w-full bg-[#00081E] text-white placeholder-[#7687B2] border border-transparent focus:border-crimson px-3 py-1.5 focus:outline-none font-sans text-xs rounded-none">
+            <form action="{{ route('search') }}" method="GET" class="w-full flex">
+                <input type="text" name="q" value="{{ request('q') }}" placeholder="Search news..." class="flex-grow bg-[#00081E] text-white placeholder-[#7687B2] border border-transparent focus:border-crimson px-3 py-1.5 focus:outline-none font-sans text-xs rounded-none">
+                <button type="submit" class="bg-crimson hover:bg-red-700 text-white px-3 py-1.5 flex items-center justify-center transition-colors rounded-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
             </form>
         </div>
     </header>
@@ -145,9 +151,9 @@
                 <div>
                     <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">RESOURCES</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        <li><a href="#" class="hover:text-white transition-colors">Faculty Experts</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Media Relations</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Archives</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Faculty Experts</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Media Relations</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Archives</a></li>
                     </ul>
                 </div>
                 <div>
@@ -170,18 +176,18 @@
                         <li><a href="https://linkedin.com/in/{{ $socials['linkedin'] }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">LinkedIn</a></li>
                         @endif
                         @if(empty($socials['instagram']) && empty($socials['twitter']) && empty($socials['threads']) && empty($socials['linkedin']))
-                        <li><a href="#" class="hover:text-white transition-colors">Newsletter</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Podcasts</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Events</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Newsletter</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Podcasts</a></li>
+                        <li><a href="{{ route('events') }}" class="hover:text-white transition-colors">Events</a></li>
                         @endif
                     </ul>
                 </div>
                 <div>
                     <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">INSTITUTION</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        <li><a href="#" class="hover:text-white transition-colors">About the University</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Admissions</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Giving</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">About the University</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Admissions</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Giving</a></li>
                     </ul>
                 </div>
             </div>
@@ -190,8 +196,8 @@
                     &copy; 2024 University News Portal. All academic rights reserved.
                 </div>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Accessibility</a>
+                    <a href="{{ route('home') }}" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="{{ route('home') }}" class="hover:text-white transition-colors">Accessibility</a>
                 </div>
             </div>
         </div>
