@@ -19,6 +19,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
-        "alpinejs": "^3.16.1"
+        "alpinejs": "^3.16.1",
+        "driver.js": "^1.8.0"
     }
 }

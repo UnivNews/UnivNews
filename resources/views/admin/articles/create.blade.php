@@ -1,7 +1,8 @@
 @extends('layouts.cms')
 
 @section('title', 'Create New Article - University News')
-@section('header_tagline', 'CREATE ARTICLE - UNIVERSITY NEWS')
+@section('header_tagline', 'CREATE ARTICLE - CMS PORTAL')
+@section('page_tour_id', 'admin.articles.create')
 
 @section('content')
 <div class="max-w-6xl mx-auto" x-data="articleFormHandler()">

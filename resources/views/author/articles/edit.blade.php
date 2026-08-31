@@ -2,6 +2,7 @@
 
 @section('title', 'Edit Article - University News')
 @section('header_tagline', 'EDIT ARTICLE - UNIVERSITY NEWS')
+@section('page_tour_id', 'author.articles.edit')
 
 @section('content')
 <div class="max-w-6xl mx-auto" x-data="authorArticleEditFormHandler()">
@@ -19,7 +20,7 @@
         </div>
 
         @if($article->isRejected() && $article->admin_notes)
-        <div class="p-3 bg-red-50 border-l-4 border-red-600 text-red-800 text-xs max-w-md">
+        <div class="p-3 bg-red-50 border-l-4 border-red-600 text-red-800 text-xs max-w-md" data-tour="edit-admin-feedback">
             <strong>Editor Feedback:</strong> {{ $article->admin_notes }}
         </div>
         @endif
@@ -47,7 +48,7 @@
             <div class="lg:col-span-8 space-y-6">
                 
                 <!-- Title Field -->
-                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="create-title">
                     <label for="title" class="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">
                         Title <span class="text-[#8b1528]">*</span>
                     </label>

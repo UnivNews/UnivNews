@@ -2,6 +2,7 @@
 
 @section('title', 'My Articles - University News')
 @section('header_tagline', 'AUTHOR DESK - UNIVERSITY NEWS')
+@section('page_tour_id', 'author.articles.index')
 
 @section('content')
 <div class="max-w-6xl mx-auto space-y-6">
@@ -13,7 +14,7 @@
             <p class="text-gray-500 font-sans text-sm mt-1">Manage, draft, and track your submitted campus stories.</p>
         </div>
 
-        <a href="{{ route('author.articles.create') }}" class="px-5 py-2.5 bg-[#8b1528] hover:bg-[#721120] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-colors self-start sm:self-auto">
+        <a href="{{ route('author.articles.create') }}" data-tour="articles-write-btn" class="px-5 py-2.5 bg-[#8b1528] hover:bg-[#721120] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-colors self-start sm:self-auto">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -22,7 +23,7 @@
     </div>
 
     <!-- Status Tabs Filter Bar -->
-    <div class="flex items-center gap-2 border-b border-gray-200 pb-px overflow-x-auto text-xs font-semibold uppercase tracking-wider">
+    <div class="flex items-center gap-2 border-b border-gray-200 pb-px overflow-x-auto text-xs font-semibold uppercase tracking-wider" data-tour="articles-status-tabs">
         @php
             $currentStatus = request('status');
         @endphp
@@ -49,7 +50,7 @@
     </div>
 
     <!-- Search Controls -->
-    <div class="bg-white border border-gray-200 p-4 shadow-sm">
+    <div class="bg-white border border-gray-200 p-4 shadow-sm" data-tour="articles-search-bar">
         <form method="GET" action="{{ route('author.articles.index') }}" class="flex items-center gap-3">
             @if($currentStatus)
                 <input type="hidden" name="status" value="{{ $currentStatus }}">
@@ -73,7 +74,7 @@
     </div>
 
     <!-- Articles Table Card -->
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden relative">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden relative" data-tour="articles-table">
         @php
             $hasAnyBoosted = false;
         @endphp

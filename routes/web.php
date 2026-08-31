@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\OnboardingController;
 
 // 1. Public Portal Routes
 Route::get('/', [PublicController::class, 'home'])->name('home');
@@ -65,6 +66,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/{article}', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/{article}/pay', [PaymentController::class, 'pay'])->name('payment.pay');
     Route::get('/payment/{article}/thanks', [PaymentController::class, 'thanks'])->name('payment.thanks');
+
+    // Onboarding completion (web guard users: author)
+    Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
 });
 
 // 5. Auth Routes (Breeze)
@@ -90,6 +94,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // 7c. Admin Area Routes (menggunakan admin guard terpisah via role:admin middleware)
 Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
+
+    // Onboarding completion (admin guard users)
+    Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
     
     // Article Review Workflow
     Route::get('/articles/{article}/review', [Admin\ReviewController::class, 'show'])->name('articles.review');

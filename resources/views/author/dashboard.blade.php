@@ -27,6 +27,7 @@
             @endif
 
             <a href="{{ route('author.articles.create') }}"
+               data-tour="author-new-article"
                class="px-5 py-2.5 bg-[#00081e] hover:bg-[#8b1528] text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
@@ -37,7 +38,7 @@
     </div>
 
     {{-- ── 4 Stats Cards (Design Reference Style) ─────────────────────── --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-tour="author-stats">
 
         {{-- Total Articles --}}
         <div class="relative bg-white border border-gray-200 p-6 shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
@@ -136,7 +137,7 @@
     </div>
 
     {{-- ── My Recent Stories Table ───────────────────────────────────── --}}
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden" data-tour="author-recent-table">
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-[#fcfcfd]">
             <div>
                 <h2 class="text-base font-bold font-heading text-[#00081e]">My Recent Stories</h2>

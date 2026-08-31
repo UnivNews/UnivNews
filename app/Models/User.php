@@ -45,6 +45,9 @@ class User extends Authenticatable
         'provider_id',
         'author_applied_at',
         'author_rejection_reason',
+        'has_completed_onboarding',
+        'onboarding_completed_at',
+        'completed_page_tours',
     ];
 
     /**
@@ -65,10 +68,13 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at'  => 'datetime',
-            'author_applied_at'  => 'datetime',
-            'password'           => 'hashed',
-            'social_links'       => 'array',
+            'email_verified_at'          => 'datetime',
+            'author_applied_at'          => 'datetime',
+            'onboarding_completed_at'    => 'datetime',
+            'password'                   => 'hashed',
+            'social_links'               => 'array',
+            'has_completed_onboarding'   => 'boolean',
+            'completed_page_tours'       => 'array',
         ];
     }
 
@@ -131,6 +137,19 @@ class User extends Authenticatable
     public function isAuthorRejected(): bool
     {
         return $this->author_status === self::STATUS_REJECTED;
+    }
+
+    // ── Onboarding Helpers ─────────────────────────────────────────────────
+
+    /**
+     * Check whether a per-page tour has already been completed by this user.
+     *
+     * @param string $tourId  e.g. 'author.articles.create'
+     */
+    public function hasCompletedPageTour(string $tourId): bool
+    {
+        $tours = $this->completed_page_tours ?? [];
+        return in_array($tourId, $tours, true);
     }
 }
 

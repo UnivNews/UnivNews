@@ -2,6 +2,7 @@
 
 @section('title', 'App Settings — University News')
 @section('header_tagline', 'APP SETTINGS - UNIVERSITY NEWS CMS')
+@section('page_tour_id', 'admin.app-settings.index')
 
 @section('content')
 <div class="max-w-4xl mx-auto space-y-8">
@@ -44,7 +45,7 @@
         @method('PUT')
 
         {{-- ── Section: Payment Configuration ────────────────────────────── --}}
-        <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+        <div class="bg-white border border-gray-200 shadow-sm overflow-hidden" data-tour="appsettings-publication-fee">
 
             {{-- Section Header --}}
             <div class="px-6 py-4 border-b border-gray-100 bg-[#00081e] flex items-center gap-3">
@@ -135,7 +136,7 @@
         </div>
 
         {{-- ── Section: Boost Article Prices ────────────────────────────── --}}
-        <div class="bg-white border border-gray-200 shadow-sm overflow-hidden mt-8">
+        <div class="bg-white border border-gray-200 shadow-sm overflow-hidden mt-8" data-tour="appsettings-boost-prices">
 
             {{-- Section Header --}}
             <div class="px-6 py-4 border-b border-gray-100 bg-[#00081e] flex items-center justify-between gap-3">
@@ -228,6 +229,7 @@
                 Batal
             </a>
             <button type="submit"
+                    data-tour="appsettings-save-btn"
                     class="px-8 py-3 bg-[#8b1528] hover:bg-[#6b0f1f] text-white text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
