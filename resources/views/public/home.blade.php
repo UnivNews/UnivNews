@@ -259,9 +259,12 @@
                         </a>
                         @endforeach
 
+                        @php
+                            $fallbackArticleUrl = $recentArticles->first() ? route('article', $recentArticles->first()->slug) : route('home');
+                        @endphp
                         @for($i = 0; $i < $recentDummyCount; $i++)
                         @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
-                        <a href="#" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                        <a href="{{ $fallbackArticleUrl }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
                                 <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
                             </div>
@@ -331,7 +334,7 @@
                         @for($i = 0; $i < $dummyCount; $i++)
                         @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
                         <!-- Dummy Card -->
-                        <a href="#" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
+                        <a href="{{ $fallbackArticleUrl }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
                                 <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
                             </div>
@@ -361,67 +364,37 @@
                         <span class="w-2 h-2 rounded-full mr-3 bg-crimson"></span> TRENDING NEWS
                     </h3>
                     <div class="space-y-5">
-                        
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">01</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        Breakthrough in Quantum Computing Achieved by Engineering Faculty
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Technology</span>
-                            </div>
-                        </div>
+                        @php
+                            $trendingNewsList = ($trendingResearch ?? collect())->concat($recentArticles ?? collect())->unique('id')->take(5);
+                        @endphp
 
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">02</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        New Study Links Urban Green Spaces to Lower Stress Levels in Students
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Health & Wellness</span>
+                        @if($trendingNewsList->isNotEmpty())
+                            @foreach($trendingNewsList as $idx => $tArticle)
+                            <div class="flex gap-4 group items-start">
+                                <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">{{ sprintf('%02d', $idx + 1) }}</span>
+                                <div>
+                                    <a href="{{ route('article', $tArticle->slug) }}">
+                                        <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
+                                            {{ $tArticle->title }}
+                                        </h4>
+                                    </a>
+                                    <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">{{ $tArticle->category?->name ?? 'General' }}</span>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">03</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        Annual Arts Festival Draws Record-Breaking Crowd This Weekend
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Campus Life</span>
+                            @endforeach
+                        @else
+                            <div class="flex gap-4 group items-start">
+                                <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">01</span>
+                                <div>
+                                    <a href="{{ route('home') }}">
+                                        <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
+                                            Breakthrough in Quantum Computing Achieved by Engineering Faculty
+                                        </h4>
+                                    </a>
+                                    <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Technology</span>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">04</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        Researchers Discover Novel Enzyme that Breaks Down Microplastics
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Environment</span>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-4 group items-start">
-                            <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">05</span>
-                            <div>
-                                <a href="#">
-                                    <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                        University Announces Groundbreaking $50M Endowment for Scholarships
-                                    </h4>
-                                </a>
-                                <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Administration</span>
-                            </div>
-                        </div>
-
+                        @endif
                     </div>
                 </div>
 

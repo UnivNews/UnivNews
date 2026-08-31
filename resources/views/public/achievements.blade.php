@@ -156,55 +156,37 @@
 
             <!-- Sidebar (Right) -->
             <aside class="lg:col-span-4 space-y-10">
-                <!-- Achievement Highlights (Stats) -->
-                <div class="bg-[#00081E] text-white p-8 relative overflow-hidden group">
-                    <div class="absolute -right-4 -top-4 opacity-10 transform rotate-12 group-hover:scale-110 transition-transform duration-700">
-                        <svg class="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-2xl mb-6 relative z-10 border-b border-white/20 pb-2">Achievement Highlights</h3>
-                    <ul class="space-y-4 relative z-10">
-                        <li class="flex items-center gap-4">
-                            <svg class="w-6 h-6 text-[#B71032]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <div class="font-heading font-bold text-2xl">85+</div>
-                                <div class="font-sans text-xs text-gray-300 uppercase tracking-wider">Awards This Year</div>
-                            </div>
-                        </li>
-                        <li class="flex items-center gap-4">
-                            <svg class="w-6 h-6 text-[#B71032]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <div class="font-heading font-bold text-2xl">32</div>
-                                <div class="font-sans text-xs text-gray-300 uppercase tracking-wider">International Recognitions</div>
-                            </div>
-                        </li>
-                        <li class="flex items-center gap-4">
-                            <svg class="w-6 h-6 text-[#B71032]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                            <div>
-                                <div class="font-heading font-bold text-2xl">15</div>
-                                <div class="font-sans text-xs text-gray-300 uppercase tracking-wider">Faculty Grants Awarded</div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
 
                 <!-- Trending Achievements -->
                 <div>
                     <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-6 border-b-2 border-[#B71032] pb-2 inline-block">Top Achievements</h3>
                     <div class="space-y-6">
                         @php
-                            $trendingItems = $articles->count() >= 4 ? $articles->take(4)->map(function($a) {
-                                return [
-                                    'category' => $a->tags->first() ? $a->tags->first()->name : $a->category->name,
-                                    'title' => $a->title,
-                                    'date' => $a->published_at->format('M d, Y'),
-                                    'url' => route('article', $a->slug)
+                            $allPubArticles = \App\Models\Article::where('status', 'published')
+                                ->whereNotNull('published_at')
+                                ->where('published_at', '<=', now())
+                                ->orderBy('published_at', 'desc')
+                                ->get();
+
+                            $trendingPool = $articles->concat($allPubArticles)->unique('id')->take(4);
+
+                            if ($trendingPool->isNotEmpty()) {
+                                $trendingItems = $trendingPool->map(function($a) {
+                                    return [
+                                        'category' => $a->tags->first() ? $a->tags->first()->name : $a->category->name,
+                                        'title' => $a->title,
+                                        'date' => $a->published_at ? $a->published_at->format('M d, Y') : now()->format('M d, Y'),
+                                        'url' => route('article', $a->slug)
+                                    ];
+                                })->toArray();
+                            } else {
+                                $trendingItems = [
+                                    ['category' => 'STUDENTS', 'title' => 'Debate Team Secures National Championship Title', 'date' => 'Nov 12, 2024', 'url' => route('home')],
+                                    ['category' => 'SCIENCE', 'title' => 'Robotics Lab Wins International Gold at Tech Symposium', 'date' => 'Nov 10, 2024', 'url' => route('home')],
+                                    ['category' => 'FACULTY', 'title' => 'Professor Awarded Prestigious Humanities Fellowship', 'date' => 'Nov 08, 2024', 'url' => route('home')],
+                                    ['category' => 'ATHLETICS', 'title' => 'University Track Team Breaks State Relay Record', 'date' => 'Nov 05, 2024', 'url' => route('home')],
                                 ];
-                            })->toArray() : [
-                                ['category' => 'STUDENTS', 'title' => 'Debate Team Secures National Championship Title', 'date' => 'Nov 12, 2024', 'url' => '#'],
-                                ['category' => 'SCIENCE', 'title' => 'Robotics Lab Wins International Gold at Tech Symposium', 'date' => 'Nov 10, 2024', 'url' => '#'],
-                                ['category' => 'FACULTY', 'title' => 'Professor Awarded Prestigious Humanities Fellowship', 'date' => 'Nov 08, 2024', 'url' => '#'],
-                                ['category' => 'ATHLETICS', 'title' => 'University Track Team Breaks State Relay Record', 'date' => 'Nov 05, 2024', 'url' => '#'],
-                            ];
+                            }
                         @endphp
                         @foreach($trendingItems as $item)
                         <a class="group block border-l-[3px] border-transparent hover:border-[#B71032] pl-4 transition-all" href="{{ $item['url'] }}">

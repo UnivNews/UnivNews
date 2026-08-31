@@ -222,55 +222,37 @@
                     </form>
                 </div>
 
-                <!-- Events Highlights (Stats) -->
-                <div class="bg-[#00081E] text-white p-8 relative overflow-hidden group">
-                    <div class="absolute -right-4 -top-4 opacity-10 transform rotate-12 group-hover:scale-110 transition-transform duration-700">
-                        <svg class="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-2xl mb-6 relative z-10 border-b border-white/20 pb-2">Events This Semester</h3>
-                    <ul class="space-y-4 relative z-10">
-                        <li class="flex items-center gap-4">
-                            <svg class="w-6 h-6 text-[#B71032]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <div class="font-heading font-bold text-2xl">120+</div>
-                                <div class="font-sans text-xs text-gray-300 uppercase tracking-wider">Events Held</div>
-                            </div>
-                        </li>
-                        <li class="flex items-center gap-4">
-                            <svg class="w-6 h-6 text-[#B71032]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                            <div>
-                                <div class="font-heading font-bold text-2xl">25,000+</div>
-                                <div class="font-sans text-xs text-gray-300 uppercase tracking-wider">Total Attendees</div>
-                            </div>
-                        </li>
-                        <li class="flex items-center gap-4">
-                            <svg class="w-6 h-6 text-[#B71032]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div>
-                                <div class="font-heading font-bold text-2xl">18</div>
-                                <div class="font-sans text-xs text-gray-300 uppercase tracking-wider">International Guests</div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
 
                 <!-- Trending Events -->
                 <div>
                     <h3 class="font-heading font-semibold text-2xl text-[#00081E] mb-6 border-b-2 border-[#B71032] pb-2 inline-block">Trending Events</h3>
                     <div class="space-y-6">
                         @php
-                            $trendingItems = $articles->count() >= 4 ? $articles->take(4)->map(function($a) {
-                                return [
-                                    'category' => $a->tags->first() ? $a->tags->first()->name : $a->category->name,
-                                    'title' => $a->title,
-                                    'date' => $a->published_at->format('M d, Y'),
-                                    'url' => route('article', $a->slug)
+                            $allPubArticles = \App\Models\Article::where('status', 'published')
+                                ->whereNotNull('published_at')
+                                ->where('published_at', '<=', now())
+                                ->orderBy('published_at', 'desc')
+                                ->get();
+
+                            $trendingPool = $articles->concat($allPubArticles)->unique('id')->take(4);
+
+                            if ($trendingPool->isNotEmpty()) {
+                                $trendingItems = $trendingPool->map(function($a) {
+                                    return [
+                                        'category' => $a->tags->first() ? $a->tags->first()->name : $a->category->name,
+                                        'title' => $a->title,
+                                        'date' => $a->published_at ? $a->published_at->format('M d, Y') : now()->format('M d, Y'),
+                                        'url' => route('article', $a->slug)
+                                    ];
+                                })->toArray();
+                            } else {
+                                $trendingItems = [
+                                    ['category' => 'SEMINAR', 'title' => 'National Seminar: Facing the Society 5.0 Era', 'date' => 'Nov 15, 2024', 'url' => route('home')],
+                                    ['category' => 'SPORTS', 'title' => 'Inter-Faculty Basketball Championship Finals', 'date' => 'Nov 12, 2024', 'url' => route('home')],
+                                    ['category' => 'ARTS', 'title' => 'Annual Arts Festival Draws Record-Breaking Crowd', 'date' => 'Nov 10, 2024', 'url' => route('home')],
+                                    ['category' => 'ACADEMIC', 'title' => 'Workshop on Writing Scopus-Indexed Research Papers', 'date' => 'Nov 08, 2024', 'url' => route('home')],
                                 ];
-                            })->toArray() : [
-                                ['category' => 'SEMINAR', 'title' => 'National Seminar: Facing the Society 5.0 Era', 'date' => 'Nov 15, 2024', 'url' => '#'],
-                                ['category' => 'SPORTS', 'title' => 'Inter-Faculty Basketball Championship Finals', 'date' => 'Nov 12, 2024', 'url' => '#'],
-                                ['category' => 'ARTS', 'title' => 'Annual Arts Festival Draws Record-Breaking Crowd', 'date' => 'Nov 10, 2024', 'url' => '#'],
-                                ['category' => 'ACADEMIC', 'title' => 'Workshop on Writing Scopus-Indexed Research Papers', 'date' => 'Nov 08, 2024', 'url' => '#'],
-                            ];
+                            }
                         @endphp
                         @foreach($trendingItems as $item)
                         <a class="group block border-l-[3px] border-transparent hover:border-[#B71032] pl-4 transition-all" href="{{ $item['url'] }}">
