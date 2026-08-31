@@ -151,9 +151,9 @@
                 <div>
                     <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">RESOURCES</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Faculty Experts</a></li>
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Media Relations</a></li>
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Archives</a></li>
+                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Faculty Experts</a></li>
+                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Media Relations</a></li>
+                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Archives</a></li>
                     </ul>
                 </div>
                 <div>
@@ -176,8 +176,8 @@
                         <li><a href="https://linkedin.com/in/{{ $socials['linkedin'] }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">LinkedIn</a></li>
                         @endif
                         @if(empty($socials['instagram']) && empty($socials['twitter']) && empty($socials['threads']) && empty($socials['linkedin']))
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Newsletter</a></li>
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Podcasts</a></li>
+                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Newsletter</a></li>
+                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Podcasts</a></li>
                         <li><a href="{{ route('events') }}" class="hover:text-white transition-colors">Events</a></li>
                         @endif
                     </ul>
@@ -185,9 +185,9 @@
                 <div>
                     <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">INSTITUTION</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">About the University</a></li>
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Admissions</a></li>
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Giving</a></li>
+                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">About the University</a></li>
+                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Admissions</a></li>
+                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Giving</a></li>
                     </ul>
                 </div>
             </div>
@@ -196,8 +196,8 @@
                     &copy; 2024 University News Portal. All academic rights reserved.
                 </div>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="{{ route('home') }}" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="{{ route('home') }}" class="hover:text-white transition-colors">Accessibility</a>
+                    <a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Accessibility</a>
                 </div>
             </div>
         </div>

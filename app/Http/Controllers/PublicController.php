@@ -188,14 +188,23 @@ class PublicController extends Controller
         
         $articles = Article::where('status', 'published')
             ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
-            ->where(function($q) use ($query) {
-                $q->where('title', 'like', "%{$query}%")
-                  ->orWhere('excerpt', 'like', "%{$query}%")
-                  ->orWhere('content', 'like', "%{$query}%")
-                  ->orWhereHas('tags', fn($t) => $t->where('name', 'like', "%{$query}%"));
-            })
-            ->orderBy('published_at', 'desc')
+            ->where('published_at', '<=', now());
+
+        if (!empty($query)) {
+            $terms = array_filter(explode(' ', $query));
+            $articles->where(function($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function($subQ) use ($term) {
+                        $subQ->where('title', 'ilike', "%{$term}%")
+                             ->orWhere('excerpt', 'ilike', "%{$term}%")
+                             ->orWhere('content', 'ilike', "%{$term}%")
+                             ->orWhereHas('tags', fn($t) => $t->where('name', 'ilike', "%{$term}%"));
+                    });
+                }
+            });
+        }
+
+        $articles = $articles->orderBy('published_at', 'desc')
             ->paginate(10);
 
         return view('public.search', compact('articles', 'query'));
