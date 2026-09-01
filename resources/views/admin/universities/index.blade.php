@@ -2,6 +2,7 @@
 
 @section('title', 'Universities Management - University News')
 @section('header_tagline', 'INSTITUTION DIRECTORY - CMS PORTAL')
+@section('page_tour_id', 'admin.universities.index')
 
 @section('content')
 <div class="max-w-6xl mx-auto space-y-8" x-data="{ addModalOpen: false }">
@@ -13,7 +14,7 @@
             <p class="text-gray-500 font-sans text-sm mt-1">Manage participating universities, abbreviations, and network campuses.</p>
         </div>
 
-        <button @click="addModalOpen = true" class="px-5 py-2.5 bg-[#8b1528] hover:bg-[#721120] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-colors self-start sm:self-auto">
+        <button @click="addModalOpen = true" data-tour="universities-add-btn" class="px-5 py-2.5 bg-[#8b1528] hover:bg-[#721120] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-colors self-start sm:self-auto">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -22,7 +23,7 @@
     </div>
 
     <!-- Universities Table Card -->
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden" data-tour="universities-list">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs font-sans">
                 <thead class="bg-[#f8f9fa] text-gray-500 uppercase tracking-wider border-b border-gray-200">
@@ -55,7 +56,7 @@
                             <form action="{{ route('admin.universities.destroy', $uni) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this university?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-800 font-semibold">
+                                <button type="submit" data-tour="universities-delete-btn" class="text-red-600 hover:text-red-800 font-semibold">
                                     Delete
                                 </button>
                             </form>

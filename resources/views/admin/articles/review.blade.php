@@ -2,6 +2,7 @@
 
 @section('title', 'Review Article: ' . $article->title . ' - University News')
 @section('header_tagline', 'REVIEW ARTICLE - UNIVERSITY NEWS')
+@section('page_tour_id', 'admin.articles.review')
 
 @section('content')
 <div class="max-w-6xl mx-auto">
@@ -44,7 +45,7 @@
         <div class="lg:col-span-8 space-y-6">
             
             <!-- Metadata Card -->
-            <div class="bg-white border border-gray-200 p-6 shadow-sm">
+            <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="review-metadata">
                 <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
                     <div class="flex items-center gap-2 text-xs font-bold text-gray-800 uppercase tracking-wider">
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,7 +172,7 @@
                     </div>
 
                     <!-- Admin Notes / Feedback -->
-                    <div class="space-y-2 mb-6">
+                    <div class="space-y-2 mb-6" data-tour="review-reject-box">
                         <div class="flex items-center gap-1.5 text-xs font-bold text-gray-700">
                             <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
@@ -190,7 +191,8 @@
                     <!-- Action Buttons -->
                     <div class="space-y-3">
                         <!-- Approve & Schedule Button -->
-                        <button type="submit" 
+                        <button type="submit"
+                                data-tour="review-approve-btn"
                                 class="w-full py-3 bg-[#6b0f1f] hover:bg-[#520a17] text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-colors text-center">
                             Approve &amp; Schedule
                         </button>

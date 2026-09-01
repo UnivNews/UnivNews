@@ -2,6 +2,7 @@
 
 @section('title', 'Create New Article - University News')
 @section('header_tagline', 'CREATE ARTICLE - UNIVERSITY NEWS')
+@section('page_tour_id', 'author.articles.create')
 
 @section('content')
 <div class="max-w-6xl mx-auto" x-data="authorArticleFormHandler()">
@@ -38,7 +39,7 @@
             <div class="lg:col-span-8 space-y-6">
                 
                 <!-- Title Field -->
-                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="create-title">
                     <label for="title" class="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">
                         Title <span class="text-[#8b1528]">*</span>
                     </label>
@@ -52,7 +53,7 @@
                 </div>
 
                 <!-- Excerpt Field -->
-                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="create-excerpt">
                     <label for="excerpt" class="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">
                         Excerpt (Summary)
                     </label>
@@ -64,7 +65,7 @@
                 </div>
 
                 <!-- Full Content Editor -->
-                <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+                <div class="bg-white border border-gray-200 shadow-sm overflow-hidden" data-tour="create-content-editor">
                     <div class="p-4 border-b border-gray-200 flex items-center justify-between bg-[#fcfcfd]">
                         <label class="block text-xs font-bold text-gray-800 uppercase tracking-wider">
                             Full Content <span class="text-[#8b1528]">*</span>
@@ -96,7 +97,7 @@
             <div class="lg:col-span-4 space-y-6">
                 
                 <!-- Publish Box -->
-                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="create-publish-box">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-5 border-b border-gray-100">
                         Publish
                     </h3>
@@ -132,7 +133,7 @@
                 </div>
 
                 <!-- Categories Box -->
-                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="create-categories">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-4 border-b border-gray-100">
                         Categories <span class="text-[#8b1528]">*</span>
                     </h3>
@@ -279,7 +280,7 @@
                 </div>
 
                 <!-- Tags Box -->
-                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="create-tags">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-4 border-b border-gray-100">
                         Tags
                     </h3>
@@ -334,7 +335,7 @@
                 </div>
 
                 <!-- Featured Image Box -->
-                <div class="bg-white border border-gray-200 p-6 shadow-sm">
+                <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="create-cover-image">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider pb-3 mb-4 border-b border-gray-100">
                         Featured Image
                     </h3>

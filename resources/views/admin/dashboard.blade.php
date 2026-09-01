@@ -20,6 +20,7 @@
         <div class="flex items-center gap-3 shrink-0">
             @if($stats['pending_articles'] > 0)
             <a href="{{ route('admin.articles.index', ['status' => 'pending_review']) }}"
+               data-tour="admin-pending-alert"
                class="px-4 py-2.5 bg-amber-50 border border-amber-300 text-amber-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 animate-pulse hover:bg-amber-100 transition-colors">
                 <span class="w-2 h-2 rounded-full bg-amber-500"></span>
                 {{ $stats['pending_articles'] }} Articles Pending Review
@@ -37,7 +38,7 @@
     </div>
 
     {{-- ── 4 Stats Cards ─────────────────────────────────────────────── --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-tour="admin-stats">
 
         {{-- Total Articles --}}
         <div class="relative bg-white border border-gray-200 p-6 shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
@@ -146,7 +147,7 @@
     </div>
 
     {{-- ── Publishing Trend Chart ─────────────────────────────────────── --}}
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden" data-tour="admin-chart">
         <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between bg-[#fcfcfd]">
             <div>
                 <h2 class="text-base font-bold font-heading text-[#00081e]">Publishing Trends</h2>
@@ -223,7 +224,7 @@
     </div>
 
     {{-- ── Recently Added Articles ───────────────────────────────────── --}}
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden" data-tour="admin-articles-table">
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-[#fcfcfd]">
             <h2 class="text-base font-bold font-heading text-[#00081e]">Recently Added Articles</h2>
             <a href="{{ route('admin.articles.index') }}"

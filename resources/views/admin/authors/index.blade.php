@@ -2,6 +2,7 @@
 
 @section('title', 'User & Author Management - University News')
 @section('header_tagline', 'USER MANAGEMENT - CMS PORTAL')
+@section('page_tour_id', 'admin.authors.index')
 
 @section('content')
 <div class="max-w-6xl mx-auto space-y-8">
@@ -27,7 +28,7 @@
     @endif
 
     <!-- Section 1: Pending Author Applications -->
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden" data-tour="authors-pending-section">
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-yellow-50/50">
             <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 {{ $pendingAuthors->count() > 0 ? 'animate-pulse' : '' }}"></span>
@@ -73,7 +74,7 @@
                             <!-- Quick Approve Button -->
                             <form action="{{ route('admin.authors.approve', $applicant) }}" method="POST" class="inline-block">
                                 @csrf
-                                <button type="submit" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white font-bold uppercase tracking-wider text-[10px] shadow-sm transition-colors">
+                                <button type="submit" data-tour="authors-approve-btn" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white font-bold uppercase tracking-wider text-[10px] shadow-sm transition-colors">
                                     Approve
                                 </button>
                             </form>
@@ -177,7 +178,7 @@
     </div>
 
     <!-- Section 2: Active Authors & Staff -->
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden" data-tour="authors-active-section">
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-[#fcfcfd]">
             <h2 class="text-base font-bold font-heading text-[#00081e]">Active Authors &amp; Contributors ({{ $activeAuthors->total() }})</h2>
         </div>
@@ -233,7 +234,7 @@
                             @else
                                 <form action="{{ route('admin.authors.suspend', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Suspend this author account?');">
                                     @csrf
-                                    <button type="submit" class="text-red-600 hover:text-red-800 font-semibold">
+                                    <button type="submit" data-tour="authors-suspend-btn" class="text-red-600 hover:text-red-800 font-semibold">
                                         Suspend
                                     </button>
                                 </form>

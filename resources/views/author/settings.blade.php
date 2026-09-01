@@ -2,6 +2,7 @@
 
 @section('title', 'Author Profile & Settings - University News')
 @section('header_tagline', 'University News CMS')
+@section('page_tour_id', 'author.settings')
 
 @section('content')
 <div class="max-w-6xl mx-auto">
@@ -83,7 +84,7 @@
             </div>
 
             <!-- Account Status Card -->
-            <div class="bg-white border border-gray-200 p-6 shadow-sm">
+            <div class="bg-white border border-gray-200 p-6 shadow-sm" data-tour="settings-profile-card">
                 <h3 class="text-sm font-bold font-heading text-[#00081e] mb-4 pb-2 border-b border-gray-100">Account Status</h3>
                 
                 <div class="space-y-3.5 text-xs font-sans">
@@ -107,6 +108,19 @@
                             {{ ucfirst(auth()->user()->author_status) }}
                         </span>
                     </div>
+                </div>
+
+                <!-- Tutorial Replay Button -->
+                <div class="mt-5 pt-4 border-t border-gray-100">
+                    <button
+                        onclick="typeof window.replayOnboarding === 'function' ? window.replayOnboarding() : null"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#f4f6f8] hover:bg-[#eef0f2] border border-gray-200 text-gray-600 hover:text-[#8b1528] text-[11px] font-semibold uppercase tracking-wider transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Lihat Tutorial Dashboard
+                    </button>
                 </div>
             </div>
         </div>
@@ -224,7 +238,7 @@
             </div>
 
             <!-- Security & Password Card -->
-            <div class="bg-white border border-gray-200 shadow-sm p-6 lg:p-8">
+            <div class="bg-white border border-gray-200 shadow-sm p-6 lg:p-8" data-tour="settings-password">
                 <h2 class="text-xl font-bold font-heading text-[#00081e] mb-3">Security & Password</h2>
                 
                 @if (session('status'))

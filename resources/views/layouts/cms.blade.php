@@ -24,7 +24,27 @@
         .font-serif-content { font-family: 'Source Serif 4', serif; }
     </style>
 </head>
-<body class="h-full overflow-hidden antialiased bg-[#f4f6f8] text-[#1b1b1c]">
+@php
+    // Detect current user (admin or web guard) for onboarding data attributes
+    $onboardingUser = null;
+    $onboardingRole = null;
+    if (request()->routeIs('admin.*') && Auth::guard('admin')->check()) {
+        $onboardingUser = Auth::guard('admin')->user();
+        $onboardingRole = 'admin';
+    } elseif (Auth::guard('web')->check()) {
+        $onboardingUser = Auth::guard('web')->user();
+        if ($onboardingUser && $onboardingUser->isAuthor()) {
+            $onboardingRole = 'author';
+        }
+    }
+    $onboardingPending = ($onboardingUser && !$onboardingUser->has_completed_onboarding) ? 'true' : 'false';
+    $completedTours = $onboardingUser ? ($onboardingUser->completed_page_tours ?? []) : [];
+@endphp
+<body class="h-full overflow-hidden antialiased bg-[#f4f6f8] text-[#1b1b1c]"
+      data-onboarding-pending="{{ $onboardingPending }}"
+      data-user-role="{{ $onboardingRole ?? '' }}"
+      data-completed-tours="{{ json_encode($completedTours) }}"
+      data-page-tour-id="@yield('page_tour_id')">
     <div class="flex h-screen overflow-hidden" x-data="{ mobileSidebarOpen: false }">
         
         <!-- Mobile Sidebar Backdrop -->
@@ -53,7 +73,7 @@
             </div>
 
             <!-- Navigation Links -->
-            <nav class="flex-1 overflow-y-auto py-6 space-y-1.5 px-0">
+            <nav class="flex-1 overflow-y-auto py-6 space-y-1.5 px-0" data-tour="sidebar-nav">
                 @php
                     // Determine user from the correct guard based on current route context
                     $isAdminRoute = request()->routeIs('admin.*');
@@ -82,6 +102,7 @@
 
                 <!-- Articles -->
                 <a href="{{ $isAdmin ? route('admin.articles.index') : route('author.articles.index') }}" 
+                   data-tour="{{ $isAdmin ? '' : 'author-articles-link' }}"
                    class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('*articles*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -92,6 +113,7 @@
                 <!-- Users / Authors Management (Admin only) -->
                 @if($isAdmin)
                 <a href="{{ route('admin.authors.index') }}" 
+                   data-tour="admin-users-link"
                    class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('admin.authors*') || request()->routeIs('admin.users*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -109,6 +131,7 @@
 
                 {{-- App Settings: payment fee, etc. (Admin only) --}}
                 <a href="{{ route('admin.app-settings.index') }}" 
+                   data-tour="admin-payment-settings-link"
                    class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('admin.app-settings*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
@@ -177,18 +200,17 @@
 
                 <!-- Right Utility Icons & User Info -->
                 <div class="flex items-center space-x-5 text-gray-500">
-                    <!-- Notification Bell -->
-                    <button class="hover:text-navy transition-colors relative">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
-                    </button>
-
-                    <!-- Help Question Icon -->
-                    <button class="hover:text-navy transition-colors">
+                    <!-- Help Question Icon — triggers onboarding replay -->
+                    <button
+                        id="onboarding-help-btn"
+                        data-tour="help-button"
+                        onclick="typeof window.replayOnboarding === 'function' ? window.replayOnboarding() : null"
+                        title="Lihat Tutorial Dashboard"
+                        class="hover:text-[#8b1528] transition-colors relative group">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
+                        <span class="absolute top-full right-0 mt-1.5 w-max bg-[#00081e] text-white text-[10px] font-sans px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Lihat Tutorial</span>
                     </button>
 
                     <div class="h-6 w-px bg-gray-200"></div>
