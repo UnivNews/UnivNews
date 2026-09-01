@@ -25,7 +25,7 @@ class AdminPagesTest extends TestCase
     public function test_admin_dashboard_requires_authentication()
     {
         $response = $this->get('/admin/dashboard');
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/admin/sign-in');
     }
 
     public function test_admin_can_access_dashboard()
@@ -35,7 +35,7 @@ class AdminPagesTest extends TestCase
             'author_status' => User::STATUS_APPROVED,
         ]);
         
-        $response = $this->actingAs($admin)->get('/admin/dashboard');
+        $response = $this->actingAs($admin, 'admin')->get('/admin/dashboard');
         $response->assertStatus(200);
     }
 
@@ -47,7 +47,8 @@ class AdminPagesTest extends TestCase
         ]);
         
         $response = $this->actingAs($author)->get('/admin/articles');
-        $response->assertStatus(403);
+        // Author is logged in via web, so admin route redirects to /admin/sign-in
+        $response->assertRedirect('/admin/sign-in');
     }
 
     public function test_author_can_access_author_dashboard()
@@ -76,7 +77,7 @@ class AdminPagesTest extends TestCase
             'status' => Article::STATUS_PENDING_REVIEW,
         ]);
 
-        $response = $this->actingAs($admin)->get("/admin/articles/{$article->id}/review");
+        $response = $this->actingAs($admin, 'admin')->get("/admin/articles/{$article->id}/review");
         $response->assertStatus(200);
         $response->assertSee('Review Article');
 
@@ -84,7 +85,7 @@ class AdminPagesTest extends TestCase
             '*' => \Illuminate\Support\Facades\Http::response(['data' => ['id' => 'dummy_tx_id', 'link' => 'http://dummy.url']], 200)
         ]);
 
-        $approveResponse = $this->actingAs($admin)->post("/admin/articles/{$article->id}/approve", [
+        $approveResponse = $this->actingAs($admin, 'admin')->post("/admin/articles/{$article->id}/approve", [
             'publish_date' => date('Y-m-d'),
             'publish_time' => '10:00',
         ]);
