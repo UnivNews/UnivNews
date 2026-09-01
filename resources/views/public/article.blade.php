@@ -49,7 +49,7 @@
                 @endif
             </span>
             <span class="text-gray-300">&bull;</span>
-            <span>{{ $article->published_at->format('F j, Y') }}</span>
+            <span>{{ $article->published_at ? $article->published_at->format('F j, Y') : 'Unpublished' }}</span>
             <span class="text-gray-300">&bull;</span>
             <span>{{ number_format($article->views_count) }} Views</span>
         </div>
@@ -68,7 +68,7 @@
 
     <!-- Content -->
     <div class="prose prose-lg prose-blue max-w-none font-serif text-gray-800 leading-relaxed mb-12">
-        {!! $article->content !!}
+        {!! nl2br(e($article->content)) !!}
     </div>
 
     <!-- Event Registration -->

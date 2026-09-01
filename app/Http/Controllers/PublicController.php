@@ -161,12 +161,23 @@ class PublicController extends Controller
 
     public function article(Article $article)
     {
-        if ($article->status !== 'published' || !$article->published_at || $article->published_at > now()) {
+        $canPreview = false;
+        if (auth()->guard('admin')->check()) {
+            $canPreview = true;
+        } elseif (auth()->guard('web')->check() && auth()->guard('web')->user()->id === $article->user_id) {
+            $canPreview = true;
+        }
+
+        $isPublished = $article->status === 'published' && $article->published_at && $article->published_at <= now();
+
+        if (!$canPreview && !$isPublished) {
             abort(404);
         }
 
-        // Increment view count
-        $article->increment('views_count');
+        // Increment view count only if actually published and viewed by public
+        if ($isPublished && !$canPreview) {
+            $article->increment('views_count');
+        }
 
         $article->load(['user.university', 'boosts']);
         $isBoosted = $article->isBoosted();
