@@ -227,6 +227,17 @@
                             </div>
                         </div>
 
+                        <!-- Address -->
+                        <div class="mt-6">
+                            <label for="address" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">Office Address</label>
+                            <input type="text" 
+                                   name="address" 
+                                   id="address" 
+                                   value="{{ old('address', Auth::guard('admin')->user()->social_links['address'] ?? '') }}" 
+                                   placeholder="123 Academic Way, University City, ST 12345" 
+                                   class="w-full bg-[#f8f9fa] border border-gray-300 px-3.5 py-2.5 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">
+                        </div>
+
                         <!-- Social Media Links Section -->
                         <div class="pt-4 border-t border-gray-100">
                             <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-4 flex items-center gap-2">

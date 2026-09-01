@@ -149,12 +149,13 @@
                     </p>
                 </div>
                 <div>
-                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">RESOURCES</h3>
-                    <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Faculty Experts</a></li>
-                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Media Relations</a></li>
-                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Archives</a></li>
-                    </ul>
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">ENGAGE</h3>
+                    <p class="text-gray-400 font-sans text-sm mb-4 leading-relaxed">
+                        Don't have an account? Sign up now to join the discussion, save your favorite articles, and personalize your news feed.
+                    </p>
+                    <a href="{{ route('register') }}" class="inline-block bg-crimson hover:bg-red-700 text-white px-4 py-2 text-xs font-heading font-bold uppercase tracking-wider transition-colors">
+                        Create Account
+                    </a>
                 </div>
                 <div>
                     @php
@@ -163,37 +164,33 @@
                     @endphp
                     <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">SOCIAL</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        @if(!empty($socials['instagram']))
-                        <li><a href="https://instagram.com/{{ ltrim($socials['instagram'], '@') }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">Instagram</a></li>
-                        @endif
-                        @if(!empty($socials['twitter']))
-                        <li><a href="https://x.com/{{ ltrim($socials['twitter'], '@') }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">X / Twitter</a></li>
-                        @endif
-                        @if(!empty($socials['threads']))
-                        <li><a href="https://threads.net/@{{ ltrim($socials['threads'], '@') }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">Threads</a></li>
-                        @endif
-                        @if(!empty($socials['linkedin']))
-                        <li><a href="https://linkedin.com/in/{{ $socials['linkedin'] }}" target="_blank" rel="noopener" class="hover:text-white transition-colors">LinkedIn</a></li>
-                        @endif
-                        @if(empty($socials['instagram']) && empty($socials['twitter']) && empty($socials['threads']) && empty($socials['linkedin']))
-                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Newsletter</a></li>
-                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Podcasts</a></li>
-                        <li><a href="{{ route('events') }}" class="hover:text-white transition-colors">Events</a></li>
-                        @endif
+                        <li><a href="{{ !empty($socials['instagram']) ? 'https://instagram.com/'.ltrim($socials['instagram'], '@') : '#' }}" {!! !empty($socials['instagram']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">Instagram</a></li>
+                        <li><a href="{{ !empty($socials['threads']) ? 'https://threads.net/@'.ltrim($socials['threads'], '@') : '#' }}" {!! !empty($socials['threads']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">Threads</a></li>
+                        <li><a href="{{ !empty($socials['linkedin']) ? 'https://linkedin.com/in/'.$socials['linkedin'] : '#' }}" {!! !empty($socials['linkedin']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">LinkedIn</a></li>
+                        <li><a href="{{ !empty($socials['twitter']) ? 'https://x.com/'.ltrim($socials['twitter'], '@') : '#' }}" {!! !empty($socials['twitter']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">X / Twitter</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">INSTITUTION</h3>
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">CONTACT</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">About the University</a></li>
-                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Admissions</a></li>
-                        <li><a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Giving</a></li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 mr-2 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span>{{ $adminUser->email ?? 'contact@universitynews.edu' }}</span>
+                        </li>
+                        <li class="flex items-start mt-2">
+                            <svg class="w-4 h-4 mr-2 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <span>{{ $adminUser->phone_number ?? '+1 (555) 123-4567' }}</span>
+                        </li>
+                        <li class="flex items-start mt-2">
+                            <svg class="w-4 h-4 mr-2 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span>{!! nl2br(e($socials['address'] ?? "123 Academic Way\nUniversity City, ST 12345")) !!}</span>
+                        </li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-[#C5C6CF] mt-12 pt-8 flex flex-col md:flex-row justify-between items-center font-sans text-sm" style="color: #7687B2;">
                 <div>
-                    &copy; 2024 University News Portal. All academic rights reserved.
+                    &copy; {{ date('Y') }} University News Portal. All academic rights reserved.
                 </div>
                 <div class="flex space-x-6 mt-4 md:mt-0">
                     <a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Privacy Policy</a>
