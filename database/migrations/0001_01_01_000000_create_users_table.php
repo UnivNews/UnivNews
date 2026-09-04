@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('university_id')->nullable()->constrained('universities')->nullOnDelete();
             $table->string('name');
+            $table->string('preferred_name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->string('department')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'editor', 'author'])->default('author');
+            $table->enum('role', ['admin', 'author', 'public'])->default('public');
+            $table->enum('author_status', ['none', 'pending', 'approved', 'rejected', 'suspended'])->default('none');
+            $table->text('author_bio')->nullable();
+            $table->string('page_name')->nullable();
+            $table->string('avatar_path')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

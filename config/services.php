@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    'mayar' => [
+        'base_url'      => env('MAYAR_API_BASE_URL', 'https://api.mayar.club/hl/v1'),
+        'api_key'       => env('MAYAR_API_KEY'),
+        'webhook_token' => env('MAYAR_WEBHOOK_TOKEN'),
+        'publish_fee'   => (int) env('PUBLISH_FEE', 25000),
+    ],
+
 ];

@@ -12,12 +12,20 @@
     <div class="space-y-8">
         @forelse($articles as $article)
         <a href="{{ route('article', $article->slug) }}" class="block group bg-white shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row gap-6 hover:shadow-md transition-shadow">
-            <div class="aspect-video md:w-64 bg-gray-100 relative shrink-0">
-                <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-serif italic text-sm">Image</div>
+            <div class="aspect-video md:w-64 bg-gray-100 relative shrink-0 overflow-hidden">
+                @if($article->featured_image_path)
+                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
+                        <img src="{{ $article->featured_image_path }}" alt="{{ $article->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    @else
+                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" onerror="this.src='{{ asset($article->featured_image_path) }}'" alt="{{ $article->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    @endif
+                @else
+                    <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-serif italic text-sm">No Image</div>
+                @endif
             </div>
             <div class="flex-1">
                 <span class="text-crimson font-heading font-bold text-xs uppercase tracking-wider mb-2 block">
-                    {{ $article->category->name }}
+                    {{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}
                 </span>
                 <h4 class="text-2xl font-serif font-bold text-navy mb-3 group-hover:text-crimson transition-colors duration-200">
                     {{ $article->title }}

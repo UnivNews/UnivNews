@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Mail\AuthorApplicationApproved;
+use App\Mail\AuthorApplicationRejected;
+use App\Models\AuthorApprovalToken;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+
+class AuthorManagementController extends Controller
+{
+    public function index(): View
+    {
+        $pendingAuthors = User::with('university')
+            ->where('author_status', User::STATUS_PENDING)
+            ->latest('author_applied_at')
+            ->get();
+
+        $activeAuthors = User::with('university')
+            ->withCount('articles')
+            ->whereIn('role', [User::ROLE_AUTHOR, User::ROLE_ADMIN])
+            ->latest()
+            ->paginate(15);
+
+        return view('admin.authors.index', compact('pendingAuthors', 'activeAuthors'));
+    }
+
+    public function approve(User $user): RedirectResponse
+    {
+        // Set role and status
+        $user->update([
+            'role'          => User::ROLE_AUTHOR,
+            'author_status' => User::STATUS_APPROVED,
+        ]);
+
+        // Delete any existing token for this user then create a fresh one (48h)
+        $user->approvalToken()->delete();
+        $token = AuthorApprovalToken::create([
+            'user_id'    => $user->id,
+            'token'      => Str::random(64),
+            'expires_at' => now()->addHours(48),
+        ]);
+
+        // Send approval email with set-password link
+        try {
+            Mail::to($user->email)->send(new AuthorApplicationApproved($user, $token));
+        } catch (\Exception $e) {
+            // Log but don't block
+        }
+
+        return back()->with('success', "Aplikasi author untuk {$user->name} telah disetujui. Email aktivasi telah dikirim.");
+    }
+
+    public function reject(User $user, Request $request): RedirectResponse
+    {
+        $reason = $request->input('reason');
+
+        $user->update([
+            'role'                     => User::ROLE_PUBLIC,
+            'author_status'            => User::STATUS_REJECTED,
+            'author_rejection_reason'  => $reason,
+        ]);
+
+        // Send rejection email
+        try {
+            Mail::to($user->email)->send(new AuthorApplicationRejected($user, $reason));
+        } catch (\Exception $e) {
+            // Log but don't block
+        }
+
+        return back()->with('success', "Aplikasi author untuk {$user->name} telah ditolak.");
+    }
+
+    public function suspend(User $user): RedirectResponse
+    {
+        $user->update([
+            'author_status' => User::STATUS_SUSPENDED,
+        ]);
+
+        return back()->with('success', "Akun author {$user->name} telah ditangguhkan.");
+    }
+}
