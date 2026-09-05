@@ -20,6 +20,12 @@ Route::get('/article/{article:slug}', [PublicController::class, 'article'])->nam
 Route::get('/search', [PublicController::class, 'search'])->name('search');
 Route::get('/tag/{name}', [PublicController::class, 'tag'])->name('tag');
 
+// Site Content Public Pages
+Route::get('/about-us', [\App\Http\Controllers\PageController::class, 'aboutUs'])->name('page.about');
+Route::get('/help/faq', [\App\Http\Controllers\PageController::class, 'faq'])->name('page.faq');
+Route::get('/help/contact', [\App\Http\Controllers\PageController::class, 'contact'])->name('page.contact');
+Route::get('/privacy-policy', [\App\Http\Controllers\PageController::class, 'privacyPolicy'])->name('page.privacy');
+
 // Public API endpoints
 Route::get('/api/homepage/featured', [\App\Http\Controllers\HomepageController::class, 'featured'])->name('api.homepage.featured');
 
@@ -129,6 +135,15 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
     // Boost Prices Management (API endpoints for admin panel)
     Route::get('/api/boost-prices', [Admin\BoostPriceController::class, 'index'])->name('api.boost-prices.index');
     Route::put('/api/boost-prices/{boostPrice}', [Admin\BoostPriceController::class, 'update'])->name('api.boost-prices.update');
+
+    // Site Content Management
+    Route::get('/pages/about', [Admin\PageController::class, 'editAbout'])->name('pages.about.edit');
+    Route::put('/pages/about', [Admin\PageController::class, 'updateAbout'])->name('pages.about.update');
+    Route::get('/pages/privacy', [Admin\PageController::class, 'editPrivacy'])->name('pages.privacy.edit');
+    Route::put('/pages/privacy', [Admin\PageController::class, 'updatePrivacy'])->name('pages.privacy.update');
+    Route::resource('faqs', Admin\FaqController::class)->except(['show']);
+    Route::get('/pages/contact', [Admin\ContactController::class, 'edit'])->name('pages.contact.edit');
+    Route::put('/pages/contact', [Admin\ContactController::class, 'update'])->name('pages.contact.update');
 });
 
 // 8. Author Password Setup (token-based, no auth required)
