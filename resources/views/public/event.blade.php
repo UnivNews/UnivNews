@@ -74,53 +74,6 @@
                     </div>
                     @endforeach
                 </div>
-                @else
-                <!-- Alpine Slider Fallback (no DB articles) -->
-                <div x-data="{
-                    currentSlide: 0,
-                    slides: [
-                        { tag: 'ARTS & CULTURE', title: 'University Symphony Orchestra Autumn Concert', desc: 'A special performance featuring classical and contemporary works by students of the performing arts faculty that drew over 3,000 attendees.', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1280&auto=format&fit=crop' },
-                        { tag: 'SEMINAR', title: 'National Seminar: Facing the Society 5.0 Era', desc: 'Panel discussion with leading technology experts and academics discussing the challenges and opportunities in the era of Society 5.0.', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1280&auto=format&fit=crop' },
-                        { tag: 'SPORTS', title: 'Inter-Faculty Football Tournament – Rector Cup 2024', desc: 'The biggest inter-faculty sports competition of the semester, featuring 16 teams competing for the prestigious Rector Cup trophy.', image: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1280&auto=format&fit=crop' }
-                    ],
-                    autoplay: null,
-                    startAutoplay() { this.autoplay = setInterval(() => { this.currentSlide = (this.currentSlide + 1) % this.slides.length; }, 5000); },
-                    stopAutoplay() { clearInterval(this.autoplay); },
-                    goToSlide(i) { this.currentSlide = i; this.stopAutoplay(); this.startAutoplay(); }
-                }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
-                    <div class="relative w-full h-[400px] mb-6 overflow-hidden bg-gray-100 border border-[#C5C6CF]">
-                        <template x-for="(slide, idx) in slides" :key="idx">
-                            <div class="absolute inset-0 transition-opacity duration-700 ease-in-out"
-                                 :class="currentSlide === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'">
-                                <img :src="slide.image" :alt="slide.tag" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === idx ? 'scale-105' : 'scale-100'">
-                                <div class="absolute top-4 left-4 bg-[#B71032] text-white px-3 py-1 font-sans font-semibold text-xs tracking-wider uppercase">
-                                    FEATURED EVENT
-                                </div>
-                            </div>
-                        </template>
-
-                        <!-- Slide Indicators -->
-                        <div class="absolute bottom-4 left-4 z-20 flex items-center space-x-2">
-                            <template x-for="(slide, idx) in slides" :key="'dot-'+idx">
-                                <button @click="goToSlide(idx)"
-                                        class="w-2.5 h-2.5 rounded-full transition-all duration-300 focus:outline-none"
-                                        :class="currentSlide === idx ? 'bg-[#B71032] w-6' : 'bg-white/50 hover:bg-white/80'"></button>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Dynamic text under slider -->
-                    <template x-for="(slide, idx) in slides" :key="'text-'+idx">
-                        <div x-show="currentSlide === idx" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                            <div class="text-[#B71032] font-sans font-bold text-sm uppercase tracking-wider mb-3" x-text="slide.tag"></div>
-                            <h2 class="font-heading font-semibold text-[32px] leading-tight text-[#00081E] mb-4 hover:text-[#B71032] transition-colors" x-text="slide.title"></h2>
-                            <p class="font-body text-[17px] leading-[28px] text-[#44464E] mb-6 line-clamp-3" x-text="slide.desc"></p>
-                            <span class="inline-block font-sans font-semibold text-sm text-[#00081E] border border-[#00081E] px-6 py-3 hover:bg-[#00081E] hover:text-white transition-colors uppercase tracking-wider cursor-default">
-                                Coming Soon
-                            </span>
-                        </div>
-                    </template>
-                </div>
                 @endif
 
                 <hr class="border-[#C5C6CF]"/>
@@ -284,55 +237,6 @@
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('eventSystem', () => ({
-        @php
-            $dummyVariations = [
-                [
-                    'category' => 'Seminar',
-                    'date' => 'Nov 22',
-                    'title' => 'National Seminar: Facing the Society 5.0 Era',
-                    'excerpt' => 'Panel discussion with leading technology experts and academics discussing the challenges and opportunities of Society 5.0.',
-                    'image' => 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop',
-                ],
-                [
-                    'category' => 'Sports',
-                    'date' => 'Nov 20',
-                    'title' => 'Inter-Faculty Basketball Championship Finals',
-                    'excerpt' => 'The most anticipated sporting event of the semester, featuring the top four faculty teams competing for the coveted Rector Cup.',
-                    'image' => 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=600&auto=format&fit=crop',
-                ],
-                [
-                    'category' => 'Arts & Culture',
-                    'date' => 'Nov 18',
-                    'title' => 'Architecture Faculty Final Year Exhibition 2024',
-                    'excerpt' => 'Graduating students present their capstone design projects exploring sustainable urban living and future city planning.',
-                    'image' => 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?q=80&w=600&auto=format&fit=crop',
-                ],
-                [
-                    'category' => 'Academic',
-                    'date' => 'Nov 12',
-                    'title' => 'Workshop on Writing Scopus-Indexed Research Papers',
-                    'excerpt' => 'A hands-on workshop designed to help faculty and graduate students successfully publish in international indexed journals.',
-                    'image' => 'https://picsum.photos/seed/event6/600/400',
-                ],
-                [
-                    'category' => 'Community',
-                    'date' => 'Nov 05',
-                    'title' => 'Student Community Service at Partner Village',
-                    'excerpt' => 'Hundreds of students join hands for a two-day community service program providing health checks and educational workshops.',
-                    'image' => 'https://picsum.photos/seed/event7/600/400',
-                ],
-                [
-                    'category' => 'Arts & Culture',
-                    'date' => 'Nov 15',
-                    'title' => 'University Symphony Orchestra Autumn Concert',
-                    'excerpt' => 'A special performance featuring classical and contemporary works by students of the performing arts faculty.',
-                    'image' => 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=600&auto=format&fit=crop',
-                ],
-            ];
-            $dummyCount = max(0, 9 - $articles->count());
-            $anyArticle = \App\Models\Article::where('status', 'published')->whereNotNull('published_at')->where('published_at', '<=', now())->first();
-            $fallbackUrl = $anyArticle ? route('article', $anyArticle->slug) : route('home');
-        @endphp
         allEvents: [
             @foreach($articles as $article)
             {
@@ -347,20 +251,6 @@ document.addEventListener('alpine:init', () => {
                 url: @json(route('article', $article->slug)),
             },
             @endforeach
-            @for($i = 0; $i < $dummyCount; $i++)
-            @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
-            {
-                id: 'dummy_{{ $i }}',
-                title: @json($variation['title']),
-                category: @json($variation['category']),
-                date: @json($variation['date']),
-                day: parseInt(@json($variation['date']).split(' ')[1]),
-                month: @json($variation['date']).split(' ')[0],
-                excerpt: @json($variation['excerpt']),
-                image: @json($variation['image']),
-                url: @json($fallbackUrl),
-            },
-            @endfor
         ],
 
         get filteredEvents() {

@@ -227,57 +227,6 @@ document.addEventListener('alpine:init', () => {
             center: 'All Centers'
         },
         @php
-            $dummyVariations = [
-                [
-                    'category' => 'Engineering & Applied Science',
-                    'date' => 'Nov 15',
-                    'title' => 'Robotics Lab Unveils Autonomous Campus Delivery Prototype',
-                    'excerpt' => 'A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.',
-                    'image' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop',
-                    'center' => 'Institute for Sustainable Energy'
-                ],
-                [
-                    'category' => 'Social Sciences & Humanities',
-                    'date' => 'Nov 12',
-                    'title' => 'Business School Launches New Venture Capital Fellowship',
-                    'excerpt' => 'The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.',
-                    'image' => 'https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop',
-                    'center' => 'Center for Digital Ethics'
-                ],
-                [
-                    'category' => 'Biomedical Sciences',
-                    'date' => 'Nov 10',
-                    'title' => 'New Study Links Urban Green Spaces to Lower Stress Levels in Students',
-                    'excerpt' => 'Researchers found a significant correlation between time spent in campus parks and reduced cortisol levels during finals week.',
-                    'image' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop',
-                    'center' => 'Genomics Research Institute'
-                ],
-                [
-                    'category' => 'Social Sciences & Humanities',
-                    'date' => 'Nov 08',
-                    'title' => 'Annual Arts Festival Draws Record-Breaking Crowd This Weekend',
-                    'excerpt' => 'Over 10,000 students and local residents attended the three-day event featuring live music, student films, and interactive installations.',
-                    'image' => 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop',
-                    'center' => 'Center for Digital Ethics'
-                ],
-                [
-                    'category' => 'Engineering & Applied Science',
-                    'date' => 'Nov 05',
-                    'title' => 'Researchers Discover Novel Enzyme that Breaks Down Microplastics',
-                    'excerpt' => 'A cross-disciplinary team from Biology and Chemistry has isolated a bacteria strain capable of digesting common packaging materials.',
-                    'image' => 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop',
-                    'center' => 'Institute for Sustainable Energy'
-                ],
-                [
-                    'category' => 'Biomedical Sciences',
-                    'date' => 'Nov 02',
-                    'title' => 'Medical School Partners with Regional Hospitals for Rural Care',
-                    'excerpt' => 'A new initiative will send final-year medical students to rural clinics to provide essential healthcare services while gaining clinical experience.',
-                    'image' => 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop',
-                    'center' => 'Genomics Research Institute'
-                ]
-            ];
-            $dummyCount = max(0, 9 - $articles->count());
             $researchFields = ['Biomedical Sciences', 'Engineering & Applied Science', 'Social Sciences & Humanities', 'Computer Science & AI'];
             $researchCenters = ['Institute for Sustainable Energy', 'Center for Digital Ethics', 'Genomics Research Institute', 'All Centers'];
         @endphp
@@ -295,20 +244,7 @@ document.addEventListener('alpine:init', () => {
                 center: @json($article->research_center ?: $researchCenters[crc32($article->title) % 4])
             },
             @endforeach
-            @for($i = 0; $i < $dummyCount; $i++)
-            @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
-            {
-                id: 'dummy_{{ $i }}',
-                title: @json($variation['title']),
-                category: @json($variation['category']),
-                date: @json($variation['date']),
-                excerpt: @json($variation['excerpt']),
-                image: @json($variation['image']),
-                url: '#',
-                field: @json($researchFields[$i % 4]),
-                center: @json($researchCenters[$i % 4])
-            },
-            @endfor
+
         ],
 
         get filteredResearch() {

@@ -71,7 +71,7 @@ class PublicController extends Controller
 
     public function research()
     {
-        $category = Category::where('slug', 'research-innovation')->firstOrFail();
+        $category = Category::firstOrCreate(['slug' => 'research-innovation'], ['name' => 'Research & Innovation']);
         
         $featuredResearchArticles = Article::where('category_id', $category->id)
             ->where('status', 'published')
@@ -103,7 +103,7 @@ class PublicController extends Controller
 
     public function achievements()
     {
-        $category = Category::where('slug', 'achievements')->firstOrFail();
+        $category = Category::firstOrCreate(['slug' => 'achievements'], ['name' => 'Achievements']);
 
         $featuredAchievementArticles = Article::where('category_id', $category->id)
             ->where('status', 'published')
@@ -126,7 +126,7 @@ class PublicController extends Controller
 
     public function events()
     {
-        $category = Category::where('slug', 'events')->firstOrFail();
+        $category = Category::firstOrCreate(['slug' => 'events'], ['name' => 'Events']);
 
         $featuredEventArticles = Article::where('category_id', $category->id)
             ->where('status', 'published')

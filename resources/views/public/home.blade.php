@@ -180,52 +180,6 @@
                     <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
                         @php
                             $recentList = $recentArticles->skip(2)->take(6);
-                            $recentDummyCount = 6 - $recentList->count();
-                            
-                            $dummyVariations = [
-                                [
-                                    'category' => 'RESEARCH & INNOVATION',
-                                    'date' => 'Nov 15',
-                                    'title' => 'Robotics Lab Unveils Autonomous Campus Delivery Prototype',
-                                    'excerpt' => 'A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.',
-                                    'image' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'ACHIEVEMENTS',
-                                    'date' => 'Nov 12',
-                                    'title' => 'Business School Launches New Venture Capital Fellowship',
-                                    'excerpt' => 'The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.',
-                                    'image' => 'https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'RESEARCH & INNOVATION',
-                                    'date' => 'Nov 10',
-                                    'title' => 'New Study Links Urban Green Spaces to Lower Stress Levels in Students',
-                                    'excerpt' => 'Researchers found a significant correlation between time spent in campus parks and reduced cortisol levels during finals week.',
-                                    'image' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'EVENTS',
-                                    'date' => 'Nov 08',
-                                    'title' => 'Annual Arts Festival Draws Record-Breaking Crowd This Weekend',
-                                    'excerpt' => 'Over 10,000 students and local residents attended the three-day event featuring live music, student films, and interactive installations.',
-                                    'image' => 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'EVENTS',
-                                    'date' => 'Nov 05',
-                                    'title' => 'Researchers Discover Novel Enzyme that Breaks Down Microplastics',
-                                    'excerpt' => 'A cross-disciplinary team from Biology and Chemistry has isolated a bacteria strain capable of digesting common packaging materials.',
-                                    'image' => 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'ACHIEVEMENTS',
-                                    'date' => 'Nov 02',
-                                    'title' => 'Varsity Basketball Team Secures Regional Championship',
-                                    'excerpt' => 'A thrilling overtime victory propels the team to the national tournament while breaking several school records.',
-                                    'image' => 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop'
-                                ]
-                            ];
                         @endphp
 
                         @foreach($recentList as $article)
@@ -259,29 +213,7 @@
                         </a>
                         @endforeach
 
-                        @php
-                            $fallbackArticleUrl = $recentArticles->first() ? route('article', $recentArticles->first()->slug) : route('home');
-                        @endphp
-                        @for($i = 0; $i < $recentDummyCount; $i++)
-                        @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
-                        <a href="{{ $fallbackArticleUrl }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
-                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
-                            </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $variation['category'] }}</span>
-                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $variation['date'] }}</span>
-                                </div>
-                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                    {{ $variation['title'] }}
-                                </h3>
-                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                    {{ $variation['excerpt'] }}
-                                </p>
-                            </div>
-                        </a>
-                        @endfor
+
                     </div>
                 </div>
 
@@ -297,7 +229,6 @@
                     <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
                         @php
                             $otherArticles = $recentArticles->skip(8)->take(15);
-                            $dummyCount = 15 - $otherArticles->count();
                         @endphp
 
                         @foreach($otherArticles as $article)
@@ -331,27 +262,7 @@
                         </a>
                         @endforeach
 
-                        @for($i = 0; $i < $dummyCount; $i++)
-                        @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
-                        <!-- Dummy Card -->
-                        <a href="{{ $fallbackArticleUrl }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
-                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
-                            </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $variation['category'] }}</span>
-                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $variation['date'] }}</span>
-                                </div>
-                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                    {{ $variation['title'] }}
-                                </h3>
-                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                    {{ $variation['excerpt'] }}
-                                </p>
-                            </div>
-                        </a>
-                        @endfor
+
                     </div>
                 </div>
             </div>
@@ -382,18 +293,6 @@
                                 </div>
                             </div>
                             @endforeach
-                        @else
-                            <div class="flex gap-4 group items-start">
-                                <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">01</span>
-                                <div>
-                                    <a href="{{ route('home') }}">
-                                        <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                            Breakthrough in Quantum Computing Achieved by Engineering Faculty
-                                        </h4>
-                                    </a>
-                                    <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Technology</span>
-                                </div>
-                            </div>
                         @endif
                     </div>
                 </div>
