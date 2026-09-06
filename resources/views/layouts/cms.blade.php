@@ -138,6 +138,27 @@
                     </svg>
                     Payment Settings
                 </a>
+
+                {{-- Site Content (Admin only) --}}
+                <div x-data="{ openContent: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.faqs*') ? 'true' : 'false' }} }">
+                    <button @click="openContent = !openContent" class="w-full flex items-center justify-between px-6 py-3.5 text-sm font-medium transition-colors text-gray-300 hover:bg-white/5 hover:text-white">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                            Site Content
+                        </span>
+                        <svg class="w-4 h-4 transform transition-transform" :class="{ 'rotate-180': openContent }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="openContent" class="bg-black/20 py-1 space-y-1 text-xs">
+                        <a href="{{ route('admin.pages.about.edit') }}" class="block px-12 py-2 {{ request()->routeIs('admin.pages.about*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">About Us</a>
+                        <a href="{{ route('admin.faqs.index') }}" class="block px-12 py-2 {{ request()->routeIs('admin.faqs*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">FAQ</a>
+                        <a href="{{ route('admin.pages.contact.edit') }}" class="block px-12 py-2 {{ request()->routeIs('admin.pages.contact*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">Contact Info</a>
+                        <a href="{{ route('admin.pages.privacy.edit') }}" class="block px-12 py-2 {{ request()->routeIs('admin.pages.privacy*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">Privacy Policy</a>
+                    </div>
+                </div>
                 @endif
 
                 <!-- Settings (User Profile) -->

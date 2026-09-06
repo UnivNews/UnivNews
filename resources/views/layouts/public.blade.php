@@ -137,9 +137,30 @@
         @yield('content')
     </main>
 
+    <style>
+        .footer-grid-nav {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        @media (min-width: 640px) {
+            .footer-grid-nav {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+        @media (min-width: 1024px) {
+            .footer-grid-nav {
+                grid-template-columns: 1.8fr 2.2fr 1fr 1fr 1.2fr;
+                gap: 2.5rem;
+            }
+        }
+    </style>
     <footer class="bg-navy text-white mt-auto py-12 border-t-8 border-crimson">
         <div class="max-w-[1280px] w-full mx-auto px-6 md:px-10">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="footer-grid-nav">
+                {{-- Column 1: Brand --}}
                 <div>
                     <h2 class="font-heading font-bold text-2xl tracking-tight mb-4" style="color: #FFFFFF;">
                         University News
@@ -148,21 +169,27 @@
                         Providing authoritative reporting and intellectual discourse for the academic community since 1893.
                     </p>
                 </div>
+                {{-- Column 2: Newsletter --}}
                 <div>
-                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">ENGAGE</h3>
-                    <p class="text-gray-400 font-sans text-sm mb-4 leading-relaxed">
-                        Don't have an account? Sign up now to join the discussion, save your favorite articles, and personalize your news feed.
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 text-crimson" style="color: #DC2626;">NEWSLETTER</h3>
+                    <p class="font-sans text-sm leading-relaxed mb-4" style="color: #7687B2;">
+                        Subscribe to get weekly digest of top stories across campuses, early access to investigative reports, and exclusive research archives.
                     </p>
-                    <a href="{{ route('register') }}" class="inline-block bg-crimson hover:bg-red-700 text-white px-4 py-2 text-xs font-heading font-bold uppercase tracking-wider transition-colors">
-                        Create Account
-                    </a>
+                    <button type="button" onclick="alert('Feature coming soon!');" style="background-color: #DC2626; color: #FFFFFF; font-weight: 600; font-size: 0.8125rem; padding: 0.45rem 0.9rem; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; width: auto; border: none; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#B91C1C'" onmouseout="this.style.backgroundColor='#DC2626'">
+                        <svg class="mr-2" fill="currentColor" viewBox="0 0 20 20" style="width: 0.875rem; height: 0.875rem; margin-right: 0.4rem;">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                        </svg>
+                        Subscribe
+                    </button>
                 </div>
+                {{-- Column 3: Social --}}
                 <div>
                     @php
                         $adminUser = \App\Models\User::where('role', 'admin')->first();
                         $socials = $adminUser ? ($adminUser->social_links ?? []) : [];
                     @endphp
-                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">SOCIAL</h3>
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 text-crimson" style="color: #DC2626;">SOCIAL</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
                         <li><a href="{{ !empty($socials['instagram']) ? 'https://instagram.com/'.ltrim($socials['instagram'], '@') : '#' }}" {!! !empty($socials['instagram']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">Instagram</a></li>
                         <li><a href="{{ !empty($socials['threads']) ? 'https://threads.net/@'.ltrim($socials['threads'], '@') : '#' }}" {!! !empty($socials['threads']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">Threads</a></li>
@@ -170,21 +197,20 @@
                         <li><a href="{{ !empty($socials['twitter']) ? 'https://x.com/'.ltrim($socials['twitter'], '@') : '#' }}" {!! !empty($socials['twitter']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">X / Twitter</a></li>
                     </ul>
                 </div>
+                {{-- Column 4: About Us --}}
                 <div>
-                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2 inline-block text-crimson">CONTACT</h3>
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 text-crimson" style="color: #DC2626;">ABOUT US</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        <li class="flex items-start">
-                            <svg class="w-4 h-4 mr-2 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            <span>{{ $adminUser->email ?? 'contact@universitynews.edu' }}</span>
-                        </li>
-                        <li class="flex items-start mt-2">
-                            <svg class="w-4 h-4 mr-2 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                            <span>{{ $adminUser->phone_number ?? '+1 (555) 123-4567' }}</span>
-                        </li>
-                        <li class="flex items-start mt-2">
-                            <svg class="w-4 h-4 mr-2 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <span>{!! nl2br(e($socials['address'] ?? "123 Academic Way\nUniversity City, ST 12345")) !!}</span>
-                        </li>
+                        <li><a href="{{ route('page.about') }}" class="hover:text-white transition-colors">Our Story & Mission</a></li>
+                    </ul>
+                </div>
+                {{-- Column 5: Help --}}
+                <div>
+                    <h3 class="font-heading font-bold uppercase tracking-wider mb-4 text-crimson" style="color: #DC2626;">HELP & SUPPORT</h3>
+                    <ul class="space-y-2 text-gray-400 font-sans text-sm">
+                        <li><a href="{{ route('page.faq') }}" class="hover:text-white transition-colors">FAQ</a></li>
+                        <li><a href="{{ route('page.contact') }}" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="{{ route('page.privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
@@ -193,7 +219,7 @@
                     &copy; {{ date('Y') }} University News Portal. All academic rights reserved.
                 </div>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="{{ route('page.privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a>
                     <a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Accessibility</a>
                 </div>
             </div>
