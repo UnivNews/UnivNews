@@ -94,17 +94,14 @@ class ProfileController extends Controller
             'name'            => 'required|string|max:255',
             'preferred_name'  => 'nullable|string|max:255',
             'email'           => 'required|email|max:255|unique:users,email,' . $user->id,
-            'phone_number'    => 'nullable|string|max:50',
-            'address'         => 'nullable|string|max:255',
             'social_instagram' => 'nullable|string|max:255',
             'social_twitter'   => 'nullable|string|max:255',
             'social_threads'   => 'nullable|string|max:255',
             'social_linkedin'  => 'nullable|string|max:255',
         ]);
 
-        // Build social links array (now including address for simplicity)
+        // Build social links array
         $socialLinks = array_filter([
-            'address'   => $request->input('address'),
             'instagram' => $request->input('social_instagram'),
             'twitter'   => $request->input('social_twitter'),
             'threads'   => $request->input('social_threads'),
@@ -113,9 +110,8 @@ class ProfileController extends Controller
 
         $user->update([
             'name'           => $validated['name'],
-            'preferred_name' => $validated['preferred_name'],
+            'preferred_name' => $validated['preferred_name'] ?? null,
             'email'          => $validated['email'],
-            'phone_number'   => $validated['phone_number'],
             'social_links'   => !empty($socialLinks) ? $socialLinks : null,
         ]);
 
