@@ -117,6 +117,7 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
     Route::post('/authors/{user}/approve', [Admin\AuthorManagementController::class, 'approve'])->name('authors.approve');
     Route::post('/authors/{user}/reject', [Admin\AuthorManagementController::class, 'reject'])->name('authors.reject');
     Route::post('/authors/{user}/suspend', [Admin\AuthorManagementController::class, 'suspend'])->name('authors.suspend');
+    Route::delete('/authors/{user}', [Admin\AuthorManagementController::class, 'destroy'])->name('authors.destroy');
 
     // University Management
     Route::resource('universities', Admin\UniversityController::class)->only(['index', 'store', 'destroy']);

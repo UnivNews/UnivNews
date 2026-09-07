@@ -234,8 +234,18 @@
                             @else
                                 <form action="{{ route('admin.authors.suspend', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Suspend this author account?');">
                                     @csrf
-                                    <button type="submit" data-tour="authors-suspend-btn" class="text-red-600 hover:text-red-800 font-semibold">
+                                    <button type="submit" data-tour="authors-suspend-btn" class="text-amber-600 hover:text-amber-800 font-semibold">
                                         Suspend
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($user->id !== auth()->id())
+                                <form action="{{ route('admin.authors.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus akun &quot;{{ $user->name }}&quot; secara permanen?\n\nCatatan: Seluruh artikel milik author ini akan dialihkan kepemilikannya ke akun Admin.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-800 font-semibold ml-1">
+                                        Delete
                                     </button>
                                 </form>
                             @endif

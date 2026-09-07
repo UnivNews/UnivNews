@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\AuthorApplicationApproved;
 use App\Mail\AuthorApplicationRejected;
+use App\Models\Article;
 use App\Models\AuthorApprovalToken;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -85,4 +87,33 @@ class AuthorManagementController extends Controller
 
         return back()->with('success', "Akun author {$user->name} telah ditangguhkan.");
     }
+
+    /**
+     * Delete an author/user completely, reassigning all their articles to the admin.
+     */
+    public function destroy(User $user): RedirectResponse
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        $userName = $user->name;
+        $adminId  = auth()->id();
+
+        DB::transaction(function () use ($user, $adminId) {
+            // 1. Reassign all articles to the currently logged-in Admin (single batch query)
+            Article::where('user_id', $user->id)->update(['user_id' => $adminId]);
+
+            // 2. Delete all related records — use query builder (not nullsafe) for reliability
+            $user->approvalToken()->delete();
+            $user->boosts()->delete();
+            $user->boostPayments()->delete();
+
+            // 3. Delete the user account
+            $user->delete();
+        });
+
+        return back()->with('success', "Akun \"{$userName}\" telah dihapus secara permanen. Seluruh artikelnya telah dialihkan kepemilikannya ke akun Admin.");
+    }
 }
+

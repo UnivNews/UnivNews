@@ -65,7 +65,7 @@ class ApplyController extends Controller
         try {
             Mail::to($user->email)->send(new AuthorApplicationReceived($user->fresh()));
         } catch (\Exception $e) {
-            // Log but don't block — mail driver is 'log' in local anyway
+            \Illuminate\Support\Facades\Log::error('Failed to send author application email: ' . $e->getMessage());
         }
 
         // Notify all admins
@@ -81,7 +81,7 @@ class ApplyController extends Controller
                 Mail::to($email)->send(new AdminNewApplicationNotification($user->fresh()));
             }
         } catch (\Exception $e) {
-            // Log but don't block
+            \Illuminate\Support\Facades\Log::error('Failed to send admin notification email: ' . $e->getMessage());
         }
 
         return redirect()->route('author.apply.confirmation');
