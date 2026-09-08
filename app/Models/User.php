@@ -105,6 +105,16 @@ class User extends Authenticatable
         return $this->hasMany(BoostPayment::class);
     }
 
+    public function likes()
+    {
+        return $this->hasMany(ArticleLike::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(ArticleComment::class);
+    }
+
     // ── Role Helpers ───────────────────────────────────────────────────────
 
     public function isAdmin(): bool

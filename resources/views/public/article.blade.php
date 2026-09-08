@@ -2,6 +2,20 @@
 
 @section('title', $article->title . ' - University News')
 
+@section('og_meta')
+<meta property="og:title"       content="{{ $article->title }}">
+<meta property="og:description" content="{{ $article->excerpt ?? Str::limit(strip_tags($article->content), 160) }}">
+<meta property="og:url"         content="{{ url()->current() }}">
+<meta property="og:type"        content="article">
+@if($article->featured_image_path)
+    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
+        <meta property="og:image" content="{{ $article->featured_image_path }}">
+    @else
+        <meta property="og:image" content="{{ asset('storage/' . $article->featured_image_path) }}">
+    @endif
+@endif
+@endsection
+
 @section('content')
 <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">
     
@@ -140,6 +154,13 @@
         </div>
     </div>
 
+    {{-- Engagement: Like, Comment & Share --}}
+    @include('components.article-engagement', [
+        'article'      => $article,
+        'userHasLiked' => $userHasLiked,
+        'likeCount'    => $likeCount,
+    ])
+
     <!-- Related Articles -->
     @if($relatedArticles->count() > 0)
     <div class="mt-16 bg-gray-50 p-8 border border-gray-200">
@@ -168,4 +189,5 @@
     </div>
     @endif
 </article>
+
 @endsection
