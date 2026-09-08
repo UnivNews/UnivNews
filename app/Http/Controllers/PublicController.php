@@ -179,8 +179,14 @@ class PublicController extends Controller
             $article->increment('views_count');
         }
 
-        $article->load(['user.university', 'boosts']);
+        // Eager load relations including engagement data
+        $article->load(['user.university', 'boosts', 'likes', 'comments.user']);
         $isBoosted = $article->isBoosted();
+
+        // Engagement data for the view
+        $authUser     = auth()->guard('web')->user();
+        $userHasLiked = $article->isLikedBy($authUser);
+        $likeCount    = $article->likes->count();
 
         $relatedArticles = Article::where('category_id', $article->category_id)
             ->where('id', '!=', $article->id)
@@ -190,7 +196,13 @@ class PublicController extends Controller
             ->limit(3)
             ->get();
 
-        return view('public.article', compact('article', 'relatedArticles', 'isBoosted'));
+        return view('public.article', compact(
+            'article',
+            'relatedArticles',
+            'isBoosted',
+            'userHasLiked',
+            'likeCount',
+        ));
     }
 
     public function search(Request $request)

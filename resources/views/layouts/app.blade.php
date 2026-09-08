@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name', 'University News'))</title>
+    @yield('og_meta')
     @if(request()->getHost() === 'devtest.univnews.site' || config('app.env') === 'staging')
         <meta name="robots" content="noindex, nofollow">
     @endif
@@ -39,5 +40,6 @@
     @isset($slot)
         {{ $slot }}
     @endisset
+    @stack('scripts')
 </body>
 </html>

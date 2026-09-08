@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
 
 // 1. Public Portal Routes
 Route::get('/', [PublicController::class, 'home'])->name('home');
@@ -75,6 +77,21 @@ Route::middleware(['auth'])->group(function () {
 
     // Onboarding completion (web guard users: author)
     Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
+
+    // ── Engagement Routes ──────────────────────────────────────────────────
+
+    // Like toggle (auth required; guest → redirect to login)
+    Route::post('/articles/{article}/like', [LikeController::class, 'toggle'])
+        ->name('articles.like.toggle');
+
+    // Comment store (auth + throttle: 6 req/min ≈ 1 per 10 sec)
+    Route::post('/articles/{article}/comments', [CommentController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('articles.comments.store');
+
+    // Comment soft-delete (auth required)
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
+        ->name('comments.destroy');
 });
 
 // 5. Auth Routes (Breeze)
