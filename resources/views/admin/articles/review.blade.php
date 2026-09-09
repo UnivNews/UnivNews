@@ -252,7 +252,11 @@ function submitReject() {
     const form = document.getElementById('reviewForm');
     const notes = document.getElementById('admin_notes').value.trim();
     if (!notes) {
-        alert('Please provide feedback notes explaining the reason for rejection.');
+        if (window.showWarningAlert) {
+            window.showWarningAlert('Action Required', 'Please provide feedback notes explaining the reason for rejection.');
+        } else {
+            alert('Please provide feedback notes explaining the reason for rejection.');
+        }
         document.getElementById('admin_notes').focus();
         return;
     }

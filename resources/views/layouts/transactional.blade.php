@@ -90,9 +90,9 @@
             <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-sm font-sans" style="color: #7687B2;">
                 <p>&copy; 2024 University News Portal. All academic rights reserved.</p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Accessibility</a>
-                    <a href="#" class="hover:text-white transition-colors">Contact Support</a>
+                    <a href="{{ route('page.privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" onclick="window.showInfoAlert('Info! Feature coming soon', 'Accessibility options are currently in development.'); return false;" class="hover:text-white transition-colors">Accessibility</a>
+                    <a href="{{ route('page.contact') }}" class="hover:text-white transition-colors">Contact Support</a>
                 </div>
             </div>
         </div>

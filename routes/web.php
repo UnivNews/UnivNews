@@ -146,6 +146,12 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
     Route::put('/settings/password', [Admin\ProfileController::class, 'updatePassword'])->name('settings.password');
     Route::put('/settings', [Admin\ProfileController::class, 'update'])->name('settings.update');
 
+    // Active Sessions
+    Route::get('/sessions', [Admin\SessionController::class, 'index'])->name('sessions.index');
+    Route::post('/sessions/gps-location', [Admin\SessionController::class, 'updateGps'])->name('sessions.update-gps');
+    Route::delete('/sessions/{id}', [Admin\SessionController::class, 'destroy'])->name('sessions.destroy');
+    Route::post('/sessions/revoke-others', [Admin\SessionController::class, 'destroyOthers'])->name('sessions.destroy-others');
+
     // App Settings (Payment Fee, etc.)
     Route::get('/app-settings', [Admin\AppSettingsController::class, 'index'])->name('app-settings.index');
     Route::put('/app-settings', [Admin\AppSettingsController::class, 'update'])->name('app-settings.update');

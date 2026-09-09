@@ -14,6 +14,7 @@ class RegistrationTest extends TestCase
         $response = $this->get('/register');
 
         $response->assertStatus(200);
+        $response->assertSee(route('page.privacy'));
     }
 
     public function test_new_users_can_register(): void

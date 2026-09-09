@@ -24,16 +24,6 @@ export default {
                 heading: ['Montserrat', ...defaultTheme.fontFamily.sans],
                 serif: ['"Source Serif 4"', ...defaultTheme.fontFamily.serif],
             },
-            borderRadius: {
-                none: '0px',
-                sm: '0px',
-                DEFAULT: '0px',
-                md: '0px',
-                lg: '0px',
-                xl: '0px',
-                '2xl': '0px',
-                '3xl': '0px',
-            }
         },
     },
 
