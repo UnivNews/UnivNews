@@ -41,4 +41,22 @@ class PublicPagesTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($article->title);
     }
+
+    public function test_privacy_policy_page_loads_successfully()
+    {
+        $response = $this->get('/privacy-policy');
+        $response->assertStatus(200);
+    }
+
+    public function test_footer_privacy_policy_links()
+    {
+        $response = $this->get('/');
+        $response->assertStatus(200);
+        // Column 5 HELP & SUPPORT should have Privacy Policy and Accessibility
+        $response->assertSee(route('page.privacy'));
+        $response->assertSee('Accessibility');
+        // Bottom bar should display Terms of Service
+        $response->assertSee('Terms of Service');
+        $response->assertSee('Terms of Service options are currently in development.');
+    }
 }

@@ -175,7 +175,7 @@
                     <p class="font-sans text-sm leading-relaxed mb-4" style="color: #7687B2;">
                         Subscribe to get weekly digest of top stories across campuses, early access to investigative reports, and exclusive research archives.
                     </p>
-                    <button type="button" onclick="alert('Feature coming soon!');" style="background-color: #DC2626; color: #FFFFFF; font-weight: 600; font-size: 0.8125rem; padding: 0.45rem 0.9rem; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; width: auto; border: none; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#B91C1C'" onmouseout="this.style.backgroundColor='#DC2626'">
+                    <button type="button" onclick="window.showInfoAlert('Info! Feature coming soon', 'Newsletter subscription is under development and will be available soon.');" style="background-color: #DC2626; color: #FFFFFF; font-weight: 600; font-size: 0.8125rem; padding: 0.45rem 0.9rem; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; width: auto; border: none; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#B91C1C'" onmouseout="this.style.backgroundColor='#DC2626'">
                         <svg class="mr-2" fill="currentColor" viewBox="0 0 20 20" style="width: 0.875rem; height: 0.875rem; margin-right: 0.4rem;">
                             <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
                             <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
@@ -191,10 +191,10 @@
                     @endphp
                     <h3 class="font-heading font-bold uppercase tracking-wider mb-4 text-crimson" style="color: #DC2626;">SOCIAL</h3>
                     <ul class="space-y-2 text-gray-400 font-sans text-sm">
-                        <li><a href="{{ !empty($socials['instagram']) ? 'https://instagram.com/'.ltrim($socials['instagram'], '@') : '#' }}" {!! !empty($socials['instagram']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">Instagram</a></li>
-                        <li><a href="{{ !empty($socials['threads']) ? 'https://threads.net/@'.ltrim($socials['threads'], '@') : '#' }}" {!! !empty($socials['threads']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">Threads</a></li>
-                        <li><a href="{{ !empty($socials['linkedin']) ? 'https://linkedin.com/in/'.$socials['linkedin'] : '#' }}" {!! !empty($socials['linkedin']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">LinkedIn</a></li>
-                        <li><a href="{{ !empty($socials['twitter']) ? 'https://x.com/'.ltrim($socials['twitter'], '@') : '#' }}" {!! !empty($socials['twitter']) ? 'target="_blank" rel="noopener"' : 'onclick="alert(\'Link coming soon\'); return false;"' !!} class="hover:text-white transition-colors">X / Twitter</a></li>
+                        <li><a href="{{ !empty($socials['instagram']) ? 'https://instagram.com/'.ltrim($socials['instagram'], '@') : '#' }}" {!! !empty($socials['instagram']) ? 'target="_blank" rel="noopener"' : 'onclick="window.showInfoAlert(\'Info! Link coming soon\', \'This social media profile will be available soon. Please check back later!\'); return false;"' !!} class="hover:text-white transition-colors">Instagram</a></li>
+                        <li><a href="{{ !empty($socials['threads']) ? 'https://threads.net/@'.ltrim($socials['threads'], '@') : '#' }}" {!! !empty($socials['threads']) ? 'target="_blank" rel="noopener"' : 'onclick="window.showInfoAlert(\'Info! Link coming soon\', \'This social media profile will be available soon. Please check back later!\'); return false;"' !!} class="hover:text-white transition-colors">Threads</a></li>
+                        <li><a href="{{ !empty($socials['linkedin']) ? 'https://linkedin.com/in/'.$socials['linkedin'] : '#' }}" {!! !empty($socials['linkedin']) ? 'target="_blank" rel="noopener"' : 'onclick="window.showInfoAlert(\'Info! Link coming soon\', \'This social media profile will be available soon. Please check back later!\'); return false;"' !!} class="hover:text-white transition-colors">LinkedIn</a></li>
+                        <li><a href="{{ !empty($socials['twitter']) ? 'https://x.com/'.ltrim($socials['twitter'], '@') : '#' }}" {!! !empty($socials['twitter']) ? 'target="_blank" rel="noopener"' : 'onclick="window.showInfoAlert(\'Info! Link coming soon\', \'This social media profile will be available soon. Please check back later!\'); return false;"' !!} class="hover:text-white transition-colors">X / Twitter</a></li>
                     </ul>
                 </div>
                 {{-- Column 4: About Us --}}
@@ -211,6 +211,7 @@
                         <li><a href="{{ route('page.faq') }}" class="hover:text-white transition-colors">FAQ</a></li>
                         <li><a href="{{ route('page.contact') }}" class="hover:text-white transition-colors">Contact</a></li>
                         <li><a href="{{ route('page.privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" onclick="window.showInfoAlert('Info! Feature coming soon', 'Accessibility options are currently in development.'); return false;" class="hover:text-white transition-colors">Accessibility</a></li>
                     </ul>
                 </div>
             </div>
@@ -219,8 +220,7 @@
                     &copy; {{ date('Y') }} University News Portal. All academic rights reserved.
                 </div>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="{{ route('page.privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" onclick="alert('Feature coming soon!'); return false;" class="hover:text-white transition-colors">Accessibility</a>
+                    <a href="#" onclick="window.showInfoAlert('Info! Feature coming soon', 'Terms of Service options are currently in development.'); return false;" class="hover:text-white transition-colors">Terms of Service</a>
                 </div>
             </div>
         </div>

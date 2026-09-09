@@ -79,7 +79,7 @@
             <div class="block">
                 <label for="terms" class="inline-flex items-center">
                     <input id="terms" type="checkbox" class="text-crimson border-border-main focus:ring-crimson h-4 w-4" name="terms" required>
-                    <span class="ml-2 text-sm text-gray-600">I agree to the <a href="#" class="underline hover:text-navy">Terms of Service</a> and <a href="#" class="underline hover:text-navy">Privacy Policy</a></span>
+                    <span class="ml-2 text-sm text-gray-600">I agree to the <a href="#" onclick="window.showInfoAlert('Info! Feature coming soon', 'Terms of Service options are currently in development.'); return false;" class="underline hover:text-navy">Terms of Service</a> and <a href="{{ route('page.privacy') }}" target="_blank" rel="noopener noreferrer" class="underline hover:text-navy">Privacy Policy</a></span>
                 </label>
                 <x-input-error :messages="$errors->get('terms')" class="mt-2 text-crimson" />
             </div>

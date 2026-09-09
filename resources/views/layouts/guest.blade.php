@@ -48,5 +48,8 @@
         </div>
 
     </div>
+    <x-alert-toast />
+    <x-alert-dialog />
+    <x-page-loader />
 </body>
 </html>

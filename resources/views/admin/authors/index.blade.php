@@ -141,7 +141,10 @@
                             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between gap-3">
                                 <!-- Reject with reason -->
                                 <form action="{{ route('admin.authors.reject', $applicant) }}" method="POST" class="flex-1"
-                                      onsubmit="return confirm('Tolak aplikasi ini?')">
+                                      data-confirm-title="Reject author application?"
+                                      data-confirm-description="Are you sure you want to reject this applicant?"
+                                      data-confirm-btn="Reject"
+                                      data-confirm-variant="warning">
                                     @csrf
                                     <div class="flex gap-2">
                                         <input type="text"
@@ -232,7 +235,13 @@
                                     </button>
                                 </form>
                             @else
-                                <form action="{{ route('admin.authors.suspend', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Suspend this author account?');">
+                                <form action="{{ route('admin.authors.suspend', $user) }}" 
+                                      method="POST" 
+                                      class="inline-block"
+                                      data-confirm-title="Suspend author account?"
+                                      data-confirm-description="Are you sure you want to suspend &quot;{{ addslashes($user->name) }}&quot;? The author will not be able to publish new articles."
+                                      data-confirm-btn="Suspend"
+                                      data-confirm-variant="warning">
                                     @csrf
                                     <button type="submit" data-tour="authors-suspend-btn" class="text-amber-600 hover:text-amber-800 font-semibold">
                                         Suspend
@@ -241,7 +250,12 @@
                             @endif
 
                             @if($user->id !== auth()->id())
-                                <form action="{{ route('admin.authors.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus akun &quot;{{ $user->name }}&quot; secara permanen?\n\nCatatan: Seluruh artikel milik author ini akan dialihkan kepemilikannya ke akun Admin.');">
+                                <form action="{{ route('admin.authors.destroy', $user) }}" 
+                                      method="POST" 
+                                      class="inline-block"
+                                      data-confirm-title="Delete author account?"
+                                      data-confirm-description="Are you sure you want to permanently delete &quot;{{ addslashes($user->name) }}&quot;? All articles belonging to this author will be transferred to Admin."
+                                      data-confirm-btn="Delete">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-800 font-semibold ml-1">

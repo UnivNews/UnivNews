@@ -173,7 +173,12 @@
                                     </a>
                                 @endif
 
-                                <form action="{{ route('admin.articles.destroy', $article) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this article?');">
+                                <form action="{{ route('admin.articles.destroy', $article) }}" 
+                                      method="POST" 
+                                      class="inline-block"
+                                      data-confirm-title="Delete article?"
+                                      data-confirm-description="This will permanently delete this article (&quot;{{ addslashes($article->title) }}&quot;). This action cannot be undone."
+                                      data-confirm-btn="Delete">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-800 transition-colors" title="Delete">

@@ -64,7 +64,12 @@
                         </td>
                         <td class="py-3.5 px-4 text-right space-x-2">
                             <a href="{{ route('admin.faqs.edit', $faq) }}" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs">Edit</a>
-                            <form action="{{ route('admin.faqs.destroy', $faq) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this FAQ?');">
+                            <form action="{{ route('admin.faqs.destroy', $faq) }}" 
+                                  method="POST" 
+                                  class="inline"
+                                  data-confirm-title="Delete FAQ item?"
+                                  data-confirm-description="This will permanently delete this FAQ item. This action cannot be undone."
+                                  data-confirm-btn="Delete">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-900 font-medium text-xs">Delete</button>

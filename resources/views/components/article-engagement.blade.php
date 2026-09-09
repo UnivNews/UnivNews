@@ -569,23 +569,41 @@
     function bindDelete(btn) {
         if (!btn) return;
         btn.addEventListener('click', function() {
-            if (!confirm('Hapus komentar ini?')) return;
-            var id   = btn.dataset.commentId;
-            var url  = btn.dataset.deleteUrl;
-            var item = document.querySelector('[data-comment-id="' + id + '"]');
-            apiRequest(url, 'DELETE')
-                .then(function() {
-                    if (item) item.remove();
-                    updateCommentCount(-1);
-                    if (commentList && commentList.querySelectorAll('.comment-item').length === 0) {
-                        var empty = document.createElement('div');
-                        empty.id = 'empty-comments';
-                        empty.className = 'text-center py-10 text-gray-400';
-                        empty.innerHTML = '<svg class="w-10 h-10 mx-auto mb-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><p class="text-sm font-sans">Belum ada komentar. Jadilah yang pertama!</p>';
-                        commentList.appendChild(empty);
-                    }
-                })
-                .catch(function() { alert('Gagal menghapus komentar.'); });
+            var doDelete = function() {
+                var id   = btn.dataset.commentId;
+                var url  = btn.dataset.deleteUrl;
+                var item = document.querySelector('[data-comment-id="' + id + '"]');
+                apiRequest(url, 'DELETE')
+                    .then(function() {
+                        if (item) item.remove();
+                        updateCommentCount(-1);
+                        if (commentList && commentList.querySelectorAll('.comment-item').length === 0) {
+                            var empty = document.createElement('div');
+                            empty.id = 'empty-comments';
+                            empty.className = 'text-center py-10 text-gray-400';
+                            empty.innerHTML = '<svg class="w-10 h-10 mx-auto mb-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><p class="text-sm font-sans">Belum ada komentar. Jadilah yang pertama!</p>';
+                            commentList.appendChild(empty);
+                        }
+                    })
+                    .catch(function(err) {
+                        alert(err.message || 'Gagal menghapus komentar.');
+                    });
+            };
+
+            if (window.showAlertDialog) {
+                window.showAlertDialog({
+                    title: 'Delete comment?',
+                    description: 'Are you sure you want to permanently delete this comment?',
+                    confirmText: 'Delete',
+                    cancelText: 'Cancel',
+                    variant: 'destructive',
+                    icon: 'trash'
+                }).then(function(confirmed) {
+                    if (confirmed) doDelete();
+                });
+            } else if (confirm('Hapus komentar ini?')) {
+                doDelete();
+            }
         });
     }
 
