@@ -90,8 +90,10 @@ class SessionController extends Controller
                     ? 'GPS: ' . round($geo['latitude'], 4) . '°, ' . round($geo['longitude'], 4) . '°'
                     : null;
                 $lastActive = Carbon::createFromTimestamp($dbSess->last_activity)->diffForHumans();
-                $isUnusual = false;
-                $unusualMessage = null;
+                $currentCountry = !empty($currentGps['country']) ? $currentGps['country'] : 'Indonesia';
+                $sessionCountry = $geo['country'] ?? '';
+                $isUnusual = (!empty($sessionCountry) && $sessionCountry !== 'Localhost' && strcasecmp($sessionCountry, $currentCountry) !== 0);
+                $unusualMessage = $isUnusual ? "Unusual location — signed in from {$sessionCountry}." : null;
             }
 
             $realSessions->push([
@@ -131,70 +133,10 @@ class SessionController extends Controller
             $realSessions->prepend($currentDeviceSession);
         }
 
-        // 6. Connected security demo sessions (supporting multi-device testing & unusual location alert from reference)
-        $demoSessions = collect([
-            [
-                'id' => 'sess_iphone15_' . substr(md5($adminId . '_iphone'), 0, 8),
-                'device' => 'iPhone 15 · Northwind app',
-                'is_current' => false,
-                'type' => 'mobile',
-                'ip' => '84.22.11.7',
-                'location' => 'Rotterdam, NL',
-                'gps' => 'GPS: 51.9244°, 4.4777° (±10m)',
-                'gps_raw' => null,
-                'last_active' => '2 hours ago',
-                'is_unusual' => false,
-                'unusual_message' => null,
-                'is_real' => false,
-            ],
-            [
-                'id' => 'sess_win11_' . substr(md5($adminId . '_win11'), 0, 8),
-                'device' => 'Windows 11 · Firefox 129',
-                'is_current' => false,
-                'type' => 'server',
-                'ip' => '203.0.113.44',
-                'location' => 'Warsaw, PL',
-                'gps' => 'GPS: 52.2297°, 21.0122°',
-                'gps_raw' => null,
-                'last_active' => '6 hours ago',
-                'is_unusual' => true,
-                'unusual_message' => 'Unusual location — you have not signed in from Poland before.',
-                'is_real' => false,
-            ],
-            [
-                'id' => 'sess_linux_' . substr(md5($adminId . '_cli'), 0, 8),
-                'device' => 'Linux · CLI v4.2.1',
-                'is_current' => false,
-                'type' => 'cli',
-                'ip' => '10.4.8.19',
-                'location' => 'build runner',
-                'gps' => null,
-                'gps_raw' => null,
-                'last_active' => 'yesterday',
-                'is_unusual' => false,
-                'unusual_message' => null,
-                'is_real' => false,
-            ],
-            [
-                'id' => 'sess_ipad_' . substr(md5($adminId . '_ipad'), 0, 8),
-                'device' => 'iPad Air · Safari 18',
-                'is_current' => false,
-                'type' => 'tablet',
-                'ip' => '84.22.11.7',
-                'location' => 'Rotterdam, NL',
-                'gps' => 'GPS: 51.9244°, 4.4777°',
-                'gps_raw' => null,
-                'last_active' => '12 days ago',
-                'is_unusual' => false,
-                'unusual_message' => null,
-                'is_real' => false,
-            ],
-        ]);
+        // Only genuine sessions from database, current device guaranteed at the top
+        $allSessions = $realSessions->sortByDesc('is_current')->values();
 
-        // Combine real sessions with demo remote sessions
-        $allSessions = $realSessions->concat($demoSessions);
-
-        // Reset demo sessions if explicitly requested (?reset=1)
+        // Reset revoked sessions if explicitly requested (?reset=1)
         if ($request->has('reset')) {
             $request->session()->forget(['revoked_session_ids', 'revoked_all_others']);
         }

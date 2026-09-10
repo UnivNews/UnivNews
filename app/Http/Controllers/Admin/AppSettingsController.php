@@ -70,6 +70,10 @@ class AppSettingsController extends Controller
      */
     public function destroyBoostPrice(\App\Models\BoostPrice $boostPrice): RedirectResponse
     {
+        if (\App\Models\Boost::where('boost_price_id', $boostPrice->id)->exists()) {
+            return back()->with('error', 'Paket boost ini tidak dapat dihapus karena sudah tercatat dalam riwayat boost artikel. Silakan nonaktifkan status paket ini.');
+        }
+
         $boostPrice->delete();
         return back()->with('success', 'Paket boost berhasil dihapus.');
     }

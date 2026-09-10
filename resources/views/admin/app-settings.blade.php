@@ -110,7 +110,7 @@
                 <hr class="border-gray-100">
 
                 {{-- Current active value info --}}
-                <div class="bg-[#f8f9fa] border border-gray-200 p-4">
+                <div class="bg-[#f8f9fa] border border-gray-200 p-4" data-tour="appsettings-fee-status">
                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Current Configuration Status</p>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
@@ -151,7 +151,7 @@
                         <p class="text-xs text-[#7687B2] mt-0.5">Set prices for article promotion features.</p>
                     </div>
                 </div>
-                <button type="button" id="add-boost-btn" class="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider rounded transition-colors">
+                <button type="button" id="add-boost-btn" data-tour="appsettings-add-boost-btn" class="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider rounded transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Add
                 </button>
@@ -164,7 +164,7 @@
                             <tr>
                                 <th class="px-4 py-3 font-bold border-r border-gray-200">Duration</th>
                                 <th class="px-4 py-3 font-bold border-r border-gray-200">Price (Rp)</th>
-                                <th class="px-4 py-3 font-bold text-center border-r border-gray-200">Active Status</th>
+                                <th class="px-4 py-3 font-bold text-center border-r border-gray-200" data-tour="appsettings-toggle-switch">Active Status</th>
                                 <th class="px-4 py-3 font-bold text-center w-16">Hapus</th>
                             </tr>
                         </thead>
@@ -181,7 +181,7 @@
                                     <div class="relative max-w-[200px]">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-500 select-none">Rp</span>
                                         <input
-                                            type="number"
+                                             type="number"
                                             name="boost_prices[{{ $bp->id }}][price]"
                                             value="{{ old('boost_prices.'.$bp->id.'.price', $bp->price) }}"
                                             min="0"
@@ -195,14 +195,17 @@
                                     @enderror
                                 </td>
                                 <td class="px-4 py-3 text-center align-middle border-r border-gray-200">
-                                    <label class="inline-flex items-center cursor-pointer">
+                                    <label class="relative inline-flex items-center cursor-pointer select-none">
                                         <input type="checkbox" name="boost_prices[{{ $bp->id }}][is_active]" value="1" class="sr-only peer" {{ old('boost_prices.'.$bp->id.'.is_active', $bp->is_active) ? 'checked' : '' }}>
-                                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#8b1528]"></div>
+                                        <div class="w-11 h-6 bg-gray-300 rounded-full transition-colors duration-200 peer-checked:bg-[#8b1528]"></div>
+                                        <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 peer-checked:translate-x-5 pointer-events-none"></div>
                                     </label>
                                 </td>
                                 <td class="px-4 py-3 text-center align-middle">
                                     <button type="button"
+                                        data-tour="appsettings-delete-boost-btn"
                                         data-delete-url="{{ route('admin.boost-prices.destroy', $bp->id) }}"
+                                        data-package-name="{{ str_replace('_', ' ', Str::title($bp->duration_type)) }} ({{ $bp->duration_days }} days)"
                                         title="Hapus paket ini"
                                         class="delete-boost-btn inline-flex items-center justify-center w-8 h-8 text-red-500 hover:text-white hover:bg-red-600 border border-red-300 hover:border-red-600 rounded transition-colors">
                                         <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,7 +222,7 @@
         </div>
 
         {{-- ── Note section ────────────────────────────────────────────────── --}}
-        <div class="bg-amber-50 border border-amber-200 p-4 flex gap-3">
+        <div class="bg-amber-50 border border-amber-200 p-4 flex gap-3" data-tour="appsettings-note">
             <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
             </svg>
@@ -283,12 +286,19 @@
                         <input type="number" name="new_boost_prices[${newBoostIndex}][price]" min="0" step="1000" required class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm font-mono focus:border-[#8b1528] focus:ring-0 transition-colors">
                     </div>
                 </td>
-                <td class="px-4 py-3 text-center align-middle">
-                    <label class="inline-flex items-center cursor-pointer mb-2">
+                <td class="px-4 py-3 text-center align-middle border-r border-gray-200">
+                    <label class="relative inline-flex items-center cursor-pointer select-none">
                         <input type="checkbox" name="new_boost_prices[${newBoostIndex}][is_active]" value="1" class="sr-only peer" checked>
-                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#8b1528]"></div>
+                        <div class="w-11 h-6 bg-gray-300 rounded-full transition-colors duration-200 peer-checked:bg-[#8b1528]"></div>
+                        <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 peer-checked:translate-x-5 pointer-events-none"></div>
                     </label>
-                    <button type="button" class="block mx-auto text-[10px] text-red-600 font-bold uppercase tracking-wider hover:underline remove-boost-btn">Cancel</button>
+                </td>
+                <td class="px-4 py-3 text-center align-middle">
+                    <button type="button" class="remove-boost-btn inline-flex items-center justify-center w-8 h-8 text-gray-400 hover:text-red-600 hover:bg-red-50 border border-gray-300 hover:border-red-300 rounded transition-colors" title="Batal tambah">
+                        <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -302,35 +312,59 @@
         }
     });
 
-    // Hapus paket boost — buat form DELETE di luar form utama agar tidak nested
+    // Hapus paket boost — gunakan custom Alert Dialog yang seragam dengan halaman CMS lainnya
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('.delete-boost-btn');
         if (!btn) return;
 
-        if (!confirm('Yakin ingin menghapus paket boost ini? Tindakan ini tidak bisa dibatalkan.')) return;
-
         const url = btn.dataset.deleteUrl;
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = url;
-        form.style.display = 'none';
+        const packageName = btn.dataset.packageName ? `"${btn.dataset.packageName}"` : 'this boost package';
 
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = document.querySelector('meta[name="csrf-token"]')?.content
-            || document.querySelector('input[name="_token"]')?.value
-            || '';
+        const submitDeleteForm = function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = url;
+            form.style.display = 'none';
 
-        const methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'DELETE';
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = document.querySelector('meta[name="csrf-token"]')?.content
+                || document.querySelector('input[name="_token"]')?.value
+                || '';
 
-        form.appendChild(csrfInput);
-        form.appendChild(methodInput);
-        document.body.appendChild(form);
-        form.submit();
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'DELETE';
+
+            form.appendChild(csrfInput);
+            form.appendChild(methodInput);
+            document.body.appendChild(form);
+
+            if (window.showPageLoader) {
+                window.showPageLoader('Deleting...');
+            }
+
+            form.submit();
+        };
+
+        if (typeof window.showAlertDialog === 'function') {
+            window.showAlertDialog({
+                title: 'Delete boost package?',
+                description: `This will permanently delete ${packageName}. This action cannot be undone.`,
+                confirmText: 'Delete',
+                cancelText: 'Cancel',
+                variant: 'destructive',
+                icon: 'trash'
+            }).then(function(confirmed) {
+                if (confirmed) {
+                    submitDeleteForm();
+                }
+            });
+        } else if (confirm(`Yakin ingin menghapus paket boost ${packageName}? Tindakan ini tidak bisa dibatalkan.`)) {
+            submitDeleteForm();
+        }
     });
 </script>
 @endsection

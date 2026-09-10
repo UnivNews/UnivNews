@@ -2,6 +2,7 @@
 
 @section('title', 'Active Sessions Settings - University News CMS')
 @section('header_tagline', 'University News CMS · Security & Sessions')
+@section('page_tour_id', 'admin.sessions.index')
 
 @section('content')
 <div class="max-w-4xl mx-auto py-4 sm:py-6" x-data="adminSessionsManager(@js($sessions), @js($currentGps))" x-init="init()">
@@ -13,7 +14,7 @@
     </div>
 
     <!-- Page Header -->
-    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4" data-tour="sessions-header">
         <div>
             <h1 class="text-3xl font-extrabold font-heading text-[#00081e] tracking-tight">Active sessions</h1>
             <p class="text-gray-500 font-sans text-sm mt-1">
@@ -24,6 +25,7 @@
         <div class="flex items-center gap-2.5">
             {{-- Manual GPS Sync Button --}}
             <button type="button"
+                    data-tour="sessions-gps-sync-btn"
                     @click="syncDeviceGps(true)"
                     :disabled="isSyncingGps"
                     title="Calibrate device GPS position"
@@ -37,6 +39,7 @@
 
             {{-- Sign Out Everywhere Else Button --}}
             <button type="button"
+                    data-tour="sessions-revoke-others-btn"
                     x-show="sessions.length > 1"
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 scale-95"
@@ -53,7 +56,7 @@
     </div>
 
     <!-- Sessions Main Card (Mixed Light & Dark Header) -->
-    <div class="bg-white border border-gray-200 shadow-sm rounded-[12px] overflow-hidden mb-6">
+    <div class="bg-white border border-gray-200 shadow-sm rounded-[12px] overflow-hidden mb-6" data-tour="sessions-card">
         
         <!-- Dark Navy Header Bar (matching App Settings CMS style) -->
         <div class="bg-[#00081e] text-white px-6 py-4 flex items-center justify-between border-b-2 border-[#b71032]">
@@ -77,7 +80,7 @@
         </div>
 
         <!-- Sessions List (Clean Light Theme) -->
-        <div class="divide-y divide-gray-100">
+        <div class="divide-y divide-gray-100" data-tour="sessions-list">
             <template x-for="item in sessions" :key="item.id">
                 <div class="relative flex items-center gap-3 sm:gap-4 p-4 sm:p-5 transition-colors hover:bg-gray-50/75"
                      :class="item.is_unusual ? 'pl-5 sm:pl-6 bg-amber-50/40' : ''">
@@ -195,7 +198,7 @@
     </div>
 
     <!-- Bottom Informational Note with API Key instructions -->
-    <div class="rounded-[10px] border border-gray-200 bg-gray-50/80 p-4 text-xs leading-relaxed text-gray-500 space-y-1.5 shadow-sm">
+    <div class="rounded-[10px] border border-gray-200 bg-gray-50/80 p-4 text-xs leading-relaxed text-gray-500 space-y-1.5 shadow-sm" data-tour="sessions-info-note">
         <div class="flex items-start gap-3">
             <svg class="w-4 h-4 text-gray-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <circle cx="12" cy="12" r="10" stroke-width="1.8"/>
