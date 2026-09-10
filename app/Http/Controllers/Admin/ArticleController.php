@@ -30,7 +30,7 @@ class ArticleController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                   ->orWhere('content', 'like', "%{$search}%")
-                  ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%"));
+                  ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%")->orWhere('page_name', 'like', "%{$search}%"));
             });
         }
 

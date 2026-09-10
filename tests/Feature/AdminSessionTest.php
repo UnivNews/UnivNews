@@ -36,9 +36,8 @@ class AdminSessionTest extends TestCase
         $response = $this->actingAs($admin, 'admin')->get('/admin/sessions');
         $response->assertStatus(200);
         $response->assertSee('Active sessions');
-        $response->assertSee('Sign out everywhere else');
         $response->assertSee('This device');
-        $response->assertSee('Unusual location');
+        $response->assertSee('Device Sessions');
     }
 
     public function test_admin_can_revoke_single_session()
@@ -47,13 +46,47 @@ class AdminSessionTest extends TestCase
             'role' => 'admin',
         ]);
 
+        \Illuminate\Support\Facades\DB::table('sessions')->insert([
+            'id' => 'sess_secondary_device_123',
+            'user_id' => $admin->id,
+            'ip_address' => '10.0.0.5',
+            'user_agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
+            'payload' => base64_encode(serialize([])),
+            'last_activity' => time() - 3600,
+        ]);
+
         $response = $this->actingAs($admin, 'admin')
-            ->deleteJson('/admin/sessions/sess_iphone15_test123');
+            ->deleteJson('/admin/sessions/sess_secondary_device_123');
 
         $response->assertStatus(200);
         $response->assertJson([
             'success' => true,
         ]);
+
+        $this->assertDatabaseMissing('sessions', [
+            'id' => 'sess_secondary_device_123',
+        ]);
+    }
+
+    public function test_admin_can_view_multiple_active_sessions()
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        \Illuminate\Support\Facades\DB::table('sessions')->insert([
+            'id' => 'sess_remote_laptop_99',
+            'user_id' => $admin->id,
+            'ip_address' => '192.168.1.100',
+            'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+            'payload' => base64_encode(serialize([])),
+            'last_activity' => time() - 3600,
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get('/admin/sessions');
+        $response->assertStatus(200);
+        $response->assertSee('sess_remote_laptop_99');
+        $response->assertSee('Sign out everywhere else');
     }
 
     public function test_admin_can_revoke_all_other_sessions()
@@ -62,12 +95,25 @@ class AdminSessionTest extends TestCase
             'role' => 'admin',
         ]);
 
+        \Illuminate\Support\Facades\DB::table('sessions')->insert([
+            'id' => 'sess_other_1',
+            'user_id' => $admin->id,
+            'ip_address' => '10.0.0.10',
+            'user_agent' => 'Mozilla/5.0',
+            'payload' => base64_encode(serialize([])),
+            'last_activity' => time() - 7200,
+        ]);
+
         $response = $this->actingAs($admin, 'admin')
             ->postJson('/admin/sessions/revoke-others');
 
         $response->assertStatus(200);
         $response->assertJson([
             'success' => true,
+        ]);
+
+        $this->assertDatabaseMissing('sessions', [
+            'id' => 'sess_other_1',
         ]);
     }
 

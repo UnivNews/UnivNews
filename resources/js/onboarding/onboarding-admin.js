@@ -1,13 +1,13 @@
 /**
  * Onboarding tour steps for ADMIN role dashboard.
- * Penjelasan mendetail untuk setiap tombol dan komponen di Command Center Admin.
+ * Penjelasan komprehensif untuk seluruh fitur, menu navigasi, dan komponen di Command Center Admin.
  */
 const adminSteps = [
   {
     popover: {
       title: '👋 Selamat Datang di Admin Command Center!',
       description:
-        'Ini adalah <strong>Admin Dashboard</strong> UnivNews — tempat kamu mengontrol seluruh alur publikasi berita, pengajuan author, transaksi pembayaran, dan manajemen universitas. Mari kita pelajari fungsi tiap tombolnya!',
+        'Ini adalah <strong>Admin Dashboard</strong> UnivNews — pusat kendali utama untuk mengelola penerbitan berita, pengajuan penulis (author), konfigurasi pembayaran Mayar, keamanan sesi perangkat, serta konten situs portal. Mari kita pelajari seluruh fitur barunya!',
       side: 'over',
       align: 'center',
     },
@@ -17,23 +17,36 @@ const adminSteps = [
     popover: {
       title: '🗂️ Menu Navigasi Utama Admin (Sidebar)',
       description:
-        'Sidebar ini memberikan akses penuh ke seluruh modul aplikasi:<br>' +
-        '• <strong>Dashboard</strong>: Metrik platform & antrean artikel.<br>' +
-        '• <strong>Articles</strong>: Review, edit, dan publikasi semua berita.<br>' +
-        '• <strong>Users / Authors</strong>: Persetujuan dan sanksi penulis.<br>' +
-        '• <strong>Universities</strong>: Manajemen direktori universitas.<br>' +
-        '• <strong>Payment Settings</strong>: Tarif publikasi & paket boost.<br>' +
-        '• <strong>Settings</strong>: Profil & akun administrator.',
+        'Sidebar ini memberikan akses penuh ke semua modul sistem UnivNews:<br>' +
+        '• <strong>Dashboard</strong>: Ringkasan metrik analitik & artikel terbaru.<br>' +
+        '• <strong>Articles</strong>: Kelola arsip berita, peninjauan naskah, dan persetujuan.<br>' +
+        '• <strong>Users / Authors</strong>: Verifikasi calon penulis kampus & sanksi suspend.<br>' +
+        '• <strong>Universities</strong>: Direktori institusi universitas mitra.<br>' +
+        '• <strong>Site Content</strong>: Kelola halaman publik (About Us, FAQ, Contact, Privacy).<br>' +
+        '• <strong>Settings</strong>:<br>' +
+        '&nbsp;&nbsp;&bull; <em>Profile</em>: Data identitas, tautan medsos, dan sandi.<br>' +
+        '&nbsp;&nbsp;&bull; <em>Payment Settings</em>: Tarif publikasi artikel & konfigurasi paket boost.<br>' +
+        '&nbsp;&nbsp;&bull; <em>Active Sessions Settings</em>: Pemantauan login perangkat & GPS live.',
       side: 'right',
       align: 'start',
     },
   },
   {
+    element: '[data-tour="admin-create-article-btn"]',
+    popover: {
+      title: '✍️ Tombol "+ Create New Article"',
+      description:
+        'Administrator dapat langsung menulis dan menerbitkan berita resmi redaksi kampus secara instan tanpa perlu melewati antrean peninjauan atau proses pembayaran.',
+      side: 'bottom',
+      align: 'end',
+    },
+  },
+  {
     element: '[data-tour="admin-pending-alert"]',
     popover: {
-      title: '🟡 Tombol Badge "Articles Pending Review"',
+      title: '🟡 Notifikasi "Articles Pending Review"',
       description:
-        'Badge kuning berkedip ini memberikan notifikasi jumlah artikel yang sedang mengantre untuk ditinjau. Klik tombol ini untuk langsung melompat ke daftar artikel berstatus <strong>Pending Review</strong>!',
+        'Badge kuning berkedip ini menandakan adanya naskah berita dari Author yang sedang mengantre untuk dinilai. Klik tombol ini untuk langsung menuju daftar naskah <strong>Pending Review</strong>.',
       side: 'left',
       align: 'start',
     },
@@ -41,13 +54,13 @@ const adminSteps = [
   {
     element: '[data-tour="admin-stats"]',
     popover: {
-      title: '📊 Ringkasan Metrik Sistem',
+      title: '📊 Ringkasan Metrik Sistem Real-Time',
       description:
-        'Empat indikator utama ini menampilkan performa situs secara menyeluruh:<br>' +
-        '1. <strong>Total Articles</strong>: Jumlah artikel yang sudah rilis.<br>' +
-        '2. <strong>Total Views</strong>: Total akumulasi pembaca portal.<br>' +
-        '3. <strong>Pending Review</strong>: Naskah menanti tindakan persetujuan.<br>' +
-        '4. <strong>Active Authors</strong>: Penulis terverifikasi yang aktif.',
+        'Empat kartu statistik utama ini memperlihatkan performa platform secara langsung:<br>' +
+        '1. <strong>Total Articles</strong>: Akumulasi seluruh berita yang aktif terbit.<br>' +
+        '2. <strong>Total Views</strong>: Total pembaca portal dari seluruh berita.<br>' +
+        '3. <strong>Pending</strong>: Naskah yang menunggu evaluasi dan persetujuanmu.<br>' +
+        '4. <strong>Active Authors</strong>: Jumlah kontributor penulis kampus yang terverifikasi.',
       side: 'bottom',
       align: 'start',
     },
@@ -57,7 +70,7 @@ const adminSteps = [
     popover: {
       title: '📈 Grafik Tren Publikasi (Publishing Trends)',
       description:
-        'Grafik batang ini menyajikan data statistik artikel yang berhasil dipublikasikan tiap bulan dalam 12 bulan terakhir. Arahkan kursor ke tiap batang untuk melihat detail angka persisnya.',
+        'Grafik batang interaktif ini memvisualisasikan volume berita yang terbit per bulan dalam 12 bulan terakhir. Arahkan kursor ke tiap batang untuk melihat angka persisnya.',
       side: 'top',
       align: 'center',
     },
@@ -65,9 +78,9 @@ const adminSteps = [
   {
     element: '[data-tour="admin-articles-table"]',
     popover: {
-      title: '📋 Tabel "Recently Added Articles" & Tombol Review',
+      title: '📋 Antrean Artikel Terbaru & Tombol Review',
       description:
-        'Daftar artikel yang baru diajukan oleh para author. Untuk artikel yang berstatus <strong>Pending Review</strong>, klik tombol merah <strong>Review</strong> untuk membaca naskah, menyetujui, atau memberikan catatan revisi.',
+        'Tabel ini memuat pengajuan naskah berita terkini. Untuk artikel berstatus <strong>Pending Review</strong>, klik tombol <strong>Review</strong> untuk masuk ke ruang evaluasi: membaca isi naskah, menyetujui jadwal terbit, atau menolak dengan catatan revisi.',
       side: 'top',
       align: 'start',
     },
@@ -77,16 +90,16 @@ const adminSteps = [
     popover: {
       title: '❓ Tombol Bantuan & Replay Tutorial',
       description:
-        'Kapan saja kamu butuh memutar kembali panduan antarmuka ini, cukup klik ikon <strong>❓ (Bantuan)</strong> di header atas ini!',
+        'Kapan saja kamu butuh memutar kembali panduan ini di halaman manapun, cukup klik ikon <strong>❓ (Bantuan)</strong> di sudut kanan atas header!',
       side: 'bottom',
       align: 'end',
     },
   },
   {
     popover: {
-      title: '🎉 Admin Workspace Siap Gunakan!',
+      title: '🎉 Admin Workspace Siap Digunakan!',
       description:
-        'Tur ringkas selesai! Selamat bertugas mengelola platform berita kampus UnivNews!',
+        'Tur panduan dashboard telah selesai! Selamat bertugas mengawal kualitas informasi kampus di UnivNews!',
       side: 'over',
       align: 'center',
     },

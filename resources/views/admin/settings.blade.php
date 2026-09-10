@@ -2,6 +2,7 @@
 
 @section('title', 'Admin Settings - University News')
 @section('header_tagline', 'University News CMS')
+@section('page_tour_id', 'admin.settings')
 
 @section('content')
 <div class="max-w-6xl mx-auto">
@@ -46,7 +47,7 @@
         <div class="lg:col-span-4 space-y-6">
             
             <!-- Main Profile Summary Card -->
-            <div class="bg-white border border-gray-200 p-6 text-center shadow-sm">
+            <div class="bg-white border border-gray-200 p-6 text-center shadow-sm" data-tour="settings-profile-card">
                 <!-- Avatar -->
                 <div class="w-32 h-40 mx-auto bg-gray-100 border border-gray-200 overflow-hidden shadow-inner flex items-center justify-center mb-4">
                     @if(Auth::guard('admin')->user()->avatar_path)
@@ -142,6 +143,7 @@
                 <!-- Tutorial Replay Button -->
                 <div class="mt-5 pt-4 border-t border-gray-100">
                     <button
+                        data-tour="settings-tutorial-replay"
                         onclick="typeof window.replayOnboarding === 'function' ? window.replayOnboarding() : null"
                         class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#f4f6f8] hover:bg-[#eef0f2] border border-gray-200 text-gray-600 hover:text-[#8b1528] text-[11px] font-semibold uppercase tracking-wider transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,7 +160,7 @@
         <div class="lg:col-span-8 space-y-8">
             
             <!-- ── Edit Profile Card ──────────────────────────────────────── -->
-            <div class="bg-white border border-gray-200 shadow-sm p-6 lg:p-8">
+            <div class="bg-white border border-gray-200 shadow-sm p-6 lg:p-8" data-tour="settings-edit-form">
                 <h2 class="text-xl font-bold font-heading text-[#00081e] mb-6">Edit Profile</h2>
 
                 <form method="POST" action="{{ route('admin.settings.update') }}">
@@ -278,7 +280,7 @@
             </div>
 
             <!-- ── Security & Password Card ───────────────────────────────── -->
-            <div class="bg-white border border-gray-200 shadow-sm p-6 lg:p-8">
+            <div class="bg-white border border-gray-200 shadow-sm p-6 lg:p-8" data-tour="settings-password">
                 <h2 class="text-xl font-bold font-heading text-[#00081e] mb-2">Security & Password</h2>
                 <p class="text-gray-500 text-xs font-sans mb-6">Change your password directly or request a reset link via email.</p>
 

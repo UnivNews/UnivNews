@@ -77,16 +77,16 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $staffWriter = User::create([
-            'name' => 'Staff Writer',
-            'preferred_name' => 'Writer',
+            'name' => 'Ahmad Fauzi',
+            'preferred_name' => 'Fauzi',
             'email' => 'author@university.edu',
             'phone_number' => '+1 (555) 456-7890',
             'department' => 'Campus News Desk',
             'university_id' => $ui->id,
             'role' => User::ROLE_AUTHOR,
             'author_status' => User::STATUS_APPROVED,
-            'author_bio' => 'Staff reporter covering campus life, achievements, academic breakthroughs, and student affairs.',
-            'page_name' => 'campus-desk',
+            'author_bio' => 'Jurnalis kampus dan kontributor berita seputar kehidupan akademik, riset, dan prestasi mahasiswa.',
+            'page_name' => 'ahmad-fauzi',
             'password' => bcrypt('password'),
             'created_at' => now()->subMonths(6),
         ]);
