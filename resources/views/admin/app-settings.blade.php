@@ -164,7 +164,8 @@
                             <tr>
                                 <th class="px-4 py-3 font-bold border-r border-gray-200">Duration</th>
                                 <th class="px-4 py-3 font-bold border-r border-gray-200">Price (Rp)</th>
-                                <th class="px-4 py-3 font-bold text-center">Active Status</th>
+                                <th class="px-4 py-3 font-bold text-center border-r border-gray-200">Active Status</th>
+                                <th class="px-4 py-3 font-bold text-center w-16">Hapus</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -193,11 +194,21 @@
                                         <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                                     @enderror
                                 </td>
-                                <td class="px-4 py-3 text-center align-middle">
+                                <td class="px-4 py-3 text-center align-middle border-r border-gray-200">
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="boost_prices[{{ $bp->id }}][is_active]" value="1" class="sr-only peer" {{ old('boost_prices.'.$bp->id.'.is_active', $bp->is_active) ? 'checked' : '' }}>
                                         <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#8b1528]"></div>
                                     </label>
+                                </td>
+                                <td class="px-4 py-3 text-center align-middle">
+                                    <button type="button"
+                                        data-delete-url="{{ route('admin.boost-prices.destroy', $bp->id) }}"
+                                        title="Hapus paket ini"
+                                        class="delete-boost-btn inline-flex items-center justify-center w-8 h-8 text-red-500 hover:text-white hover:bg-red-600 border border-red-300 hover:border-red-600 rounded transition-colors">
+                                        <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
                                 </td>
                             </tr>
                             @endforeach
@@ -286,9 +297,40 @@
     }
 
     document.querySelector('table tbody').addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-boost-btn')) {
+        if (e.target.classList.contains('remove-boost-btn') || e.target.closest('.remove-boost-btn')) {
             e.target.closest('tr').remove();
         }
+    });
+
+    // Hapus paket boost — buat form DELETE di luar form utama agar tidak nested
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.delete-boost-btn');
+        if (!btn) return;
+
+        if (!confirm('Yakin ingin menghapus paket boost ini? Tindakan ini tidak bisa dibatalkan.')) return;
+
+        const url = btn.dataset.deleteUrl;
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url;
+        form.style.display = 'none';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = document.querySelector('meta[name="csrf-token"]')?.content
+            || document.querySelector('input[name="_token"]')?.value
+            || '';
+
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+
+        form.appendChild(csrfInput);
+        form.appendChild(methodInput);
+        document.body.appendChild(form);
+        form.submit();
     });
 </script>
 @endsection

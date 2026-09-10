@@ -159,6 +159,7 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
     // Boost Prices Management (API endpoints for admin panel)
     Route::get('/api/boost-prices', [Admin\BoostPriceController::class, 'index'])->name('api.boost-prices.index');
     Route::put('/api/boost-prices/{boostPrice}', [Admin\BoostPriceController::class, 'update'])->name('api.boost-prices.update');
+    Route::delete('/boost-prices/{boostPrice}', [Admin\AppSettingsController::class, 'destroyBoostPrice'])->name('boost-prices.destroy');
 
     // Site Content Management
     Route::get('/pages/about', [Admin\PageController::class, 'editAbout'])->name('pages.about.edit');

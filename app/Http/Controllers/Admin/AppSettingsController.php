@@ -64,4 +64,13 @@ class AppSettingsController extends Controller
 
         return back()->with('success', 'Pengaturan berhasil disimpan.');
     }
+
+    /**
+     * Hapus satu paket harga boost.
+     */
+    public function destroyBoostPrice(\App\Models\BoostPrice $boostPrice): RedirectResponse
+    {
+        $boostPrice->delete();
+        return back()->with('success', 'Paket boost berhasil dihapus.');
+    }
 }
