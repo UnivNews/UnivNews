@@ -23,3 +23,10 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# TestSprite
+/.testsprite
+/testsprite-plans
+
+# Local Agent Skills
+/.agents
