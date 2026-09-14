@@ -45,6 +45,10 @@ class Article extends Model
         'registration_deadline' => 'datetime',
     ];
 
+    protected $appends = [
+        'featured_image_url',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -177,6 +181,28 @@ class Article extends Model
         }
 
         return true;
+    }
+
+    /**
+     * Get normalized featured image URL.
+     * Handles external URLs, storage-prefixed paths, and relative paths safely.
+     */
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        if (empty($this->featured_image_path)) {
+            return null;
+        }
+
+        if (str_starts_with($this->featured_image_path, 'http://') || str_starts_with($this->featured_image_path, 'https://')) {
+            return $this->featured_image_path;
+        }
+
+        $cleanPath = ltrim($this->featured_image_path, '/');
+        if (str_starts_with($cleanPath, 'storage/')) {
+            $cleanPath = substr($cleanPath, 8);
+        }
+
+        return asset('storage/' . $cleanPath);
     }
 }
 

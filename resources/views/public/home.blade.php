@@ -67,12 +67,8 @@
                        class="absolute inset-0 block group transition-opacity duration-700 ease-in-out"
                        :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
                        @if($index !== 0) x-cloak @endif>
-                        @if($slide->featured_image_path)
-                            @if(Str::startsWith($slide->featured_image_path, ['http://', 'https://']))
-                                <img src="{{ $slide->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                            @else
-                                <img src="{{ asset('storage/' . $slide->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                            @endif
+                        @if($slide->featured_image_url)
+                            <img src="{{ $slide->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
                         @else
                             <img src="https://picsum.photos/seed/hero{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Featured">
                         @endif
@@ -186,12 +182,8 @@
                         <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <!-- Thumbnail -->
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                @if($article->featured_image_path)
-                                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                        <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                    @else
-                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                    @endif
+                                @if($article->featured_image_url)
+                                    <img src="{{ $article->featured_image_url }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                                 @else
                                     <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
                                 @endif
@@ -235,12 +227,8 @@
                         <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <!-- Thumbnail -->
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                @if($article->featured_image_path)
-                                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                        <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                    @else
-                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                    @endif
+                                @if($article->featured_image_url)
+                                    <img src="{{ $article->featured_image_url }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                                 @else
                                     <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
                                 @endif

@@ -268,12 +268,18 @@ class PublicController extends Controller
                     ->selectRaw("
                         (
                             CASE WHEN LOWER(articles.title) = LOWER(?) THEN 100 ELSE 0 END
-                            + CASE WHEN articles.title LIKE (? || '%') THEN 50 ELSE 0 END
-                            + CASE WHEN articles.title LIKE ('%' || ? || '%') THEN 25 ELSE 0 END
-                            + CASE WHEN articles.excerpt LIKE ('%' || ? || '%') THEN 10 ELSE 0 END
-                            + CASE WHEN articles.content LIKE ('%' || ? || '%') THEN 5 ELSE 0 END
+                            + CASE WHEN articles.title LIKE ? THEN 50 ELSE 0 END
+                            + CASE WHEN articles.title LIKE ? THEN 25 ELSE 0 END
+                            + CASE WHEN articles.excerpt LIKE ? THEN 10 ELSE 0 END
+                            + CASE WHEN articles.content LIKE ? THEN 5 ELSE 0 END
                         ) as relevance_score
-                    ", [$query, $query, $query, $query, $query])
+                    ", [
+                        $query,
+                        $query . '%',
+                        '%' . $query . '%',
+                        '%' . $query . '%',
+                        '%' . $query . '%',
+                    ])
                     ->where(function($subQ) use ($query) {
                         $subQ->where('articles.title', 'like', "%{$query}%")
                              ->orWhere('articles.excerpt', 'like', "%{$query}%")

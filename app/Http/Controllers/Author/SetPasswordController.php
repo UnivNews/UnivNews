@@ -100,6 +100,11 @@ class SetPasswordController extends Controller
             return redirect()->route('home')->with('error', 'Email was not found or your author approval has been cancelled.');
         }
 
+        // Only allow resend if user actually has a pending activation token (anti-lockout DoS protection)
+        if (! $user->approvalToken()->exists()) {
+            return back()->with('info', 'Akun author kamu sudah aktif dan tidak membutuhkan aktivasi. Jika lupa kata sandi, silakan gunakan fitur Lupa Password.');
+        }
+
         // Delete old token and create fresh one
         $user->approvalToken()->delete();
         $token = \App\Models\AuthorApprovalToken::create([

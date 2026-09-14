@@ -175,7 +175,9 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
 // 8. Author Password Setup (token-based, no auth required)
 Route::get('/author/set-password', [Author\SetPasswordController::class, 'show'])->name('author.set-password.show');
 Route::post('/author/set-password', [Author\SetPasswordController::class, 'store'])->name('author.set-password.store');
-Route::post('/author/set-password/resend', [Author\SetPasswordController::class, 'resend'])->name('author.set-password.resend');
+Route::post('/author/set-password/resend', [Author\SetPasswordController::class, 'resend'])
+    ->middleware('throttle:5,1')
+    ->name('author.set-password.resend');
 
 // 9. Webhook — exclude dari CSRF di bootstrap/app.php
 // Endpoint ini dipanggil oleh server Mayar (bukan browser), sehingga tidak pakai session/CSRF.

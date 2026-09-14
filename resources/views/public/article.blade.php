@@ -7,12 +7,8 @@
 <meta property="og:description" content="{{ $article->excerpt ?? Str::limit(strip_tags($article->content), 160) }}">
 <meta property="og:url"         content="{{ url()->current() }}">
 <meta property="og:type"        content="article">
-@if($article->featured_image_path)
-    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-        <meta property="og:image" content="{{ $article->featured_image_path }}">
-    @else
-        <meta property="og:image" content="{{ asset('storage/' . $article->featured_image_path) }}">
-    @endif
+@if($article->featured_image_url)
+    <meta property="og:image" content="{{ $article->featured_image_url }}">
 @endif
 @endsection
 
@@ -70,13 +66,9 @@
     </header>
 
     <!-- Featured Image -->
-    @if($article->featured_image_path)
+    @if($article->featured_image_url)
     <div class="aspect-video bg-gray-100 w-full relative mb-12 shadow-md overflow-hidden border border-border-main">
-        @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-            <img src="{{ $article->featured_image_path }}" alt="{{ $article->title }}" class="w-full h-full object-cover">
-        @else
-            <img src="{{ asset('storage/' . $article->featured_image_path) }}" onerror="this.src='{{ asset($article->featured_image_path) }}'" alt="{{ $article->title }}" class="w-full h-full object-cover">
-        @endif
+        <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full h-full object-cover">
     </div>
     @endif
 
@@ -169,12 +161,8 @@
             @foreach($relatedArticles as $related)
             <a href="{{ route('article', $related->slug) }}" class="block group">
                 <div class="aspect-[3/2] bg-gray-200 relative mb-4 overflow-hidden">
-                    @if($related->featured_image_path)
-                        @if(Str::startsWith($related->featured_image_path, ['http://', 'https://']))
-                            <img src="{{ $related->featured_image_path }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        @else
-                            <img src="{{ asset('storage/' . $related->featured_image_path) }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        @endif
+                    @if($related->featured_image_url)
+                        <img src="{{ $related->featured_image_url }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     @else
                         <div class="w-full h-full bg-navy/10 flex items-center justify-center text-navy/40 font-bold font-serif text-2xl">UN</div>
                     @endif

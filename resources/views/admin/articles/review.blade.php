@@ -114,9 +114,9 @@
                         {{ $article->title }}
                     </h1>
 
-                    @if($article->featured_image_path)
+                    @if($article->featured_image_url)
                     <div class="my-6 border border-gray-200 bg-gray-50 overflow-hidden">
-                        <img src="{{ asset($article->featured_image_path) }}" alt="{{ $article->title }}" class="w-full max-h-96 object-cover">
+                        <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full max-h-96 object-cover">
                     </div>
                     @endif
 
@@ -227,7 +227,7 @@
                         <div class="absolute -left-6 top-1 w-2.5 h-2.5 bg-blue-600 border-2 border-white shadow-sm"></div>
                         <p class="text-xs font-bold text-gray-800">Submitted for Review</p>
                         <p class="text-[11px] text-gray-400 mt-0.5">
-                            {{ $article->updated_at->format('M d, Y · H:i') }} by {{ substr($article->user->name, 0, 1) }}. {{ explode(' ', $article->user->name)[1] ?? '' }}
+                            {{ $article->updated_at->format('M d, Y · H:i') }} by {{ $article->user?->name ?? 'Unknown Author' }}
                         </p>
                     </div>
 
@@ -236,7 +236,7 @@
                         <div class="absolute -left-6 top-1 w-2.5 h-2.5 bg-gray-400 border-2 border-white shadow-sm"></div>
                         <p class="text-xs font-bold text-gray-800">Draft Created</p>
                         <p class="text-[11px] text-gray-400 mt-0.5">
-                            {{ $article->created_at->format('M d, Y · H:i') }} by {{ substr($article->user->name, 0, 1) }}. {{ explode(' ', $article->user->name)[1] ?? '' }}
+                            {{ $article->created_at->format('M d, Y · H:i') }} by {{ $article->user?->name ?? 'Unknown Author' }}
                         </p>
                     </div>
                 </div>

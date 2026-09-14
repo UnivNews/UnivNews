@@ -103,7 +103,7 @@ class ArticleController extends Controller
 
         if ($request->hasFile('featured_image')) {
             $path = $request->file('featured_image')->store('articles', 'public');
-            $article->featured_image_path = 'storage/' . $path;
+            $article->featured_image_path = $path;
         }
 
         $article->save();
@@ -229,7 +229,7 @@ class ArticleController extends Controller
 
         if ($request->hasFile('featured_image')) {
             $path = $request->file('featured_image')->store('articles', 'public');
-            $article->featured_image_path = 'storage/' . $path;
+            $article->featured_image_path = $path;
         }
 
         $article->save();
