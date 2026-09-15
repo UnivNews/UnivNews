@@ -27,12 +27,8 @@
                          :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
                          @if($index !== 0) x-cloak @endif>
                         <a href="{{ route('article', $slide->slug) }}" class="block w-full h-full group">
-                            @if($slide->featured_image_path)
-                                @if(Str::startsWith($slide->featured_image_path, ['http://', 'https://']))
-                                    <img src="{{ $slide->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                                @else
-                                    <img src="{{ asset('storage/' . $slide->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                                @endif
+                            @if($slide->featured_image_url)
+                                <img src="{{ $slide->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
                             @else
                                 <img src="https://picsum.photos/seed/research{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Research">
                             @endif
@@ -238,7 +234,7 @@ document.addEventListener('alpine:init', () => {
                 category: @json($article->tags->first() ? $article->tags->first()->name : $article->category->name),
                 date: @json($article->published_at->format('M d')),
                 excerpt: @json($article->excerpt),
-                image: @json($article->featured_image_path ? (Str::startsWith($article->featured_image_path, ['http://', 'https://']) ? $article->featured_image_path : asset('storage/' . $article->featured_image_path)) : 'https://picsum.photos/seed/fallback/800/533'),
+                image: @json($article->featured_image_url ?: 'https://picsum.photos/seed/fallback/800/533'),
                 url: @json(route('article', $article->slug)),
                 field: @json($article->research_field ?: $researchFields[crc32($article->title) % 4]),
                 center: @json($article->research_center ?: $researchCenters[crc32($article->title) % 4])

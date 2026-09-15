@@ -23,12 +23,8 @@
                     <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                         <!-- Thumbnail -->
                         <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                            @if($article->featured_image_path)
-                                @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                    <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                @else
-                                    <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                @endif
+                            @if($article->featured_image_url)
+                                <img src="{{ $article->featured_image_url }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                             @else
                                 <img src="https://picsum.photos/seed/tag{{ $article->id }}/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
                             @endif

@@ -350,9 +350,9 @@
                         Featured Image
                     </h3>
 
-                    @if($article->featured_image_path)
+                    @if($article->featured_image_url)
                     <div class="mb-4">
-                        <img src="{{ asset($article->featured_image_path) }}" alt="Featured Image" class="w-full h-32 object-cover border border-gray-200">
+                        <img src="{{ $article->featured_image_url }}" alt="Featured Image" class="w-full h-32 object-cover border border-gray-200">
                     </div>
                     @endif
 

@@ -56,7 +56,7 @@ class ProfileController extends Controller
                         Article::STATUS_AWAITING_PAYMENT => 'blue',
                         default                          => 'gray',
                     },
-                    'detail' => '"' . \Illuminate\Support\Str::limit($article->title, 45) . '" by ' . ($article->user->preferred_name ?? $article->user->name),
+                    'detail' => '"' . \Illuminate\Support\Str::limit($article->title, 45) . '" by ' . ($article->user?->preferred_name ?? $article->user?->name ?? 'Unknown Author'),
                 ];
             });
 

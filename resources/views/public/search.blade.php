@@ -115,12 +115,8 @@
                 <div class="p-6 flex flex-col md:flex-row gap-6">
                     <!-- Featured Image -->
                     <a href="{{ route('article', $article->slug) }}" class="aspect-video md:w-64 bg-gray-100 relative shrink-0 overflow-hidden rounded-none group block">
-                        @if($article->featured_image_path)
-                            @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                <img src="{{ $article->featured_image_path }}" alt="{{ $article->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                            @else
-                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" onerror="this.src='{{ asset($article->featured_image_path) }}'" alt="{{ $article->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                            @endif
+                        @if($article->featured_image_url)
+                            <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         @else
                             <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-serif italic text-sm">No Image</div>
                         @endif
