@@ -189,6 +189,17 @@ class PublicController extends Controller
         $userHasLiked = $article->isLikedBy($authUser);
         $likeCount    = $article->likes->count();
 
+        // Record reading history for authenticated readers
+        if ($authUser && $isPublished && !$canPreview) {
+            $history = \App\Models\ReadingHistory::firstOrNew([
+                'user_id'    => $authUser->id,
+                'article_id' => $article->id,
+            ]);
+            $history->last_read_at = now();
+            $history->read_count = ($history->read_count ?? 0) + 1;
+            $history->save();
+        }
+
         $relatedArticles = Article::where('category_id', $article->category_id)
             ->where('id', '!=', $article->id)
             ->where('status', 'published')

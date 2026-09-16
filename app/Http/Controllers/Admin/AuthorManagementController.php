@@ -7,6 +7,7 @@ use App\Mail\AuthorApplicationApproved;
 use App\Mail\AuthorApplicationRejected;
 use App\Models\Article;
 use App\Models\AuthorApprovalToken;
+use App\Models\University;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,20 +18,83 @@ use Illuminate\View\View;
 
 class AuthorManagementController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $pendingAuthors = User::with('university')
-            ->where('author_status', User::STATUS_PENDING)
-            ->latest('author_applied_at')
-            ->get();
+        $activeTab = $request->query('tab', 'authors');
+        if (!in_array($activeTab, ['authors', 'readers'])) {
+            $activeTab = 'authors';
+        }
 
-        $activeAuthors = User::with(['university', 'approvalToken'])
-            ->withCount('articles')
-            ->whereIn('role', [User::ROLE_AUTHOR, User::ROLE_ADMIN])
-            ->latest()
-            ->paginate(15);
+        $pendingAuthorsCount = User::where('author_status', User::STATUS_PENDING)->count();
+        $activeAuthorsCount = User::whereIn('role', [User::ROLE_AUTHOR, User::ROLE_ADMIN])->count();
+        $readersCount = User::where('role', User::ROLE_PUBLIC)->count();
 
-        return view('admin.authors.index', compact('pendingAuthors', 'activeAuthors'));
+        // Data for Authors tab
+        $pendingAuthors = collect();
+        $activeAuthors = null;
+        if ($activeTab === 'authors') {
+            $pendingAuthors = User::with('university')
+                ->where('author_status', User::STATUS_PENDING)
+                ->latest('author_applied_at')
+                ->get();
+
+            $activeAuthors = User::with(['university', 'approvalToken'])
+                ->withCount('articles')
+                ->whereIn('role', [User::ROLE_AUTHOR, User::ROLE_ADMIN])
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();
+        }
+
+        // Data for Readers tab
+        $readers = null;
+        $universities = University::orderBy('name')->get();
+        $totalReadersCount = $readersCount;
+        $activeReadersCount = User::where('role', User::ROLE_PUBLIC)->has('readingHistories')->count();
+        $newReadersCount = User::where('role', User::ROLE_PUBLIC)->where('created_at', '>=', now()->subDays(30))->count();
+
+        if ($activeTab === 'readers') {
+            $readersQuery = User::with(['university', 'readingHistories.article.category', 'readingHistories.article.user'])
+                ->withCount(['comments', 'likes', 'readingHistories'])
+                ->where('role', User::ROLE_PUBLIC);
+
+            if ($search = trim((string) $request->input('q'))) {
+                $readersQuery->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('phone_number', 'like', "%{$search}%")
+                      ->orWhere('department', 'like', "%{$search}%");
+                });
+            }
+
+            if ($uniId = $request->input('university_id')) {
+                $readersQuery->where('university_id', $uniId);
+            }
+
+            if ($status = $request->input('status')) {
+                if ($status === 'suspended') {
+                    $readersQuery->where('author_status', User::STATUS_SUSPENDED);
+                } elseif ($status === 'active') {
+                    $readersQuery->where('author_status', '!=', User::STATUS_SUSPENDED);
+                }
+            }
+
+            $readers = $readersQuery->latest()->paginate(12)->withQueryString();
+        }
+
+        return view('admin.authors.index', compact(
+            'activeTab',
+            'pendingAuthors',
+            'activeAuthors',
+            'readers',
+            'universities',
+            'pendingAuthorsCount',
+            'activeAuthorsCount',
+            'readersCount',
+            'totalReadersCount',
+            'activeReadersCount',
+            'newReadersCount'
+        ));
     }
 
     public function approve(User $user): RedirectResponse
@@ -130,12 +194,33 @@ class AuthorManagementController extends Controller
             $user->approvalToken()->delete();
             $user->boosts()->delete();
             $user->boostPayments()->delete();
+            $user->readingHistories()->delete();
 
             // 3. Delete the user account
             $user->delete();
         });
 
         return back()->with('success', "Akun \"{$userName}\" telah dihapus secara permanen. Seluruh artikelnya telah dialihkan kepemilikannya ke akun Admin.");
+    }
+
+    /**
+     * Suspend or unsuspend a reader user.
+     */
+    public function toggleReaderStatus(User $user): RedirectResponse
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak dapat mengubah status akun Anda sendiri.');
+        }
+
+        if ($user->author_status === User::STATUS_SUSPENDED) {
+            $user->update(['author_status' => User::STATUS_NONE]);
+            $msg = "Akun pembaca \"{$user->name}\" berhasil diaktifkan kembali.";
+        } else {
+            $user->update(['author_status' => User::STATUS_SUSPENDED]);
+            $msg = "Akun pembaca \"{$user->name}\" telah ditangguhkan.";
+        }
+
+        return back()->with('success', $msg);
     }
 }
 

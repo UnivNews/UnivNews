@@ -279,11 +279,14 @@
             <div class="bg-white border border-gray-200 shadow-sm p-6 lg:p-8" data-tour="settings-edit-form">
                 <h2 class="text-xl font-bold font-heading text-[#00081e] mb-6">Edit Profile</h2>
 
+                <form id="admin-send-verification" method="POST" action="{{ route('verification.send') }}">
+                    @csrf
+                </form>
+
                 <form id="admin-profile-form" method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     
-                    <input type="hidden" name="email" value="{{ Auth::guard('admin')->user()->email }}">
                     <input type="file" 
                            id="admin_avatar_input" 
                            name="avatar" 
@@ -314,6 +317,133 @@
                                        id="preferred_name" 
                                        value="{{ old('preferred_name', Auth::guard('admin')->user()->preferred_name ?? '') }}" 
                                        class="w-full bg-[#f8f9fa] border border-gray-300 px-3.5 py-2.5 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0">
+                            </div>
+                        </div>
+
+                        <!-- Dedicated Account Email Address with Google Verification -->
+                        @php $adminUser = Auth::guard('admin')->user(); @endphp
+                        <div class="pt-4 border-t border-gray-100"
+                             x-data="{
+                                 emailInput: '{{ old('email', $adminUser->email) }}',
+                                 checking: false,
+                                 checkResult: null,
+                                 async checkGoogleEmail() {
+                                     if (!this.emailInput || !this.emailInput.includes('@')) {
+                                         this.checkResult = { is_google: false, message: 'Please enter a valid email address.' };
+                                         return;
+                                     }
+                                     this.checking = true;
+                                     this.checkResult = null;
+                                     try {
+                                         const res = await fetch('{{ route('profile.check-google-email') }}?email=' + encodeURIComponent(this.emailInput));
+                                         const data = await res.json();
+                                         this.checkResult = data;
+                                     } catch (err) {
+                                         this.checkResult = { is_google: false, message: 'Could not connect to Google verification check.' };
+                                     } finally {
+                                         this.checking = false;
+                                     }
+                                 }
+                             }">
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="email" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">Account Email Address</label>
+                                <span class="text-[11px] text-gray-400 font-sans">Used for Admin Login &amp; Security Alerts</span>
+                            </div>
+                            <input type="email" 
+                                   name="email" 
+                                   id="email" 
+                                   x-model="emailInput"
+                                   value="{{ old('email', $adminUser->email) }}" 
+                                   class="w-full bg-[#f8f9fa] border border-gray-300 px-3.5 py-2.5 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#8b1528] focus:ring-0" 
+                                   required>
+
+                            <div class="mt-3 space-y-3 font-sans">
+                                @if ($adminUser->hasVerifiedEmail())
+                                    <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-green-50 border border-green-200 rounded-md">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">✓</span>
+                                            <div>
+                                                <span class="text-xs font-bold text-green-900 uppercase tracking-wider">Email Verified</span>
+                                                <p class="text-[11px] text-green-700">Verified at {{ $adminUser->email_verified_at->format('d M Y, H:i') }}</p>
+                                            </div>
+                                        </div>
+
+                                        @if($adminUser->isGoogleLinked())
+                                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-gray-200 rounded text-[11px] font-semibold text-gray-700 shadow-xs">
+                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 12s.6 3.6 1.6 5.6l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.2-6.7-5.3L1.6 16C3.5 19.8 7.4 23 12 23z"/></svg>
+                                                <span>Connected with Google (Gmail)</span>
+                                            </div>
+                                        @else
+                                            <a href="{{ route('auth.google.redirect') }}" class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded text-[11px] font-bold uppercase tracking-wider transition-colors shadow-xs">
+                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 12s.6 3.6 1.6 5.6l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.2-6.7-5.3L1.6 16C3.5 19.8 7.4 23 12 23z"/></svg>
+                                                <span>Connect Google Account</span>
+                                            </a>
+                                        @endif
+                                    </div>
+                                @elseif (!$adminUser->hasGoogleEmail())
+                                    <!-- Alert: Non-Google Email Address -->
+                                    <div class="p-4 bg-red-50 border border-red-200 rounded-md space-y-3">
+                                        <div class="flex items-start gap-2.5">
+                                            <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                            <div>
+                                                <div class="font-bold text-xs text-red-900 uppercase tracking-wider">Google Account Not Found</div>
+                                                <p class="text-xs text-red-800 mt-0.5">
+                                                    The email <strong>{{ $adminUser->email }}</strong> was not found on Google. Administrators must use a valid Google (Gmail) account to receive critical security alerts and notifications.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-red-100">
+                                            <button type="button"
+                                                    @click="checkGoogleEmail()"
+                                                    :disabled="checking"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-xs">
+                                                <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                                <span x-text="checking ? 'Checking Google...' : 'Check if Email Exists on Google'">Check if Email Exists on Google</span>
+                                            </button>
+
+                                            <a href="{{ route('auth.google.redirect') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-xs">
+                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 12s.6 3.6 1.6 5.6l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.2-6.7-5.3L1.6 16C3.5 19.8 7.4 23 12 23z"/></svg>
+                                                <span>Connect with Google (Gmail)</span>
+                                            </a>
+                                        </div>
+
+                                        <template x-if="checkResult">
+                                            <div class="p-2.5 rounded text-xs font-medium" :class="checkResult.is_google ? 'bg-green-100 text-green-900 border border-green-200' : 'bg-red-100 text-red-900 border border-red-200'" x-text="checkResult.message"></div>
+                                        </template>
+                                    </div>
+                                @else
+                                    <!-- Alert: Google Email Detected — Unverified -->
+                                    <div class="p-4 bg-amber-50 border border-amber-300 rounded-md space-y-3">
+                                        <div class="flex items-start gap-2.5">
+                                            <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                            <div>
+                                                <div class="font-bold text-xs text-amber-900 uppercase tracking-wider">Google (Gmail) Account Detected — Unverified</div>
+                                                <p class="text-xs text-amber-800 mt-0.5">
+                                                    Your administrator email address is a Google account, but is currently unverified. Please verify via your Gmail mailbox or verify directly via Google.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        @if (session('status') === 'verification-link-sent')
+                                            <div class="p-2.5 bg-green-50 border border-green-200 rounded text-xs text-green-800 font-medium">
+                                                ✓ A new verification link has been sent to your Gmail inbox (<strong>{{ $adminUser->email }}</strong>). Please check your Gmail mailbox or spam folder.
+                                            </div>
+                                        @endif
+
+                                        <div class="flex flex-wrap items-center gap-2 pt-1">
+                                            <button form="admin-send-verification" type="submit" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#8b1528] hover:bg-[#6b0f1f] text-white text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-xs">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                                <span>Verify via Gmail Mailbox</span>
+                                            </button>
+
+                                            <a href="{{ route('auth.google.redirect') }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-xs">
+                                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 12s.6 3.6 1.6 5.6l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.2-6.7-5.3L1.6 16C3.5 19.8 7.4 23 12 23z"/></svg>
+                                                <span>Verify with Google Account</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 

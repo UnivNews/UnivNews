@@ -77,6 +77,8 @@ class NewFeaturesTest extends TestCase
         $user = User::factory()->create([
             'role' => User::ROLE_PUBLIC,
             'author_status' => User::STATUS_NONE,
+            'email' => 'contributor@gmail.com',
+            'email_verified_at' => now(),
         ]);
 
         $response = $this->actingAs($user)->get(route('profile.edit'));

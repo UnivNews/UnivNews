@@ -84,6 +84,11 @@ class Article extends Model
         return $this->hasMany(ArticleComment::class)->visible()->latest();
     }
 
+    public function readingHistories(): HasMany
+    {
+        return $this->hasMany(ReadingHistory::class);
+    }
+
     /**
      * Check whether a given user has liked this article.
      * Works whether the 'likes' relation has been eager-loaded or not.
