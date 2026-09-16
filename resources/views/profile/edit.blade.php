@@ -8,9 +8,60 @@
                 <h1 class="font-heading font-semibold text-[32px] text-[#00081E] tracking-tight">Account Settings</h1>
                 <p class="font-sans text-[16px] text-[#44464E] mt-1">Manage your profile, security, portal roles, and account preferences.</p>
             </div>
+
+            <!-- Global Status & Alert Banners -->
+            @if (session('status') === 'google-linked')
+                <div class="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 text-sm text-green-800">
+                    <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+                    <div>
+                        <p class="font-bold">Google Account Connected!</p>
+                        <p class="text-xs text-green-700 mt-0.5">Your account has been successfully verified and connected to Google (Gmail) to receive all portal notifications.</p>
+                    </div>
+                </div>
+            @elseif (session('status') === 'verification-link-sent')
+                <div class="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 text-sm text-green-800">
+                    <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+                    <div>
+                        <p class="font-bold">Verification Email Sent!</p>
+                        <p class="text-xs text-green-700 mt-0.5">A new verification link has been sent to your Gmail inbox (<strong>{{ $user->email }}</strong>). Please check your Gmail mailbox or spam folder.</p>
+                    </div>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-sm text-red-800">
+                    <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">!</span>
+                    <p class="font-medium">{{ session('error') }}</p>
+                </div>
+            @endif
+
+            @if (session('warning'))
+                <div class="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-3 text-sm text-amber-800">
+                    <span class="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">⚠️</span>
+                    <p class="font-medium">{{ session('warning') }}</p>
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 text-sm text-green-800">
+                    <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+                    <p class="font-medium">{{ session('success') }}</p>
+                </div>
+            @endif
+
+            <!-- Verification Email Form Helper -->
+            <form id="send-verification" method="post" action="{{ route('verification.send') }}">
+                @csrf
+            </form>
             
             <div class="space-y-10">
-                <!-- 1. Author Program & Portal Access Section -->
+                <!-- 1. Profile Information Card -->
+                @include('profile.partials.update-profile-information-form')
+
+                <!-- 2. Security & Password Card -->
+                @include('profile.partials.update-password-form')
+
+                <!-- 3. Author Program & Portal Access Section (Directly Below Password Box) -->
                 <div class="bg-white border border-[#C5C6CF] p-6 sm:p-8 rounded-lg shadow-sm">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-gray-100">
                         <div>
@@ -76,17 +127,90 @@
                             </div>
                         @else
                             <p class="mb-4">Interested in sharing academic insights, research findings, opinions, and campus coverage? Apply to become an official University News contributor.</p>
-                            <div class="flex flex-wrap gap-3">
-                                <a href="{{ route('author.apply') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-[#8b1528] hover:bg-[#6b0f1f] text-white text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-sm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                    Apply as Contributor
-                                </a>
-                            </div>
+
+                            @if ($user->hasVerifiedEmail() && $user->hasGoogleEmail())
+                                <div class="mb-4 p-3 bg-green-50 border border-green-200 rounded-md flex flex-wrap items-center justify-between gap-3 text-xs text-green-800">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+                                        <span class="font-medium">Your email is verified with Google (<strong>{{ $user->email }}</strong>). You are eligible to apply as an Author contributor.</span>
+                                    </div>
+                                    @if($user->isGoogleLinked())
+                                        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-gray-700 bg-white px-2.5 py-1 rounded border border-gray-200 shadow-xs">
+                                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 12s.6 3.6 1.6 5.6l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.2-6.7-5.3L1.6 16C3.5 19.8 7.4 23 12 23z"/></svg>
+                                            Gmail Linked
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="flex flex-wrap gap-3">
+                                    <a href="{{ route('author.apply') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-[#8b1528] hover:bg-[#6b0f1f] text-white text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        Apply as Contributor
+                                    </a>
+                                </div>
+                            @elseif (!$user->hasGoogleEmail())
+                                <!-- Alert: Non-Google Email Address -->
+                                <div class="mb-5 p-4 rounded-lg bg-red-50 border border-red-300">
+                                    <div class="flex items-start gap-3">
+                                        <div class="p-1.5 rounded-full bg-red-100 text-red-700 mt-0.5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="text-xs font-bold uppercase tracking-wider text-red-950">Google (Gmail) Email Required</h4>
+                                            <p class="text-xs text-red-900 mt-1 leading-relaxed">
+                                                Before applying to become an Author, your account must use a Google (Gmail) email address. The address <strong>{{ $user->email }}</strong> was not found on Google. Please update your email address in the Profile Information section above to your Gmail address or connect directly with Google.
+                                            </p>
+                                            <div class="mt-3 flex flex-wrap items-center gap-2">
+                                                <a href="{{ route('auth.google.redirect') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-xs">
+                                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 12s.6 3.6 1.6 5.6l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.2-6.7-5.3L1.6 16C3.5 19.8 7.4 23 12 23z"/></svg>
+                                                    Connect with Google (Gmail)
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <button type="button" disabled class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-400 border border-gray-200 text-xs font-bold uppercase tracking-wider rounded cursor-not-allowed">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                        Apply as Contributor (Google Email Required)
+                                    </button>
+                                </div>
+                            @else
+                                <!-- Alert: Google Email detected but Unverified -->
+                                <div class="mb-5 p-4 rounded-lg bg-amber-50 border border-amber-300">
+                                    <div class="flex items-start gap-3">
+                                        <div class="p-1.5 rounded-full bg-amber-200 text-amber-900 mt-0.5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-950">Google (Gmail) Verification Required</h4>
+                                            <p class="text-xs text-amber-900 mt-1 leading-relaxed">
+                                                Before applying to become an Author, your Google account email must be verified. This ensures all editorial curation updates and application status notifications are delivered to your Gmail mailbox.
+                                            </p>
+                                            <div class="mt-3 flex flex-wrap items-center gap-2">
+                                                <button form="send-verification" type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#8b1528] hover:bg-[#6b0f1f] text-white text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-xs">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                                    Verify via Gmail Mailbox
+                                                </button>
+                                                <a href="{{ route('auth.google.redirect') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-xs">
+                                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 12s.6 3.6 1.6 5.6l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.2-6.7-5.3L1.6 16C3.5 19.8 7.4 23 12 23z"/></svg>
+                                                    Verify with Google Account
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <button type="button" disabled class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-400 border border-gray-200 text-xs font-bold uppercase tracking-wider rounded cursor-not-allowed">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                        Apply as Contributor (Email Verification Required)
+                                    </button>
+                                </div>
+                            @endif
                         @endif
                     </div>
                 </div>
 
-                <!-- 2. Help Center, Information & Policies (Footer Parity) -->
+                <!-- 4. Help Center, Information & Policies (Directly Above Danger Zone Box) -->
                 <div class="bg-white border border-[#C5C6CF] p-6 sm:p-8 rounded-lg shadow-sm">
                     <div class="pb-5 border-b border-gray-100">
                         <h2 class="font-heading font-bold text-lg text-[#00081E] flex items-center gap-2">
@@ -138,12 +262,6 @@
                         </a>
                     </div>
                 </div>
-
-                <!-- 3. Profile Information Card -->
-                @include('profile.partials.update-profile-information-form')
-
-                <!-- 4. Security & Password Card -->
-                @include('profile.partials.update-password-form')
 
                 <!-- 5. Danger Zone Card -->
                 @include('profile.partials.delete-user-form')

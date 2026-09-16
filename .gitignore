@@ -1,63 +1,130 @@
-*.log
-.DS_Store
+# --------------------------------------------------
+# Laravel Environment & Local Config
+# --------------------------------------------------
 .env
 .env.backup
 .env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
-/node_modules
-/.vite
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/vendor
+.env.*.local
 Homestead.json
 Homestead.yaml
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
 
-# Temporary & Editor files
-*.swp
-*.swo
-*~
-*.bak
-*.tmp
-*.sublime-project
-*.sublime-workspace
+# --------------------------------------------------
+# Laravel Storage (Private/Public uploads & Framework)
+# --------------------------------------------------
+/storage/*.key
+/storage/pail
+/storage/app/private/*
+!/storage/app/private/.gitignore
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+!/storage/framework/cache/data/
+!/storage/framework/cache/data/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
 
-# Python cache & artifacts (TestSprite)
+# --------------------------------------------------
+# Dependencies & Package Managers
+# --------------------------------------------------
+/vendor/
+/node_modules/
+/auth.json
+
+# --------------------------------------------------
+# Build Assets & Bundlers
+# --------------------------------------------------
+/public/build/
+/public/hot
+/public/storage
+/.vite/
+.eslintcache
+.stylelintcache
+
+# --------------------------------------------------
+# Logs
+# --------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --------------------------------------------------
+# Database & SQLite Journals
+# --------------------------------------------------
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+database/*.sqlite-journal
+database/*.sqlite-shm
+database/*.sqlite-wal
+
+# --------------------------------------------------
+# Testing & Code Coverage
+# --------------------------------------------------
+.phpunit.result.cache
+/.phpunit.cache/
+/coverage/
+*.lcov
+.nyc_output/
+
+# --------------------------------------------------
+# TestSprite & Automated Testing Artifacts
+# --------------------------------------------------
+/.testsprite/
+/testsprite-plans/
+/testsprite_tests/
+testsprite_tests/tmp/
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
 
-# TestSprite test plans, generated test cases, and reports
-/.testsprite
-/testsprite-plans
-/testsprite_tests
+# --------------------------------------------------
+# IDEs, Editors & Workspaces
+# --------------------------------------------------
+/.vscode/
+/.idea/
+/.fleet/
+/.nova/
+/.zed/
+.phpactor.json
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
 
-# Local Agent Skills & configs
-/.agents
-/.antigravity
+# --------------------------------------------------
+# AI Assistants, Agents & IDE Tools
+# --------------------------------------------------
+/.agents/
+/.antigravity/
+/.gemini/
+/.cursor/
+/.windsurf/
+/.cline/
+/.roo/
 
-# SQLite journal files
-*.sqlite-journal
-*.sqlite-shm
-*.sqlite-wal
-
-# Package manager logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+# --------------------------------------------------
+# Operating System & Temporary Files
+# --------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.swp
+*.swo
+*~
+*.bak
+*.tmp

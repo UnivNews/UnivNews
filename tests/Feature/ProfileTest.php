@@ -19,6 +19,8 @@ class ProfileTest extends TestCase
             ->get('/profile');
 
         $response->assertOk();
+        $response->assertSee('Phone Number');
+        $response->assertSee('id="phone_number"', false);
     }
 
     public function test_profile_information_can_be_updated(): void
@@ -30,6 +32,7 @@ class ProfileTest extends TestCase
             ->patch('/profile', [
                 'name' => 'Test User',
                 'email' => 'test@example.com',
+                'phone_number' => '+62 812-3456-7890',
             ]);
 
         $response
@@ -40,7 +43,31 @@ class ProfileTest extends TestCase
 
         $this->assertSame('Test User', $user->name);
         $this->assertSame('test@example.com', $user->email);
+        $this->assertSame('+62 812-3456-7890', $user->phone_number);
         $this->assertNull($user->email_verified_at);
+    }
+
+    public function test_profile_phone_number_can_be_cleared(): void
+    {
+        $user = User::factory()->create([
+            'phone_number' => '+62 812-3456-7890',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone_number' => null,
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $user->refresh();
+
+        $this->assertNull($user->phone_number);
     }
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void

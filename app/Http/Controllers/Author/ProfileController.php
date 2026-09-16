@@ -49,7 +49,13 @@ class ProfileController extends Controller
             $updateData['avatar_path'] = $path;
         }
 
-        $user->update($updateData);
+        $user->fill($updateData);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return back()->with('success', 'Profile updated successfully.');
     }

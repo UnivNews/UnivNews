@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -115,6 +116,23 @@ class User extends Authenticatable
         return $this->hasMany(ArticleComment::class);
     }
 
+    public function readingHistories()
+    {
+        return $this->hasMany(ReadingHistory::class);
+    }
+
+    /**
+     * Get the last 3-5 articles read by this user.
+     */
+    public function recentReadArticles(int $limit = 5)
+    {
+        return $this->readingHistories()
+            ->with(['article.category', 'article.user.university'])
+            ->latest('last_read_at')
+            ->take($limit)
+            ->get();
+    }
+
     // ── Role Helpers ───────────────────────────────────────────────────────
 
     public function isAdmin(): bool
@@ -130,6 +148,53 @@ class User extends Authenticatable
     public function isPublic(): bool
     {
         return $this->role === self::ROLE_PUBLIC;
+    }
+
+    public function isGoogleLinked(): bool
+    {
+        return $this->provider === 'google' && !empty($this->provider_id);
+    }
+
+    /**
+     * Determine if an email address is hosted by Google (Gmail or Google Workspace).
+     */
+    public static function isGoogleEmail(?string $email): bool
+    {
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+
+        $parts = explode('@', strtolower(trim($email)));
+        if (count($parts) !== 2) {
+            return false;
+        }
+
+        $domain = $parts[1];
+
+        // Standard Gmail / Googlemail domains
+        if (in_array($domain, ['gmail.com', 'googlemail.com'], true)) {
+            return true;
+        }
+
+        // Check MX records for Google Workspace / custom domains
+        if (function_exists('getmxrr') && @getmxrr($domain, $mxhosts)) {
+            foreach ($mxhosts as $mx) {
+                $mxLower = strtolower($mx);
+                if (str_contains($mxLower, 'google.com') || str_contains($mxLower, 'googlemail.com') || str_contains($mxLower, 'smtp.google.com')) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check whether this user has a valid Google email or is linked to Google.
+     */
+    public function hasGoogleEmail(): bool
+    {
+        return $this->isGoogleLinked() || self::isGoogleEmail($this->email);
     }
 
     // ── Author Status Helpers ──────────────────────────────────────────────

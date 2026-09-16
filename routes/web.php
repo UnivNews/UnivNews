@@ -34,19 +34,34 @@ Route::get('/api/homepage/featured', [\App\Http\Controllers\HomepageController::
 // 2. Authenticated General Routes
 Route::middleware(['auth'])->group(function () {
     
-    // Generic Dashboard fallback route (untuk web guard: author/reader)
+    // Generic Dashboard fallback route (supports reader, author, admin)
     Route::get('/dashboard', function () {
-        $user = auth()->user();
-        if ($user->isAuthor()) {
+        $user = auth('admin')->user() ?: auth()->user();
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+        if ($user && $user->isAuthor()) {
             return redirect()->route('author.dashboard');
         }
         return redirect()->route('home');
-    })->name('dashboard');
+    })->withoutMiddleware('auth')->middleware('auth:web,admin')->name('dashboard');
 
     // Standard Profile Routes
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/check-google-email', function (\Illuminate\Http\Request $request) {
+        $email = (string) $request->query('email', '');
+        $isGoogle = \App\Models\User::isGoogleEmail($email);
+
+        return response()->json([
+            'email'     => $email,
+            'is_google' => $isGoogle,
+            'message'   => $isGoogle
+                ? 'Google (Gmail) account detected. You can verify this email via your Gmail mailbox.'
+                : 'Google account not found. This email address does not exist on Google or is not hosted by Gmail.',
+        ]);
+    })->withoutMiddleware('auth')->middleware('auth:web,admin')->name('profile.check-google-email');
 
     // Apply to Become an Author
     Route::get('/apply-author', [Author\ApplyController::class, 'create'])->name('author.apply');
@@ -97,16 +112,23 @@ Route::middleware(['auth'])->group(function () {
 // 5. Auth Routes (Breeze)
 require __DIR__.'/auth.php';
 
-// 6. Google OAuth Routes
-Route::middleware('guest.admin_aware')->group(function () {
-    Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('auth.google.redirect');
-    Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
-});
+// 6. Google OAuth Routes (supports both guest login and authenticated profile linking)
+Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 
-// 7. Admin Login Routes
+// 7. Admin Login Routes & Aliases
 Route::middleware('guest.admin_aware')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/sign-in', [AdminLoginController::class, 'create'])->name('login');
     Route::post('/sign-in', [AdminLoginController::class, 'store']);
+    Route::get('/login', [AdminLoginController::class, 'create'])->name('login.alias');
+    Route::post('/login', [AdminLoginController::class, 'store']);
+});
+
+Route::get('/admin', function () {
+    if (auth('admin')->check()) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('admin.login');
 });
 
 // 7b. Admin Logout Route (tidak perlu middleware role, hanya butuh CSRF)
@@ -129,13 +151,14 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
     // Articles Resource
     Route::resource('articles', Admin\ArticleController::class)->except(['show']);
 
-    // Author Management
+    // Author & User Management
     Route::get('/authors', [Admin\AuthorManagementController::class, 'index'])->name('authors.index');
     Route::post('/authors/{user}/approve', [Admin\AuthorManagementController::class, 'approve'])->name('authors.approve');
     Route::post('/authors/{user}/reject', [Admin\AuthorManagementController::class, 'reject'])->name('authors.reject');
     Route::post('/authors/{user}/suspend', [Admin\AuthorManagementController::class, 'suspend'])->name('authors.suspend');
     Route::post('/authors/{user}/cancel-approval', [Admin\AuthorManagementController::class, 'cancelApproval'])->name('authors.cancel-approval');
     Route::delete('/authors/{user}', [Admin\AuthorManagementController::class, 'destroy'])->name('authors.destroy');
+    Route::post('/readers/{user}/toggle-status', [Admin\AuthorManagementController::class, 'toggleReaderStatus'])->name('readers.toggle-status');
 
     // University Management
     Route::resource('universities', Admin\UniversityController::class)->only(['index', 'store', 'destroy']);

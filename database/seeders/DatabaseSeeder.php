@@ -330,9 +330,10 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 7. Boost Prices
+        // 7. Boost Prices & Reading History
         $this->call([
             BoostPriceSeeder::class,
+            ReadingHistorySeeder::class,
         ]);
     }
 }

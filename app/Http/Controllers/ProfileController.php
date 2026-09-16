@@ -28,7 +28,7 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request, AvatarService $avatarService): RedirectResponse
     {
         $user = $request->user();
-        $user->fill($request->safe()->only(['name', 'email']));
+        $user->fill($request->safe()->only(['name', 'email', 'phone_number']));
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
