@@ -73,8 +73,8 @@
     @endif
 
     <!-- Content -->
-    <div class="prose prose-lg prose-blue max-w-none font-serif text-gray-800 leading-relaxed mb-12">
-        {!! nl2br(e($article->content)) !!}
+    <div class="prose prose-lg prose-blue max-w-none font-serif text-gray-800 leading-relaxed mb-12 article-content">
+        {!! nl2br(strip_tags($article->content, '<b><strong><i><em><u><s><strike><blockquote><h3><h4><h5><h6><p><br><a><ul><ol><li>')) !!}
     </div>
 
     <!-- Event Registration -->

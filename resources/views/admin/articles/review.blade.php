@@ -121,8 +121,8 @@
                     @endif
 
                     <!-- Rendered HTML Content with Editorial Academic Typography -->
-                    <div class="prose max-w-none font-serif-content text-gray-800 text-base leading-relaxed space-y-4">
-                        {!! $article->content !!}
+                    <div class="prose max-w-none font-serif-content text-gray-800 text-base leading-relaxed space-y-4 article-content">
+                        {!! nl2br(strip_tags($article->content, '<b><strong><i><em><u><s><strike><blockquote><h3><h4><h5><h6><p><br><a><ul><ol><li>')) !!}
                     </div>
                 </div>
             </div>

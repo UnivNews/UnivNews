@@ -42,6 +42,26 @@ class PublicPagesTest extends TestCase
         $response->assertSee($article->title);
     }
 
+    public function test_article_page_renders_html_formatting_properly()
+    {
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+        $article = Article::factory()->create([
+            'user_id' => $user->id,
+            'category_id' => $category->id,
+            'content' => 'Paragraf dengan <b>tulisan tebal</b>, <u>garis bawah</u>, dan <i>miring</i>.',
+            'status' => 'published',
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->get('/article/' . $article->slug);
+        $response->assertStatus(200);
+        $response->assertSee('<b>tulisan tebal</b>', false);
+        $response->assertSee('<u>garis bawah</u>', false);
+        $response->assertSee('<i>miring</i>', false);
+        $response->assertDontSee('&lt;b&gt;tulisan tebal&lt;/b&gt;', false);
+    }
+
     public function test_privacy_policy_page_loads_successfully()
     {
         $response = $this->get('/privacy-policy');
