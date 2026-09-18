@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 
-use App\Mail\ArticlePaymentRequired;
 use App\Mail\ArticleRejected;
 use App\Models\Article;
 use App\Models\Payment;
@@ -79,17 +78,7 @@ class ReviewController extends Controller
                 'payment_url'          => $invoice['data']['link'] ?? ($invoice['link'] ?? null),
             ]);
 
-            // Kirim email tagihan pembayaran ke author
-            if ($article->user && $article->user->email) {
-                try {
-                    Mail::to($article->user->email)->send(new ArticlePaymentRequired($article->user, $article, $payment));
-                } catch (\Exception $mailEx) {
-                    Log::warning('Failed to send ArticlePaymentRequired email', [
-                        'article_id' => $article->id,
-                        'error'      => $mailEx->getMessage(),
-                    ]);
-                }
-            }
+            // Invoice pembayaran dikirim langsung secara otomatis oleh sistem Mayar ke email author.
 
         } catch (\Exception $e) {
             Log::error('Mayar invoice creation failed', [
