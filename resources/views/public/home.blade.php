@@ -44,10 +44,12 @@
                 totalSlides: {{ $featuredArticles->count() }},
                 autoplay: null,
                 startAutoplay() {
+                    clearInterval(this.autoplay);
                     this.autoplay = setInterval(() => { this.nextSlide() }, 5000);
                 },
                 stopAutoplay() {
                     clearInterval(this.autoplay);
+                    this.autoplay = null;
                 },
                 nextSlide() {
                     this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
@@ -57,7 +59,6 @@
                 },
                 goToSlide(i) {
                     this.currentSlide = i;
-                    this.stopAutoplay();
                     this.startAutoplay();
                 }
             }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
@@ -99,10 +100,10 @@
                     </div>
 
                     <!-- Navigation Arrows (Desktop only to prevent mobile text overlap) -->
-                    <button @click="prevSlide(); stopAutoplay(); startAutoplay();" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                    <button @click="prevSlide(); startAutoplay();" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    <button @click="nextSlide(); stopAutoplay(); startAutoplay();" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                    <button @click="nextSlide(); startAutoplay();" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
@@ -174,11 +175,7 @@
                 <div class="mb-12">
                     <!-- Recent News Grid -->
                     <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
-                        @php
-                            $recentList = $recentArticles->skip(2)->take(6);
-                        @endphp
-
-                        @foreach($recentList as $article)
+                        @foreach($recentArticles as $article)
                         <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <!-- Thumbnail -->
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
@@ -204,8 +201,6 @@
                             </div>
                         </a>
                         @endforeach
-
-
                     </div>
                 </div>
 
@@ -217,12 +212,9 @@
                 </div>
 
                 <div class="mb-12">
-                    <!-- Others Grid (15 items) -->
+                    <!-- Others Grid -->
+                    @if($otherArticles->isNotEmpty())
                     <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
-                        @php
-                            $otherArticles = $recentArticles->skip(8)->take(15);
-                        @endphp
-
                         @foreach($otherArticles as $article)
                         <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <!-- Thumbnail -->
@@ -249,9 +241,25 @@
                             </div>
                         </a>
                         @endforeach
-
-
                     </div>
+
+                    <!-- Pagination + Per-page selector -->
+                    <div class="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>{{ $otherArticles->links() }}</div>
+                        <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2.5 shrink-0">
+                            <label for="perPage" class="text-xs font-bold uppercase tracking-widest text-[#44464E] cursor-pointer" style="font-family: 'Work Sans', sans-serif;">Show</label>
+                            <select name="perPage" id="perPage" onchange="this.form.submit()"
+                                class="text-sm font-semibold border border-[#C5C6CF] rounded-md pl-3.5 pr-10 py-1.5 text-navy focus:outline-none focus:ring-1 focus:ring-crimson focus:border-crimson bg-white cursor-pointer shadow-sm transition-colors hover:border-gray-400" style="font-family: 'Work Sans', sans-serif;">
+                                @foreach([10, 20, 30] as $opt)
+                                    <option value="{{ $opt }}" {{ $perPage == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                @endforeach
+                            </select>
+                            <span class="text-xs font-bold uppercase tracking-widest text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">per page</span>
+                        </form>
+                    </div>
+                    @else
+                    <p class="text-gray-400 text-sm" style="font-family: 'Work Sans', sans-serif;">No more articles to show.</p>
+                    @endif
                 </div>
             </div>
 
@@ -263,12 +271,8 @@
                         <span class="w-2 h-2 rounded-full mr-3 bg-crimson"></span> TRENDING NEWS
                     </h3>
                     <div class="space-y-5">
-                        @php
-                            $trendingNewsList = ($trendingResearch ?? collect())->concat($recentArticles ?? collect())->unique('id')->take(5);
-                        @endphp
-
-                        @if($trendingNewsList->isNotEmpty())
-                            @foreach($trendingNewsList as $idx => $tArticle)
+                        @if($trendingArticles->isNotEmpty())
+                            @foreach($trendingArticles as $idx => $tArticle)
                             <div class="flex gap-4 group items-start">
                                 <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">{{ sprintf('%02d', $idx + 1) }}</span>
                                 <div>
@@ -277,7 +281,10 @@
                                             {{ $tArticle->title }}
                                         </h4>
                                     </a>
-                                    <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">{{ $tArticle->category?->name ?? 'General' }}</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">{{ $tArticle->category?->name ?? 'General' }}</span>
+                                        <span class="text-xs text-[#7687B2]" style="font-family: 'Work Sans', sans-serif;">· {{ number_format($tArticle->views_count) }} views</span>
+                                    </div>
                                 </div>
                             </div>
                             @endforeach

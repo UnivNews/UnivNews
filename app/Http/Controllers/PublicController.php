@@ -21,22 +21,21 @@ class PublicController extends Controller
 
         $boostedArticles = $activeBoosts->map(fn($boost) => $boost->article);
 
-        // 2. Fetch latest articles to fill the gap if boosted articles are less than 5
-        $limit = 5 - $boostedArticles->count();
+        // 2. Jika ada boost aktif → hero hanya tampilkan artikel yang di-boost.
+        //    Jika tidak ada boost sama sekali → fallback ke 5 artikel terbaru.
         $latestArticles = collect();
-        if ($limit > 0) {
+        if ($boostedArticles->isEmpty()) {
             $latestArticles = Article::where('status', 'published')
                 ->whereNotNull('published_at')
                 ->where('published_at', '<=', now())
-                ->when($boostedArticles->isNotEmpty(), function ($q) use ($boostedArticles) {
-                    $q->whereNotIn('id', $boostedArticles->pluck('id'));
-                })
                 ->orderBy('published_at', 'desc')
-                ->limit($limit)
+                ->limit(5)
                 ->get();
         }
 
-        $featuredArticles = $boostedArticles->merge($latestArticles);
+        $featuredArticles = $boostedArticles->isNotEmpty()
+            ? $boostedArticles
+            : $latestArticles;
         $featuredArticle = $featuredArticles->first();
 
         // 3. Setup Marquee Text
@@ -47,27 +46,44 @@ class PublicController extends Controller
             $marqueeArticles = $featuredArticles->take(1);
         }
 
-        // 4. Fetch Recent Articles (exclude the one currently highlighted in first spot of slider)
+        // 4. Recent News — 6 artikel terbaru (exclude hero artikel)
         $recentArticles = Article::where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
-            ->where('id', '!=', $featuredArticle?->id)
+            ->when($featuredArticle, fn($q) => $q->where('id', '!=', $featuredArticle->id))
             ->orderBy('published_at', 'desc')
-            ->limit(8)
+            ->limit(6)
             ->get();
 
-        // 5. Fetch Trending Research
-        $trendingResearch = Article::whereHas('category', function($q) {
-                $q->where('slug', 'research-innovation');
-            })
-            ->where('status', 'published')
+        // 5. Others — artikel ke-7 dst (exclude hero + recent 6), paginated
+        $excludeIds = $recentArticles->pluck('id')
+            ->when($featuredArticle, fn($c) => $c->push($featuredArticle->id))
+            ->filter()
+            ->unique()
+            ->values();
+
+        $perPage = in_array((int) request('perPage'), [10, 20, 30]) ? (int) request('perPage') : 10;
+
+        $otherArticles = Article::where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->whereNotIn('id', $excludeIds)
+            ->orderBy('published_at', 'desc')
+            ->paginate($perPage, ['*'], 'page')
+            ->withQueryString();
+
+        // 6. Trending — top 5 dari semua kategori berdasarkan views_count
+        $trendingArticles = Article::where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->orderBy('views_count', 'desc')
             ->limit(5)
             ->get();
 
-        return view('public.home', compact('featuredArticle', 'featuredArticles', 'recentArticles', 'trendingResearch', 'marqueeArticles'));
+        return view('public.home', compact(
+            'featuredArticle', 'featuredArticles', 'marqueeArticles',
+            'recentArticles', 'otherArticles', 'trendingArticles', 'perPage'
+        ));
     }
 
     public function research()
