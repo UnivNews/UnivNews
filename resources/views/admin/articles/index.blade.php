@@ -122,8 +122,8 @@
 
                         <!-- Author -->
                         <td class="px-6 py-4 text-gray-700">
-                            <div class="font-medium">{{ $article->user->name ?? 'Unknown' }}</div>
-                            <div class="text-[10px] text-gray-400">{{ $article->user->university->abbreviation ?? '' }}</div>
+                            <div class="font-medium text-gray-900 leading-snug">{{ $article->user->name ?? 'Unknown' }}</div>
+                            <div class="text-[10px] text-gray-400 uppercase font-medium tracking-wide mt-0.5">{{ $article->user->university->abbreviation ?? '' }}</div>
                         </td>
 
                         <!-- Category -->
@@ -173,7 +173,12 @@
                                     </a>
                                 @endif
 
-                                <form action="{{ route('admin.articles.destroy', $article) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this article?');">
+                                <form action="{{ route('admin.articles.destroy', $article) }}" 
+                                      method="POST" 
+                                      class="inline-block"
+                                      data-confirm-title="Delete article?"
+                                      data-confirm-description="This will permanently delete this article (&quot;{{ addslashes($article->title) }}&quot;). This action cannot be undone."
+                                      data-confirm-btn="Delete">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-800 transition-colors" title="Delete">

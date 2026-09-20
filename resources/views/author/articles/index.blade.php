@@ -152,7 +152,12 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                 </a>
 
-                                <form action="{{ route('author.articles.destroy', $article) }}" method="POST" class="inline-block ml-2" onsubmit="return confirm('Delete this draft?');">
+                                <form action="{{ route('author.articles.destroy', $article) }}" 
+                                      method="POST" 
+                                      class="inline-block ml-2"
+                                      data-confirm-title="Delete draft?"
+                                      data-confirm-description="This will permanently delete this draft (&quot;{{ addslashes($article->title) }}&quot;). This action cannot be undone."
+                                      data-confirm-btn="Delete">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-800 transition-colors" title="Delete">

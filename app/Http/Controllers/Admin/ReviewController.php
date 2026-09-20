@@ -78,6 +78,8 @@ class ReviewController extends Controller
                 'payment_url'          => $invoice['data']['link'] ?? ($invoice['link'] ?? null),
             ]);
 
+            // Invoice pembayaran dikirim langsung secara otomatis oleh sistem Mayar ke email author.
+
         } catch (\Exception $e) {
             Log::error('Mayar invoice creation failed', [
                 'article_id' => $article->id,

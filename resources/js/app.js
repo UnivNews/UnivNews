@@ -32,6 +32,7 @@ import { adminAuthorsIndexSteps }        from './onboarding/pages/admin-authors-
 import { adminUniversitiesIndexSteps }   from './onboarding/pages/admin-universities-index';
 import { adminAppSettingsSteps }         from './onboarding/pages/admin-app-settings';
 import { adminSettingsSteps }            from './onboarding/pages/admin-settings';
+import { adminSessionsIndexSteps }       from './onboarding/pages/admin-sessions-index';
 
 // Map: page tour ID → steps array
 const PAGE_TOUR_MAP = {
@@ -50,6 +51,7 @@ const PAGE_TOUR_MAP = {
   'admin.universities.index':   adminUniversitiesIndexSteps,
   'admin.app-settings.index':   adminAppSettingsSteps,
   'admin.settings':             adminSettingsSteps,
+  'admin.sessions.index':       adminSessionsIndexSteps,
 };
 
 document.addEventListener('DOMContentLoaded', () => {

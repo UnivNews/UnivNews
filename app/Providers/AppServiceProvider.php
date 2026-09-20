@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
 use App\Models\Category;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,5 +33,9 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.public', function ($view) {
             $view->with('navCategories', Category::orderBy('name')->get());
         });
+
+        if (config('app.env') === 'production' || str_starts_with(config('app.url', ''), 'https://')) {
+            URL::forceScheme('https');
+        }
     }
 }

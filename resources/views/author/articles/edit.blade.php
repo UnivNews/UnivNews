@@ -207,11 +207,11 @@
 
                     <!-- Toggle Link Pendaftaran -->
                     <div x-data="{ hasRegistration: {{ (old('registration_link', $article->registration_link)) ? 'true' : 'false' }} }" class="mb-1">
-                        <label class="flex items-center gap-3 cursor-pointer mb-4">
+                        <label class="inline-flex items-center gap-3 cursor-pointer mb-4 select-none">
                             <div class="relative">
                                 <input type="checkbox" class="sr-only" x-model="hasRegistration">
-                                <div class="w-10 h-5 rounded-full transition-colors" :class="hasRegistration ? 'bg-[#8b1528]' : 'bg-gray-300'"></div>
-                                <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform" :class="hasRegistration ? 'translate-x-5' : 'translate-x-0'"></div>
+                                <div class="w-11 h-6 rounded-full transition-colors duration-200" :class="hasRegistration ? 'bg-[#8b1528]' : 'bg-gray-300'"></div>
+                                <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 pointer-events-none" :class="hasRegistration ? 'translate-x-5' : 'translate-x-0'"></div>
                             </div>
                             <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Event Ini Membuka Pendaftaran</span>
                         </label>
@@ -350,9 +350,9 @@
                         Featured Image
                     </h3>
 
-                    @if($article->featured_image_path)
+                    @if($article->featured_image_url)
                     <div class="mb-4">
-                        <img src="{{ asset($article->featured_image_path) }}" alt="Featured Image" class="w-full h-32 object-cover border border-gray-200">
+                        <img src="{{ $article->featured_image_url }}" alt="Featured Image" class="w-full h-32 object-cover border border-gray-200">
                     </div>
                     @endif
 

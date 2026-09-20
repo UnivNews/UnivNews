@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-[#f8f9fa]">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full overflow-hidden bg-[#030919]">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'CMS Portal - University News')</title>
+    @if(request()->getHost() === 'devtest.univnews.site' || config('app.env') === 'staging')
+        <meta name="robots" content="noindex, nofollow">
+    @endif
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23B71032'/><text x='50' y='50' font-family='sans-serif' font-weight='bold' font-size='70' fill='white' dominant-baseline='central' text-anchor='middle'>U</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,12 +45,12 @@
     $onboardingPending = ($onboardingUser && !$onboardingUser->has_completed_onboarding) ? 'true' : 'false';
     $completedTours = $onboardingUser ? ($onboardingUser->completed_page_tours ?? []) : [];
 @endphp
-<body class="h-full overflow-hidden antialiased bg-[#f4f6f8] text-[#1b1b1c]"
+<body class="h-full overflow-hidden antialiased bg-[#030919] text-[#1b1b1c]"
       data-onboarding-pending="{{ $onboardingPending }}"
       data-user-role="{{ $onboardingRole ?? '' }}"
       data-completed-tours="{{ json_encode($completedTours) }}"
       data-page-tour-id="@yield('page_tour_id')">
-    <div class="flex h-screen overflow-hidden" x-data="{ mobileSidebarOpen: false }">
+    <div class="flex h-screen h-[100dvh] w-full overflow-hidden bg-[#f8f9fa]" x-data="{ mobileSidebarOpen: false }">
         
         <!-- Mobile Sidebar Backdrop -->
         <div x-show="mobileSidebarOpen" 
@@ -55,7 +60,7 @@
 
         <!-- Sidebar -->
         <aside :class="mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'" 
-               class="fixed inset-y-0 left-0 z-50 w-64 bg-[#030919] text-white transition-transform duration-200 ease-in-out md:static md:translate-x-0 flex flex-col flex-shrink-0 select-none shadow-xl md:shadow-none">
+               class="fixed inset-y-0 left-0 z-50 w-64 h-full min-h-screen md:h-screen md:sticky md:top-0 bg-[#030919] text-white transition-transform duration-200 ease-in-out md:translate-x-0 flex flex-col flex-shrink-0 select-none shadow-xl md:shadow-none">
             
             <!-- Logo Header -->
             <div class="p-6 border-b border-gray-800/80">
@@ -73,7 +78,7 @@
             </div>
 
             <!-- Navigation Links -->
-            <nav class="flex-1 overflow-y-auto py-6 space-y-1.5 px-0" data-tour="sidebar-nav">
+            <nav class="flex-1 overflow-y-auto py-6 space-y-1.5 px-0 no-scrollbar sidebar-nav-scroll [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" data-tour="sidebar-nav">
                 @php
                     // Determine user from the correct guard based on current route context
                     $isAdminRoute = request()->routeIs('admin.*');
@@ -128,27 +133,59 @@
                     </svg>
                     Universities
                 </a>
+                {{-- Universities --}}
 
-                {{-- App Settings: payment fee, etc. (Admin only) --}}
-                <a href="{{ route('admin.app-settings.index') }}" 
-                   data-tour="admin-payment-settings-link"
-                   class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('admin.app-settings*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                    </svg>
-                    Payment Settings
-                </a>
-                @endif
+                {{-- Site Content (Admin only) --}}
+                <div x-data="{ openContent: {{ request()->routeIs('admin.pages*') || request()->routeIs('admin.faqs*') ? 'true' : 'false' }} }">
+                    <button @click="openContent = !openContent" class="w-full flex items-center justify-between px-6 py-3.5 text-sm font-medium transition-colors text-gray-300 hover:bg-white/5 hover:text-white">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                            Site Content
+                        </span>
+                        <svg class="w-4 h-4 transform transition-transform" :class="{ 'rotate-180': openContent }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="openContent" class="bg-black/20 py-1 space-y-1 text-xs">
+                        <a href="{{ route('admin.pages.about.edit') }}" class="block px-12 py-2 {{ request()->routeIs('admin.pages.about*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">About Us</a>
+                        <a href="{{ route('admin.faqs.index') }}" class="block px-12 py-2 {{ request()->routeIs('admin.faqs*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">FAQ</a>
+                        <a href="{{ route('admin.pages.contact.edit') }}" class="block px-12 py-2 {{ request()->routeIs('admin.pages.contact*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">Contact Info</a>
+                        <a href="{{ route('admin.pages.privacy.edit') }}" class="block px-12 py-2 {{ request()->routeIs('admin.pages.privacy*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">Privacy Policy</a>
+                    </div>
+                </div>
 
-                <!-- Settings (User Profile) -->
-                <a href="{{ $isAdmin ? route('admin.settings.edit') : route('author.settings.edit') }}" 
+                {{-- Settings Dropdown (Admin only: Profile, Payment Settings, Active Sessions Settings) --}}
+                <div x-data="{ openSettings: {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.profile*') || request()->routeIs('admin.app-settings*') || request()->routeIs('admin.sessions*') ? 'true' : 'false' }} }">
+                    <button @click="openSettings = !openSettings" class="w-full flex items-center justify-between px-6 py-3.5 text-sm font-medium transition-colors text-gray-300 hover:bg-white/5 hover:text-white">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Settings
+                        </span>
+                        <svg class="w-4 h-4 transform transition-transform" :class="{ 'rotate-180': openSettings }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="openSettings" class="bg-black/20 py-1 space-y-1 text-xs">
+                        <a href="{{ route('admin.settings.edit') }}" class="block px-12 py-2 {{ request()->routeIs('admin.settings*') || request()->routeIs('admin.profile*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">Profile</a>
+                        <a href="{{ route('admin.app-settings.index') }}" class="block px-12 py-2 {{ request()->routeIs('admin.app-settings*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">Payment Settings</a>
+                        <a href="{{ route('admin.sessions.index') }}" class="block px-12 py-2 {{ request()->routeIs('admin.sessions*') ? 'text-white font-semibold' : 'text-gray-400 hover:text-white' }}">Active Sessions Settings</a>
+                    </div>
+                </div>
+                @else
+                <!-- Profile for Author -->
+                <a href="{{ route('author.settings.edit') }}" 
                    class="flex items-center px-6 py-3.5 text-sm font-medium transition-colors {{ request()->routeIs('*.settings*') || request()->routeIs('*.profile*') ? 'bg-[#8b1528] text-white font-semibold' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <svg class="w-5 h-5 mr-3.5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
-                    Settings
+                    Profile
                 </a>
+                @endif
             </nav>
 
             <!-- Bottom Log Out -->
@@ -219,8 +256,8 @@
                     <div class="flex items-center gap-2.5">
                         <span class="text-xs font-sans text-gray-600 hidden sm:inline-block">Logged in as: <strong class="text-navy font-semibold text-gray-900">{{ $currentUser->name }}</strong></span>
                         <div class="w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center font-bold text-xs overflow-hidden border border-gray-200">
-                            @if($currentUser->avatar_path)
-                                <img src="{{ asset($currentUser->avatar_path) }}" alt="{{ $currentUser->name }}" class="w-full h-full object-cover">
+                            @if($currentUser->hasAvatar())
+                                <img src="{{ $currentUser->avatar_url }}" alt="{{ $currentUser->name }}" class="w-full h-full object-cover">
                             @else
                                 <span class="uppercase">{{ substr($currentUser->name, 0, 2) }}</span>
                             @endif
@@ -260,5 +297,8 @@
             </main>
         </div>
     </div>
+    <x-alert-toast />
+    <x-alert-dialog />
+    <x-page-loader />
 </body>
 </html>

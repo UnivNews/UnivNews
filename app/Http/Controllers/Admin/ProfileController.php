@@ -56,7 +56,7 @@ class ProfileController extends Controller
                         Article::STATUS_AWAITING_PAYMENT => 'blue',
                         default                          => 'gray',
                     },
-                    'detail' => '"' . \Illuminate\Support\Str::limit($article->title, 45) . '" by ' . ($article->user->preferred_name ?? $article->user->name),
+                    'detail' => '"' . \Illuminate\Support\Str::limit($article->title, 45) . '" by ' . ($article->user?->preferred_name ?? $article->user?->name ?? 'Unknown Author'),
                 ];
             });
 
@@ -86,38 +86,59 @@ class ProfileController extends Controller
         return view('admin.settings', compact('activityLog'));
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, \App\Services\AvatarService $avatarService): RedirectResponse
     {
         $user = Auth::guard('admin')->user();
 
         $validated = $request->validate([
-            'name'            => 'required|string|max:255',
-            'preferred_name'  => 'nullable|string|max:255',
-            'email'           => 'required|email|max:255|unique:users,email,' . $user->id,
-            'phone_number'    => 'nullable|string|max:50',
-            'address'         => 'nullable|string|max:255',
+            'name'             => 'required|string|max:255',
+            'preferred_name'   => 'nullable|string|max:255',
+            'email'            => 'required|email|max:255|unique:users,email,' . $user->id,
+            'avatar'           => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'remove_avatar'    => 'nullable',
             'social_instagram' => 'nullable|string|max:255',
             'social_twitter'   => 'nullable|string|max:255',
             'social_threads'   => 'nullable|string|max:255',
             'social_linkedin'  => 'nullable|string|max:255',
+        ], [
+            'avatar.image' => 'The profile photo must be a valid image file.',
+            'avatar.mimes' => 'The profile photo must be a file of type: PNG or JPG.',
+            'avatar.max'   => 'The profile photo may not be greater than 2MB in size.',
         ]);
 
-        // Build social links array (now including address for simplicity)
+        // Build social links array
         $socialLinks = array_filter([
-            'address'   => $request->input('address'),
             'instagram' => $request->input('social_instagram'),
             'twitter'   => $request->input('social_twitter'),
             'threads'   => $request->input('social_threads'),
             'linkedin'  => $request->input('social_linkedin'),
         ]);
 
-        $user->update([
+        $updateData = [
             'name'           => $validated['name'],
-            'preferred_name' => $validated['preferred_name'],
+            'preferred_name' => $validated['preferred_name'] ?? null,
             'email'          => $validated['email'],
-            'phone_number'   => $validated['phone_number'],
             'social_links'   => !empty($socialLinks) ? $socialLinks : null,
-        ]);
+        ];
+
+        // Handle avatar removal
+        if ($request->boolean('remove_avatar')) {
+            $avatarService->delete($user->avatar_path);
+            $updateData['avatar_path'] = null;
+        }
+        // Handle avatar upload and compression
+        elseif ($request->hasFile('avatar')) {
+            $path = $avatarService->uploadAndCompress($request->file('avatar'), $user->avatar_path);
+            $updateData['avatar_path'] = $path;
+        }
+
+        $user->fill($updateData);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return back()->with('success', 'Profile updated successfully.');
     }

@@ -114,15 +114,15 @@
                         {{ $article->title }}
                     </h1>
 
-                    @if($article->featured_image_path)
+                    @if($article->featured_image_url)
                     <div class="my-6 border border-gray-200 bg-gray-50 overflow-hidden">
-                        <img src="{{ asset($article->featured_image_path) }}" alt="{{ $article->title }}" class="w-full max-h-96 object-cover">
+                        <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full max-h-96 object-cover">
                     </div>
                     @endif
 
                     <!-- Rendered HTML Content with Editorial Academic Typography -->
-                    <div class="prose max-w-none font-serif-content text-gray-800 text-base leading-relaxed space-y-4">
-                        {!! $article->content !!}
+                    <div class="prose max-w-none font-serif-content text-gray-800 text-base leading-relaxed space-y-4 article-content">
+                        {!! nl2br(strip_tags($article->content, '<b><strong><i><em><u><s><strike><blockquote><h3><h4><h5><h6><p><br><a><ul><ol><li>')) !!}
                     </div>
                 </div>
             </div>
@@ -227,7 +227,7 @@
                         <div class="absolute -left-6 top-1 w-2.5 h-2.5 bg-blue-600 border-2 border-white shadow-sm"></div>
                         <p class="text-xs font-bold text-gray-800">Submitted for Review</p>
                         <p class="text-[11px] text-gray-400 mt-0.5">
-                            {{ $article->updated_at->format('M d, Y · H:i') }} by {{ substr($article->user->name, 0, 1) }}. {{ explode(' ', $article->user->name)[1] ?? '' }}
+                            {{ $article->updated_at->format('M d, Y · H:i') }} by {{ $article->user?->name ?? 'Unknown Author' }}
                         </p>
                     </div>
 
@@ -236,7 +236,7 @@
                         <div class="absolute -left-6 top-1 w-2.5 h-2.5 bg-gray-400 border-2 border-white shadow-sm"></div>
                         <p class="text-xs font-bold text-gray-800">Draft Created</p>
                         <p class="text-[11px] text-gray-400 mt-0.5">
-                            {{ $article->created_at->format('M d, Y · H:i') }} by {{ substr($article->user->name, 0, 1) }}. {{ explode(' ', $article->user->name)[1] ?? '' }}
+                            {{ $article->created_at->format('M d, Y · H:i') }} by {{ $article->user?->name ?? 'Unknown Author' }}
                         </p>
                     </div>
                 </div>
@@ -252,7 +252,11 @@ function submitReject() {
     const form = document.getElementById('reviewForm');
     const notes = document.getElementById('admin_notes').value.trim();
     if (!notes) {
-        alert('Please provide feedback notes explaining the reason for rejection.');
+        if (window.showWarningAlert) {
+            window.showWarningAlert('Action Required', 'Please provide feedback notes explaining the reason for rejection.');
+        } else {
+            alert('Please provide feedback notes explaining the reason for rejection.');
+        }
         document.getElementById('admin_notes').focus();
         return;
     }

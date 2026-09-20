@@ -53,7 +53,12 @@
                             {{ $uni->created_at->format('M j, Y') }}
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <form action="{{ route('admin.universities.destroy', $uni) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this university?');">
+                            <form action="{{ route('admin.universities.destroy', $uni) }}" 
+                                  method="POST" 
+                                  class="inline-block"
+                                  data-confirm-title="Delete university?"
+                                  data-confirm-description="This will permanently delete {{ addslashes($uni->name) }}. All associated records will be affected."
+                                  data-confirm-btn="Delete">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" data-tour="universities-delete-btn" class="text-red-600 hover:text-red-800 font-semibold">

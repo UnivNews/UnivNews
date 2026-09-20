@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PublicController extends Controller
 {
@@ -20,22 +21,21 @@ class PublicController extends Controller
 
         $boostedArticles = $activeBoosts->map(fn($boost) => $boost->article);
 
-        // 2. Fetch latest articles to fill the gap if boosted articles are less than 5
-        $limit = 5 - $boostedArticles->count();
+        // 2. Jika ada boost aktif → hero hanya tampilkan artikel yang di-boost.
+        //    Jika tidak ada boost sama sekali → fallback ke 5 artikel terbaru.
         $latestArticles = collect();
-        if ($limit > 0) {
+        if ($boostedArticles->isEmpty()) {
             $latestArticles = Article::where('status', 'published')
                 ->whereNotNull('published_at')
                 ->where('published_at', '<=', now())
-                ->when($boostedArticles->isNotEmpty(), function ($q) use ($boostedArticles) {
-                    $q->whereNotIn('id', $boostedArticles->pluck('id'));
-                })
                 ->orderBy('published_at', 'desc')
-                ->limit($limit)
+                ->limit(5)
                 ->get();
         }
 
-        $featuredArticles = $boostedArticles->merge($latestArticles);
+        $featuredArticles = $boostedArticles->isNotEmpty()
+            ? $boostedArticles
+            : $latestArticles;
         $featuredArticle = $featuredArticles->first();
 
         // 3. Setup Marquee Text
@@ -46,32 +46,49 @@ class PublicController extends Controller
             $marqueeArticles = $featuredArticles->take(1);
         }
 
-        // 4. Fetch Recent Articles (exclude the one currently highlighted in first spot of slider)
+        // 4. Recent News — 6 artikel terbaru (exclude hero artikel)
         $recentArticles = Article::where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
-            ->where('id', '!=', $featuredArticle?->id)
+            ->when($featuredArticle, fn($q) => $q->where('id', '!=', $featuredArticle->id))
             ->orderBy('published_at', 'desc')
-            ->limit(8)
+            ->limit(6)
             ->get();
 
-        // 5. Fetch Trending Research
-        $trendingResearch = Article::whereHas('category', function($q) {
-                $q->where('slug', 'research-innovation');
-            })
-            ->where('status', 'published')
+        // 5. Others — artikel ke-7 dst (exclude hero + recent 6), paginated
+        $excludeIds = $recentArticles->pluck('id')
+            ->when($featuredArticle, fn($c) => $c->push($featuredArticle->id))
+            ->filter()
+            ->unique()
+            ->values();
+
+        $perPage = in_array((int) request('perPage'), [10, 20, 30]) ? (int) request('perPage') : 10;
+
+        $otherArticles = Article::where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->whereNotIn('id', $excludeIds)
+            ->orderBy('published_at', 'desc')
+            ->paginate($perPage, ['*'], 'page')
+            ->withQueryString();
+
+        // 6. Trending — top 5 dari semua kategori berdasarkan views_count
+        $trendingArticles = Article::where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->orderBy('views_count', 'desc')
             ->limit(5)
             ->get();
 
-        return view('public.home', compact('featuredArticle', 'featuredArticles', 'recentArticles', 'trendingResearch', 'marqueeArticles'));
+        return view('public.home', compact(
+            'featuredArticle', 'featuredArticles', 'marqueeArticles',
+            'recentArticles', 'otherArticles', 'trendingArticles', 'perPage'
+        ));
     }
 
     public function research()
     {
-        $category = Category::where('slug', 'research-innovation')->firstOrFail();
+        $category = Category::firstOrCreate(['slug' => 'research-innovation'], ['name' => 'Research & Innovation']);
         
         $featuredResearchArticles = Article::where('category_id', $category->id)
             ->where('status', 'published')
@@ -103,7 +120,7 @@ class PublicController extends Controller
 
     public function achievements()
     {
-        $category = Category::where('slug', 'achievements')->firstOrFail();
+        $category = Category::firstOrCreate(['slug' => 'achievements'], ['name' => 'Achievements']);
 
         $featuredAchievementArticles = Article::where('category_id', $category->id)
             ->where('status', 'published')
@@ -126,7 +143,7 @@ class PublicController extends Controller
 
     public function events()
     {
-        $category = Category::where('slug', 'events')->firstOrFail();
+        $category = Category::firstOrCreate(['slug' => 'events'], ['name' => 'Events']);
 
         $featuredEventArticles = Article::where('category_id', $category->id)
             ->where('status', 'published')
@@ -179,8 +196,25 @@ class PublicController extends Controller
             $article->increment('views_count');
         }
 
-        $article->load(['user.university', 'boosts']);
+        // Eager load relations including engagement data
+        $article->load(['user.university', 'boosts', 'likes', 'comments.user']);
         $isBoosted = $article->isBoosted();
+
+        // Engagement data for the view
+        $authUser     = auth()->guard('web')->user();
+        $userHasLiked = $article->isLikedBy($authUser);
+        $likeCount    = $article->likes->count();
+
+        // Record reading history for authenticated readers
+        if ($authUser && $isPublished && !$canPreview) {
+            $history = \App\Models\ReadingHistory::firstOrNew([
+                'user_id'    => $authUser->id,
+                'article_id' => $article->id,
+            ]);
+            $history->last_read_at = now();
+            $history->read_count = ($history->read_count ?? 0) + 1;
+            $history->save();
+        }
 
         $relatedArticles = Article::where('category_id', $article->category_id)
             ->where('id', '!=', $article->id)
@@ -190,35 +224,123 @@ class PublicController extends Controller
             ->limit(3)
             ->get();
 
-        return view('public.article', compact('article', 'relatedArticles', 'isBoosted'));
+        return view('public.article', compact(
+            'article',
+            'relatedArticles',
+            'isBoosted',
+            'userHasLiked',
+            'likeCount',
+        ));
     }
 
     public function search(Request $request)
     {
-        $query = $request->input('q');
-        
-        $articles = Article::where('status', 'published')
+        $query = trim((string)$request->input('q'));
+        $sort = $request->input('sort', 'relevance');
+        if (!in_array($sort, ['relevance', 'latest'])) {
+            $sort = 'relevance';
+        }
+        $selectedCategory = $request->input('category', 'all');
+
+        $driver = DB::connection()->getDriverName();
+
+        $articles = Article::with(['category', 'tags', 'user'])
+            ->where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
 
         if (!empty($query)) {
-            $terms = array_filter(explode(' ', $query));
-            $articles->where(function($q) use ($terms) {
-                foreach ($terms as $term) {
-                    $q->where(function($subQ) use ($term) {
-                        $subQ->where('title', 'ilike', "%{$term}%")
-                             ->orWhere('excerpt', 'ilike', "%{$term}%")
-                             ->orWhere('content', 'ilike', "%{$term}%")
-                             ->orWhereHas('tags', fn($t) => $t->where('name', 'ilike', "%{$term}%"));
-                    });
+            if ($driver === 'pgsql') {
+                $safeRegex = trim(preg_replace('/[^\p{L}\p{N}\s]/u', '', $query));
+                if (empty($safeRegex)) {
+                    $safeRegex = 'a^';
                 }
-            });
+
+                $vectorSql = "
+                    setweight(to_tsvector('english', coalesce(articles.title, '')), 'A') ||
+                    setweight(to_tsvector('english', coalesce(articles.excerpt, '')), 'B') ||
+                    setweight(to_tsvector('english', regexp_replace(coalesce(articles.content, ''), '<[^>]+>', ' ', 'g')), 'D')
+                ";
+
+                $articles->select('articles.*')
+                    ->selectRaw("
+                        (
+                            ts_rank(({$vectorSql}), websearch_to_tsquery('english', ?)) * 10
+                            + CASE WHEN LOWER(articles.title) = LOWER(?) THEN 100 ELSE 0 END
+                            + CASE WHEN articles.title ILIKE (? || '%') THEN 50 ELSE 0 END
+                            + CASE WHEN articles.title ~* ('\\\\y' || ? || '\\\\y') THEN 40 ELSE 0 END
+                            + CASE WHEN length(?) >= 4 AND articles.title ILIKE ('%' || ? || '%') THEN 25 ELSE 0 END
+                            + CASE WHEN length(?) >= 4 AND articles.excerpt ILIKE ('%' || ? || '%') THEN 10 ELSE 0 END
+                            + CASE WHEN EXISTS (
+                                SELECT 1 FROM article_tag 
+                                JOIN tags ON tags.id = article_tag.tag_id 
+                                WHERE article_tag.article_id = articles.id AND tags.name ~* ('\\\\y' || ? || '\\\\y')
+                            ) THEN 30 ELSE 0 END
+                        ) as relevance_score
+                    ", [$query, $query, $query, $safeRegex, $query, $query, $query, $query, $safeRegex])
+                    ->selectRaw("
+                        ts_headline('english', regexp_replace(articles.content, '<[^>]+>', ' ', 'g'),
+                                    websearch_to_tsquery('english', ?),
+                                    'StartSel=<mark>, StopSel=</mark>, MaxWords=35, MinWords=15') as search_snippet
+                    ", [$query])
+                    ->where(function($subQ) use ($vectorSql, $query, $safeRegex) {
+                        $subQ->whereRaw("({$vectorSql}) @@ websearch_to_tsquery('english', ?)", [$query])
+                             ->orWhere('articles.title', '~*', "\\y{$safeRegex}")
+                             ->orWhereHas('tags', fn($t) => $t->where('name', '~*', "\\y{$safeRegex}\\y"))
+                             ->orWhereHas('category', fn($c) => $c->where('name', '~*', "\\y{$safeRegex}\\y"));
+                    });
+            } else {
+                // DB-agnostic fallback (MySQL / SQLite)
+                $articles->select('articles.*')
+                    ->selectRaw("
+                        (
+                            CASE WHEN LOWER(articles.title) = LOWER(?) THEN 100 ELSE 0 END
+                            + CASE WHEN articles.title LIKE ? THEN 50 ELSE 0 END
+                            + CASE WHEN articles.title LIKE ? THEN 25 ELSE 0 END
+                            + CASE WHEN articles.excerpt LIKE ? THEN 10 ELSE 0 END
+                            + CASE WHEN articles.content LIKE ? THEN 5 ELSE 0 END
+                        ) as relevance_score
+                    ", [
+                        $query,
+                        $query . '%',
+                        '%' . $query . '%',
+                        '%' . $query . '%',
+                        '%' . $query . '%',
+                    ])
+                    ->where(function($subQ) use ($query) {
+                        $subQ->where('articles.title', 'like', "%{$query}%")
+                             ->orWhere('articles.excerpt', 'like', "%{$query}%")
+                             ->orWhere('articles.content', 'like', "%{$query}%")
+                             ->orWhereHas('tags', fn($t) => $t->where('name', 'like', "%{$query}%"))
+                             ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%{$query}%"));
+                    });
+            }
         }
 
-        $articles = $articles->orderBy('published_at', 'desc')
-            ->paginate(10);
+        // Category filter
+        if (!empty($selectedCategory) && $selectedCategory !== 'all') {
+            $articles->whereHas('category', fn($c) => $c->where('slug', $selectedCategory));
+        }
 
-        return view('public.search', compact('articles', 'query'));
+        // Sorting
+        if ($sort === 'latest') {
+            $articles->orderByDesc('published_at');
+        } else {
+            if (!empty($query)) {
+                $articles->orderByDesc('relevance_score')->orderByDesc('published_at');
+            } else {
+                $articles->orderByDesc('published_at');
+            }
+        }
+
+        $articles = $articles->paginate(10)->withQueryString();
+
+        // Categories for filter pills with published count
+        $categories = Category::withCount(['articles' => fn($q) => $q->where('status', 'published')->whereNotNull('published_at')->where('published_at', '<=', now())])
+            ->orderBy('name')
+            ->get();
+
+        return view('public.search', compact('articles', 'query', 'sort', 'selectedCategory', 'categories'));
     }
 
     public function tag($name)

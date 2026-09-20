@@ -14,9 +14,15 @@ use Illuminate\View\View;
 
 class ApplyController extends Controller
 {
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
         $user = auth()->user();
+
+        // Enforce email verification and Google email requirement before applying
+        if (!$user->hasVerifiedEmail() || !$user->hasGoogleEmail()) {
+            return redirect()->route('profile.edit')
+                ->with('error', 'Email verification required: Please ensure your account is verified with a valid Google (Gmail) email address before applying to become an Author.');
+        }
 
         $universities = University::orderBy('name')->get();
         return view('author.apply', compact('universities', 'user'));
@@ -25,6 +31,12 @@ class ApplyController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $user = $request->user();
+
+        // Enforce email verification and Google email requirement before applying
+        if (!$user->hasVerifiedEmail() || !$user->hasGoogleEmail()) {
+            return redirect()->route('profile.edit')
+                ->with('error', 'Application cannot be processed: Your account must be verified with a valid Google (Gmail) email address.');
+        }
 
         // Already an active author — redirect to dashboard
         if ($user->author_status === User::STATUS_APPROVED) {
@@ -44,10 +56,10 @@ class ApplyController extends Controller
             'phone_number'  => 'nullable|string|max:50',
             'author_bio'    => 'required|string|min:50|max:2000',
         ], [
-            'author_bio.min'  => 'Bio / statement harus minimal 50 karakter.',
-            'author_bio.required' => 'Bio / statement wajib diisi.',
-            'university_id.required' => 'Universitas wajib dipilih.',
-            'department.required' => 'Fakultas / Departemen wajib diisi.',
+            'author_bio.min'  => 'Bio / statement must be at least 50 characters.',
+            'author_bio.required' => 'Bio / statement is required.',
+            'university_id.required' => 'University is required.',
+            'department.required' => 'Faculty / Department is required.',
         ]);
 
         $user->update([
@@ -65,7 +77,7 @@ class ApplyController extends Controller
         try {
             Mail::to($user->email)->send(new AuthorApplicationReceived($user->fresh()));
         } catch (\Exception $e) {
-            // Log but don't block — mail driver is 'log' in local anyway
+            \Illuminate\Support\Facades\Log::error('Failed to send author application email: ' . $e->getMessage());
         }
 
         // Notify all admins
@@ -81,7 +93,7 @@ class ApplyController extends Controller
                 Mail::to($email)->send(new AdminNewApplicationNotification($user->fresh()));
             }
         } catch (\Exception $e) {
-            // Log but don't block
+            \Illuminate\Support\Facades\Log::error('Failed to send admin notification email: ' . $e->getMessage());
         }
 
         return redirect()->route('author.apply.confirmation');
@@ -96,11 +108,11 @@ class ApplyController extends Controller
             return view('author.apply-approved', compact('user'));
         }
 
-        // If they haven't actually applied, redirect to form
-        if ($user->author_status !== User::STATUS_PENDING) {
-            return redirect()->route('author.apply');
+        if ($user->author_status === User::STATUS_PENDING) {
+            return view('author.apply-confirmation', compact('user'));
         }
-        
-        return view('author.apply-confirmation', compact('user'));
+
+        // If approval was cancelled or status is none/rejected, redirect to main page/dashboard
+        return redirect()->route('dashboard')->with('info', 'Your author application is not active or approval was cancelled.');
     }
 }

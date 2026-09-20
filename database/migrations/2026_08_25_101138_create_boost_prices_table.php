@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('boost_prices', function (Blueprint $table) {
             $table->id();
-            $table->enum('duration_type', ['3_days', '1_week', '1_month'])->unique();
-            $table->unsignedInteger('duration_days'); // 3, 7, 30
+            $table->string('duration_type', 50); // bebas, misal: 3_days, 1_week, 2_weeks, dll.
+            $table->unsignedInteger('duration_days'); // jumlah hari
             $table->unsignedBigInteger('price'); // in Rupiah
             $table->boolean('is_active')->default(true);
             $table->timestamps();

@@ -12,10 +12,17 @@ class BoostPriceSeeder extends Seeder
      */
     public function run(): void
     {
-        \Illuminate\Support\Facades\DB::table('boost_prices')->insert([
-            ['duration_type' => '3_days',  'duration_days' => 3,  'price' => 50000,  'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['duration_type' => '1_week',  'duration_days' => 7,  'price' => 100000, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['duration_type' => '1_month', 'duration_days' => 30, 'price' => 350000, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        $prices = [
+            ['duration_type' => '3_days',  'duration_days' => 3,  'price' => 50000,  'is_active' => true],
+            ['duration_type' => '1_week',  'duration_days' => 7,  'price' => 100000, 'is_active' => true],
+            ['duration_type' => '1_month', 'duration_days' => 30, 'price' => 350000, 'is_active' => true],
+        ];
+
+        foreach ($prices as $price) {
+            \Illuminate\Support\Facades\DB::table('boost_prices')->updateOrInsert(
+                ['duration_type' => $price['duration_type']],
+                array_merge($price, ['updated_at' => now(), 'created_at' => now()])
+            );
+        }
     }
 }

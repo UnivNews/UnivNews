@@ -44,10 +44,12 @@
                 totalSlides: {{ $featuredArticles->count() }},
                 autoplay: null,
                 startAutoplay() {
+                    clearInterval(this.autoplay);
                     this.autoplay = setInterval(() => { this.nextSlide() }, 5000);
                 },
                 stopAutoplay() {
                     clearInterval(this.autoplay);
+                    this.autoplay = null;
                 },
                 nextSlide() {
                     this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
@@ -57,7 +59,6 @@
                 },
                 goToSlide(i) {
                     this.currentSlide = i;
-                    this.stopAutoplay();
                     this.startAutoplay();
                 }
             }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
@@ -67,12 +68,8 @@
                        class="absolute inset-0 block group transition-opacity duration-700 ease-in-out"
                        :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
                        @if($index !== 0) x-cloak @endif>
-                        @if($slide->featured_image_path)
-                            @if(Str::startsWith($slide->featured_image_path, ['http://', 'https://']))
-                                <img src="{{ $slide->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                            @else
-                                <img src="{{ asset('storage/' . $slide->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                            @endif
+                        @if($slide->featured_image_url)
+                            <img src="{{ $slide->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
                         @else
                             <img src="https://picsum.photos/seed/hero{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Featured">
                         @endif
@@ -103,10 +100,10 @@
                     </div>
 
                     <!-- Navigation Arrows (Desktop only to prevent mobile text overlap) -->
-                    <button @click="prevSlide(); stopAutoplay(); startAutoplay();" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                    <button @click="prevSlide(); startAutoplay();" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    <button @click="nextSlide(); stopAutoplay(); startAutoplay();" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                    <button @click="nextSlide(); startAutoplay();" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
@@ -178,66 +175,12 @@
                 <div class="mb-12">
                     <!-- Recent News Grid -->
                     <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
-                        @php
-                            $recentList = $recentArticles->skip(2)->take(6);
-                            $recentDummyCount = 6 - $recentList->count();
-                            
-                            $dummyVariations = [
-                                [
-                                    'category' => 'RESEARCH & INNOVATION',
-                                    'date' => 'Nov 15',
-                                    'title' => 'Robotics Lab Unveils Autonomous Campus Delivery Prototype',
-                                    'excerpt' => 'A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.',
-                                    'image' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'ACHIEVEMENTS',
-                                    'date' => 'Nov 12',
-                                    'title' => 'Business School Launches New Venture Capital Fellowship',
-                                    'excerpt' => 'The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.',
-                                    'image' => 'https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'RESEARCH & INNOVATION',
-                                    'date' => 'Nov 10',
-                                    'title' => 'New Study Links Urban Green Spaces to Lower Stress Levels in Students',
-                                    'excerpt' => 'Researchers found a significant correlation between time spent in campus parks and reduced cortisol levels during finals week.',
-                                    'image' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'EVENTS',
-                                    'date' => 'Nov 08',
-                                    'title' => 'Annual Arts Festival Draws Record-Breaking Crowd This Weekend',
-                                    'excerpt' => 'Over 10,000 students and local residents attended the three-day event featuring live music, student films, and interactive installations.',
-                                    'image' => 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'EVENTS',
-                                    'date' => 'Nov 05',
-                                    'title' => 'Researchers Discover Novel Enzyme that Breaks Down Microplastics',
-                                    'excerpt' => 'A cross-disciplinary team from Biology and Chemistry has isolated a bacteria strain capable of digesting common packaging materials.',
-                                    'image' => 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop'
-                                ],
-                                [
-                                    'category' => 'ACHIEVEMENTS',
-                                    'date' => 'Nov 02',
-                                    'title' => 'Varsity Basketball Team Secures Regional Championship',
-                                    'excerpt' => 'A thrilling overtime victory propels the team to the national tournament while breaking several school records.',
-                                    'image' => 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=600&auto=format&fit=crop'
-                                ]
-                            ];
-                        @endphp
-
-                        @foreach($recentList as $article)
+                        @foreach($recentArticles as $article)
                         <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <!-- Thumbnail -->
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                @if($article->featured_image_path)
-                                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                        <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                    @else
-                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                    @endif
+                                @if($article->featured_image_url)
+                                    <img src="{{ $article->featured_image_url }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                                 @else
                                     <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
                                 @endif
@@ -258,30 +201,6 @@
                             </div>
                         </a>
                         @endforeach
-
-                        @php
-                            $fallbackArticleUrl = $recentArticles->first() ? route('article', $recentArticles->first()->slug) : route('home');
-                        @endphp
-                        @for($i = 0; $i < $recentDummyCount; $i++)
-                        @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
-                        <a href="{{ $fallbackArticleUrl }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
-                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
-                            </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $variation['category'] }}</span>
-                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $variation['date'] }}</span>
-                                </div>
-                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                    {{ $variation['title'] }}
-                                </h3>
-                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                    {{ $variation['excerpt'] }}
-                                </p>
-                            </div>
-                        </a>
-                        @endfor
                     </div>
                 </div>
 
@@ -293,23 +212,15 @@
                 </div>
 
                 <div class="mb-12">
-                    <!-- Others Grid (15 items) -->
+                    <!-- Others Grid -->
+                    @if($otherArticles->isNotEmpty())
                     <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
-                        @php
-                            $otherArticles = $recentArticles->skip(8)->take(15);
-                            $dummyCount = 15 - $otherArticles->count();
-                        @endphp
-
                         @foreach($otherArticles as $article)
                         <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
                             <!-- Thumbnail -->
                             <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                @if($article->featured_image_path)
-                                    @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-                                        <img src="{{ $article->featured_image_path }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                    @else
-                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                    @endif
+                                @if($article->featured_image_url)
+                                    <img src="{{ $article->featured_image_url }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                                 @else
                                     <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
                                 @endif
@@ -330,29 +241,25 @@
                             </div>
                         </a>
                         @endforeach
-
-                        @for($i = 0; $i < $dummyCount; $i++)
-                        @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
-                        <!-- Dummy Card -->
-                        <a href="{{ $fallbackArticleUrl }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
-                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                <img src="{{ $variation['image'] }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $variation['title'] }}">
-                            </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $variation['category'] }}</span>
-                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $variation['date'] }}</span>
-                                </div>
-                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                    {{ $variation['title'] }}
-                                </h3>
-                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                    {{ $variation['excerpt'] }}
-                                </p>
-                            </div>
-                        </a>
-                        @endfor
                     </div>
+
+                    <!-- Pagination + Per-page selector -->
+                    <div class="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>{{ $otherArticles->links() }}</div>
+                        <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2.5 shrink-0">
+                            <label for="perPage" class="text-xs font-bold uppercase tracking-widest text-[#44464E] cursor-pointer" style="font-family: 'Work Sans', sans-serif;">Show</label>
+                            <select name="perPage" id="perPage" onchange="this.form.submit()"
+                                class="text-sm font-semibold border border-[#C5C6CF] rounded-md pl-3.5 pr-10 py-1.5 text-navy focus:outline-none focus:ring-1 focus:ring-crimson focus:border-crimson bg-white cursor-pointer shadow-sm transition-colors hover:border-gray-400" style="font-family: 'Work Sans', sans-serif;">
+                                @foreach([10, 20, 30] as $opt)
+                                    <option value="{{ $opt }}" {{ $perPage == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                @endforeach
+                            </select>
+                            <span class="text-xs font-bold uppercase tracking-widest text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">per page</span>
+                        </form>
+                    </div>
+                    @else
+                    <p class="text-gray-400 text-sm" style="font-family: 'Work Sans', sans-serif;">No more articles to show.</p>
+                    @endif
                 </div>
             </div>
 
@@ -364,12 +271,8 @@
                         <span class="w-2 h-2 rounded-full mr-3 bg-crimson"></span> TRENDING NEWS
                     </h3>
                     <div class="space-y-5">
-                        @php
-                            $trendingNewsList = ($trendingResearch ?? collect())->concat($recentArticles ?? collect())->unique('id')->take(5);
-                        @endphp
-
-                        @if($trendingNewsList->isNotEmpty())
-                            @foreach($trendingNewsList as $idx => $tArticle)
+                        @if($trendingArticles->isNotEmpty())
+                            @foreach($trendingArticles as $idx => $tArticle)
                             <div class="flex gap-4 group items-start">
                                 <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">{{ sprintf('%02d', $idx + 1) }}</span>
                                 <div>
@@ -378,22 +281,13 @@
                                             {{ $tArticle->title }}
                                         </h4>
                                     </a>
-                                    <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">{{ $tArticle->category?->name ?? 'General' }}</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">{{ $tArticle->category?->name ?? 'General' }}</span>
+                                        <span class="text-xs text-[#7687B2]" style="font-family: 'Work Sans', sans-serif;">· {{ number_format($tArticle->views_count) }} views</span>
+                                    </div>
                                 </div>
                             </div>
                             @endforeach
-                        @else
-                            <div class="flex gap-4 group items-start">
-                                <span class="text-3xl font-bold leading-none text-[#7687B2]" style="font-family: Montserrat, sans-serif;">01</span>
-                                <div>
-                                    <a href="{{ route('home') }}">
-                                        <h4 class="text-[15px] font-bold group-hover:text-crimson transition-colors line-clamp-2 mb-1 leading-snug text-navy" style="font-family: Montserrat, sans-serif;">
-                                            Breakthrough in Quantum Computing Achieved by Engineering Faculty
-                                        </h4>
-                                    </a>
-                                    <span class="text-xs font-medium uppercase tracking-wide text-[#44464E]" style="font-family: 'Work Sans', sans-serif;">Technology</span>
-                                </div>
-                            </div>
                         @endif
                     </div>
                 </div>

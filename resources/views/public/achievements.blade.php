@@ -33,12 +33,8 @@
                              :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
                              @if($index !== 0) x-cloak @endif>
                             <a href="{{ route('article', $slide->slug) }}" class="block w-full h-full group">
-                                @if($slide->featured_image_path)
-                                    @if(Str::startsWith($slide->featured_image_path, ['http://', 'https://']))
-                                        <img src="{{ $slide->featured_image_path }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                                    @else
-                                        <img src="{{ asset('storage/' . $slide->featured_image_path) }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                                    @endif
+                                @if($slide->featured_image_url)
+                                    <img src="{{ $slide->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
                                 @else
                                     <img src="https://picsum.photos/seed/achieve{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Achievement">
                                 @endif
@@ -246,55 +242,7 @@
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('achievementSystem', () => ({
-        @php
-            $dummyVariations = [
-                [
-                    'category' => 'Students',
-                    'date' => 'Nov 15',
-                    'title' => 'Robotics Lab Unveils Autonomous Campus Delivery Prototype',
-                    'excerpt' => 'A team of graduate students has developed a self-navigating rover designed to deliver library books and small packages safely across pedestrian walkways.',
-                    'image' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop',
-                ],
-                [
-                    'category' => 'Faculty',
-                    'date' => 'Nov 12',
-                    'title' => 'Business School Launches New Venture Capital Fellowship',
-                    'excerpt' => 'The fellowship will provide 20 outstanding MBA candidates with hands-on experience managing a $5 million student-run investment fund.',
-                    'image' => 'https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=600&auto=format&fit=crop',
-                ],
-                [
-                    'category' => 'Science',
-                    'date' => 'Nov 10',
-                    'title' => 'New Study Links Urban Green Spaces to Lower Stress Levels in Students',
-                    'excerpt' => 'Researchers found a significant correlation between time spent in campus parks and reduced cortisol levels during finals week.',
-                    'image' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop',
-                ],
-                [
-                    'category' => 'Athletics',
-                    'date' => 'Nov 08',
-                    'title' => 'University Track Team Breaks State Relay Record',
-                    'excerpt' => 'The 4x100m relay team set a new state record this weekend, qualifying for the national championships.',
-                    'image' => 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=600&auto=format&fit=crop',
-                ],
-                [
-                    'category' => 'Students',
-                    'date' => 'Nov 05',
-                    'title' => 'Debate Team Secures National Championship Title',
-                    'excerpt' => 'After a grueling three-day tournament, the university debate society brought home the national trophy.',
-                    'image' => 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=600&auto=format&fit=crop',
-                ],
-                [
-                    'category' => 'Faculty',
-                    'date' => 'Nov 02',
-                    'title' => 'Professor Awarded Prestigious Humanities Fellowship',
-                    'excerpt' => 'Dr. Elena Rostova has been granted a two-year fellowship to complete her research on pre-colonial trade routes.',
-                    'image' => 'https://images.unsplash.com/photo-1544717302-de2939b7ef71?q=80&w=600&auto=format&fit=crop',
-                ],
-            ];
-            $dummyCount = max(0, 9 - $articles->count());
-            $anyArticle = \App\Models\Article::where('status', 'published')->whereNotNull('published_at')->where('published_at', '<=', now())->first();
-            $fallbackUrl = $anyArticle ? route('article', $anyArticle->slug) : route('home');
-        @endphp
+
         allAchievements: [
             @foreach($articles as $article)
             {
@@ -303,22 +251,11 @@ document.addEventListener('alpine:init', () => {
                 category: @json($article->tags->first() ? $article->tags->first()->name : $article->category->name),
                 date: @json($article->published_at->format('M d')),
                 excerpt: @json($article->excerpt),
-                image: @json($article->featured_image_path ? (Str::startsWith($article->featured_image_path, ['http://', 'https://']) ? $article->featured_image_path : asset('storage/' . $article->featured_image_path)) : 'https://picsum.photos/seed/achieve' . $article->id . '/800/533'),
+                image: @json($article->featured_image_url ?: ('https://picsum.photos/seed/achieve' . $article->id . '/800/533')),
                 url: @json(route('article', $article->slug)),
             },
             @endforeach
-            @for($i = 0; $i < $dummyCount; $i++)
-            @php $variation = $dummyVariations[$i % count($dummyVariations)]; @endphp
-            {
-                id: 'dummy_{{ $i }}',
-                title: @json($variation['title']),
-                category: @json($variation['category']),
-                date: @json($variation['date']),
-                excerpt: @json($variation['excerpt']),
-                image: @json($variation['image']),
-                url: @json($fallbackUrl),
-            },
-            @endfor
+
         ],
 
         get filteredAchievements() {

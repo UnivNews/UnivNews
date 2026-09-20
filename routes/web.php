@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
 
 // 1. Public Portal Routes
 Route::get('/', [PublicController::class, 'home'])->name('home');
@@ -20,25 +22,46 @@ Route::get('/article/{article:slug}', [PublicController::class, 'article'])->nam
 Route::get('/search', [PublicController::class, 'search'])->name('search');
 Route::get('/tag/{name}', [PublicController::class, 'tag'])->name('tag');
 
+// Site Content Public Pages
+Route::get('/about-us', [\App\Http\Controllers\PageController::class, 'aboutUs'])->name('page.about');
+Route::get('/help/faq', [\App\Http\Controllers\PageController::class, 'faq'])->name('page.faq');
+Route::get('/help/contact', [\App\Http\Controllers\PageController::class, 'contact'])->name('page.contact');
+Route::get('/privacy-policy', [\App\Http\Controllers\PageController::class, 'privacyPolicy'])->name('page.privacy');
+
 // Public API endpoints
 Route::get('/api/homepage/featured', [\App\Http\Controllers\HomepageController::class, 'featured'])->name('api.homepage.featured');
 
 // 2. Authenticated General Routes
 Route::middleware(['auth'])->group(function () {
     
-    // Generic Dashboard fallback route (untuk web guard: author/reader)
+    // Generic Dashboard fallback route (supports reader, author, admin)
     Route::get('/dashboard', function () {
-        $user = auth()->user();
-        if ($user->isAuthor()) {
+        $user = auth('admin')->user() ?: auth()->user();
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+        if ($user && $user->isAuthor()) {
             return redirect()->route('author.dashboard');
         }
         return redirect()->route('home');
-    })->name('dashboard');
+    })->withoutMiddleware('auth')->middleware('auth:web,admin')->name('dashboard');
 
     // Standard Profile Routes
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/check-google-email', function (\Illuminate\Http\Request $request) {
+        $email = (string) $request->query('email', '');
+        $isGoogle = \App\Models\User::isGoogleEmail($email);
+
+        return response()->json([
+            'email'     => $email,
+            'is_google' => $isGoogle,
+            'message'   => $isGoogle
+                ? 'Google (Gmail) account detected. You can verify this email via your Gmail mailbox.'
+                : 'Google account not found. This email address does not exist on Google or is not hosted by Gmail.',
+        ]);
+    })->withoutMiddleware('auth')->middleware('auth:web,admin')->name('profile.check-google-email');
 
     // Apply to Become an Author
     Route::get('/apply-author', [Author\ApplyController::class, 'create'])->name('author.apply');
@@ -69,21 +92,43 @@ Route::middleware(['auth'])->group(function () {
 
     // Onboarding completion (web guard users: author)
     Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
+
+    // ── Engagement Routes ──────────────────────────────────────────────────
+
+    // Like toggle (auth required; guest → redirect to login)
+    Route::post('/articles/{article}/like', [LikeController::class, 'toggle'])
+        ->name('articles.like.toggle');
+
+    // Comment store (auth + throttle: 6 req/min ≈ 1 per 10 sec)
+    Route::post('/articles/{article}/comments', [CommentController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('articles.comments.store');
+
+    // Comment soft-delete (auth required)
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
+        ->name('comments.destroy');
 });
 
 // 5. Auth Routes (Breeze)
 require __DIR__.'/auth.php';
 
-// 6. Google OAuth Routes
-Route::middleware('guest.admin_aware')->group(function () {
-    Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('auth.google.redirect');
-    Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
-});
+// 6. Google OAuth Routes (supports both guest login and authenticated profile linking)
+Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 
-// 7. Admin Login Routes
+// 7. Admin Login Routes & Aliases
 Route::middleware('guest.admin_aware')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/sign-in', [AdminLoginController::class, 'create'])->name('login');
     Route::post('/sign-in', [AdminLoginController::class, 'store']);
+    Route::get('/login', [AdminLoginController::class, 'create'])->name('login.alias');
+    Route::post('/login', [AdminLoginController::class, 'store']);
+});
+
+Route::get('/admin', function () {
+    if (auth('admin')->check()) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('admin.login');
 });
 
 // 7b. Admin Logout Route (tidak perlu middleware role, hanya butuh CSRF)
@@ -106,11 +151,14 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
     // Articles Resource
     Route::resource('articles', Admin\ArticleController::class)->except(['show']);
 
-    // Author Management
+    // Author & User Management
     Route::get('/authors', [Admin\AuthorManagementController::class, 'index'])->name('authors.index');
     Route::post('/authors/{user}/approve', [Admin\AuthorManagementController::class, 'approve'])->name('authors.approve');
     Route::post('/authors/{user}/reject', [Admin\AuthorManagementController::class, 'reject'])->name('authors.reject');
     Route::post('/authors/{user}/suspend', [Admin\AuthorManagementController::class, 'suspend'])->name('authors.suspend');
+    Route::post('/authors/{user}/cancel-approval', [Admin\AuthorManagementController::class, 'cancelApproval'])->name('authors.cancel-approval');
+    Route::delete('/authors/{user}', [Admin\AuthorManagementController::class, 'destroy'])->name('authors.destroy');
+    Route::post('/readers/{user}/toggle-status', [Admin\AuthorManagementController::class, 'toggleReaderStatus'])->name('readers.toggle-status');
 
     // University Management
     Route::resource('universities', Admin\UniversityController::class)->only(['index', 'store', 'destroy']);
@@ -122,6 +170,12 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
     Route::put('/settings/password', [Admin\ProfileController::class, 'updatePassword'])->name('settings.password');
     Route::put('/settings', [Admin\ProfileController::class, 'update'])->name('settings.update');
 
+    // Active Sessions
+    Route::get('/sessions', [Admin\SessionController::class, 'index'])->name('sessions.index');
+    Route::post('/sessions/gps-location', [Admin\SessionController::class, 'updateGps'])->name('sessions.update-gps');
+    Route::delete('/sessions/{id}', [Admin\SessionController::class, 'destroy'])->name('sessions.destroy');
+    Route::post('/sessions/revoke-others', [Admin\SessionController::class, 'destroyOthers'])->name('sessions.destroy-others');
+
     // App Settings (Payment Fee, etc.)
     Route::get('/app-settings', [Admin\AppSettingsController::class, 'index'])->name('app-settings.index');
     Route::put('/app-settings', [Admin\AppSettingsController::class, 'update'])->name('app-settings.update');
@@ -129,14 +183,49 @@ Route::prefix('admin')->middleware(['role:admin'])->name('admin.')->group(functi
     // Boost Prices Management (API endpoints for admin panel)
     Route::get('/api/boost-prices', [Admin\BoostPriceController::class, 'index'])->name('api.boost-prices.index');
     Route::put('/api/boost-prices/{boostPrice}', [Admin\BoostPriceController::class, 'update'])->name('api.boost-prices.update');
+    Route::delete('/boost-prices/{boostPrice}', [Admin\AppSettingsController::class, 'destroyBoostPrice'])->name('boost-prices.destroy');
+
+    // Site Content Management
+    Route::get('/pages/about', [Admin\PageController::class, 'editAbout'])->name('pages.about.edit');
+    Route::put('/pages/about', [Admin\PageController::class, 'updateAbout'])->name('pages.about.update');
+    Route::get('/pages/privacy', [Admin\PageController::class, 'editPrivacy'])->name('pages.privacy.edit');
+    Route::put('/pages/privacy', [Admin\PageController::class, 'updatePrivacy'])->name('pages.privacy.update');
+    Route::resource('faqs', Admin\FaqController::class)->except(['show']);
+    Route::get('/pages/contact', [Admin\ContactController::class, 'edit'])->name('pages.contact.edit');
+    Route::put('/pages/contact', [Admin\ContactController::class, 'update'])->name('pages.contact.update');
 });
 
 // 8. Author Password Setup (token-based, no auth required)
 Route::get('/author/set-password', [Author\SetPasswordController::class, 'show'])->name('author.set-password.show');
 Route::post('/author/set-password', [Author\SetPasswordController::class, 'store'])->name('author.set-password.store');
-Route::post('/author/set-password/resend', [Author\SetPasswordController::class, 'resend'])->name('author.set-password.resend');
+Route::post('/author/set-password/resend', [Author\SetPasswordController::class, 'resend'])
+    ->middleware('throttle:5,1')
+    ->name('author.set-password.resend');
 
 // 9. Webhook — exclude dari CSRF di bootstrap/app.php
 // Endpoint ini dipanggil oleh server Mayar (bukan browser), sehingga tidak pakai session/CSRF.
 Route::post('/webhooks/mayar', [WebhookController::class, 'handleMayar'])->name('webhooks.mayar');
 Route::post('/webhooks/mayar/boost', [WebhookController::class, 'handleMayarBoost'])->name('webhooks.mayar.boost');
+
+// 10. Fallback Storage Route
+// Ensures public storage files are always served even if symlinks are disabled or unsupported
+Route::get('/storage/{path}', function (string $path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+    $mimeType = match ($ext) {
+        'jpg', 'jpeg' => 'image/jpeg',
+        'png'         => 'image/png',
+        'gif'         => 'image/gif',
+        'webp'        => 'image/webp',
+        'svg'         => 'image/svg+xml',
+        default       => mime_content_type($filePath) ?: 'application/octet-stream',
+    };
+    return response()->file($filePath, [
+        'Content-Type'  => $mimeType,
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('path', '.*')->name('storage.fallback');
+

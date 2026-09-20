@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Article extends Model
 {
@@ -44,6 +45,10 @@ class Article extends Model
         'registration_deadline' => 'datetime',
     ];
 
+    protected $appends = [
+        'featured_image_url',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -67,6 +72,38 @@ class Article extends Model
     public function boosts(): HasMany
     {
         return $this->hasMany(Boost::class);
+    }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(ArticleLike::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(ArticleComment::class)->visible()->latest();
+    }
+
+    public function readingHistories(): HasMany
+    {
+        return $this->hasMany(ReadingHistory::class);
+    }
+
+    /**
+     * Check whether a given user has liked this article.
+     * Works whether the 'likes' relation has been eager-loaded or not.
+     */
+    public function isLikedBy(?\App\Models\User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        if ($this->relationLoaded('likes')) {
+            return $this->likes->contains('user_id', $user->id);
+        }
+
+        return $this->likes()->where('user_id', $user->id)->exists();
     }
 
     public function scopePublished(Builder $query): Builder
@@ -149,6 +186,28 @@ class Article extends Model
         }
 
         return true;
+    }
+
+    /**
+     * Get normalized featured image URL.
+     * Handles external URLs, storage-prefixed paths, and relative paths safely.
+     */
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        if (empty($this->featured_image_path)) {
+            return null;
+        }
+
+        if (str_starts_with($this->featured_image_path, 'http://') || str_starts_with($this->featured_image_path, 'https://')) {
+            return $this->featured_image_path;
+        }
+
+        $cleanPath = ltrim($this->featured_image_path, '/');
+        if (str_starts_with($cleanPath, 'storage/')) {
+            $cleanPath = substr($cleanPath, 8);
+        }
+
+        return asset('storage/' . $cleanPath);
     }
 }
 

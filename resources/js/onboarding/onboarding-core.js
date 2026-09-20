@@ -158,7 +158,11 @@ function replayOnboarding(steps) {
 
   const filtered = filterAvailableSteps(steps);
   if (filtered.length === 0) {
-    alert('Tutorial tidak tersedia untuk halaman ini.');
+    if (window.showInfoAlert) {
+      window.showInfoAlert('Info! Tutorial', 'Tutorial tidak tersedia untuk halaman ini.');
+    } else {
+      alert('Tutorial tidak tersedia untuk halaman ini.');
+    }
     return;
   }
 

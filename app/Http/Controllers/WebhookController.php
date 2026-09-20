@@ -28,11 +28,11 @@ class WebhookController extends Controller
     public function handleMayar(Request $request, MayarService $mayar): JsonResponse
     {
         // 1. Verifikasi signature webhook
-        $signature = $request->header('X-Mayar-Signature') ?? '';
+        $signature = $request->header('X-Callback-Token') ?? '';
 
         if (! $mayar->verifyWebhookSignature($signature)) {
-            Log::warning('Mayar webhook: invalid signature (Bypassed for testing)', ['ip' => $request->ip()]);
-            // return response()->json(['message' => 'Unauthorized'], 403);
+            Log::warning('Mayar webhook: invalid signature', ['ip' => $request->ip()]);
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         // 2. Ekstrak data dari payload
@@ -133,11 +133,11 @@ class WebhookController extends Controller
     public function handleMayarBoost(Request $request, MayarService $mayar, \App\Services\BoostAvailabilityService $availabilityService): JsonResponse
     {
         // 1. Verify signature
-        $signature = $request->header('X-Mayar-Signature') ?? '';
+        $signature = $request->header('X-Callback-Token') ?? '';
 
         if (! $mayar->verifyWebhookSignature($signature)) {
-            Log::warning('Mayar boost webhook: invalid signature (Bypassed for testing)', ['ip' => $request->ip()]);
-            // return response()->json(['message' => 'Unauthorized'], 403);
+            Log::warning('Mayar boost webhook: invalid signature', ['ip' => $request->ip()]);
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         // 2. Extract data

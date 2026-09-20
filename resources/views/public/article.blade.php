@@ -2,11 +2,21 @@
 
 @section('title', $article->title . ' - University News')
 
+@section('og_meta')
+<meta property="og:title"       content="{{ $article->title }}">
+<meta property="og:description" content="{{ $article->excerpt ?? Str::limit(strip_tags($article->content), 160) }}">
+<meta property="og:url"         content="{{ url()->current() }}">
+<meta property="og:type"        content="article">
+@if($article->featured_image_url)
+    <meta property="og:image" content="{{ $article->featured_image_url }}">
+@endif
+@endsection
+
 @section('content')
 <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">
     
-    <!-- Tombol Back (Umum) -->
-    <a href="javascript:history.back()" class="absolute top-4 left-4 sm:top-12 sm:-left-4 md:-left-12 flex items-center justify-center w-8 h-8 bg-white border border-gray-200 text-gray-500 hover:text-[#8b1528] hover:bg-gray-50 rounded-full shadow-sm transition-all z-10" title="Kembali">
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="absolute top-4 left-4 sm:top-12 sm:-left-4 md:-left-12 flex items-center justify-center w-8 h-8 bg-white border border-gray-200 text-gray-500 hover:text-[#8b1528] hover:bg-gray-50 rounded-full shadow-sm transition-all z-10" title="Back">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
@@ -56,19 +66,15 @@
     </header>
 
     <!-- Featured Image -->
-    @if($article->featured_image_path)
+    @if($article->featured_image_url)
     <div class="aspect-video bg-gray-100 w-full relative mb-12 shadow-md overflow-hidden border border-border-main">
-        @if(Str::startsWith($article->featured_image_path, ['http://', 'https://']))
-            <img src="{{ $article->featured_image_path }}" alt="{{ $article->title }}" class="w-full h-full object-cover">
-        @else
-            <img src="{{ asset('storage/' . $article->featured_image_path) }}" onerror="this.src='{{ asset($article->featured_image_path) }}'" alt="{{ $article->title }}" class="w-full h-full object-cover">
-        @endif
+        <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full h-full object-cover">
     </div>
     @endif
 
     <!-- Content -->
-    <div class="prose prose-lg prose-blue max-w-none font-serif text-gray-800 leading-relaxed mb-12">
-        {!! nl2br(e($article->content)) !!}
+    <div class="prose prose-lg prose-blue max-w-none font-serif text-gray-800 leading-relaxed mb-12 article-content">
+        {!! nl2br(strip_tags($article->content, '<b><strong><i><em><u><s><strike><blockquote><h3><h4><h5><h6><p><br><a><ul><ol><li>')) !!}
     </div>
 
     <!-- Event Registration -->
@@ -140,6 +146,13 @@
         </div>
     </div>
 
+    {{-- Engagement: Like, Comment & Share --}}
+    @include('components.article-engagement', [
+        'article'      => $article,
+        'userHasLiked' => $userHasLiked,
+        'likeCount'    => $likeCount,
+    ])
+
     <!-- Related Articles -->
     @if($relatedArticles->count() > 0)
     <div class="mt-16 bg-gray-50 p-8 border border-gray-200">
@@ -148,12 +161,8 @@
             @foreach($relatedArticles as $related)
             <a href="{{ route('article', $related->slug) }}" class="block group">
                 <div class="aspect-[3/2] bg-gray-200 relative mb-4 overflow-hidden">
-                    @if($related->featured_image_path)
-                        @if(Str::startsWith($related->featured_image_path, ['http://', 'https://']))
-                            <img src="{{ $related->featured_image_path }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        @else
-                            <img src="{{ asset('storage/' . $related->featured_image_path) }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        @endif
+                    @if($related->featured_image_url)
+                        <img src="{{ $related->featured_image_url }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     @else
                         <div class="w-full h-full bg-navy/10 flex items-center justify-center text-navy/40 font-bold font-serif text-2xl">UN</div>
                     @endif
@@ -168,4 +177,5 @@
     </div>
     @endif
 </article>
+
 @endsection

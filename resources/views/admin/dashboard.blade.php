@@ -28,6 +28,7 @@
             @endif
 
             <a href="{{ route('admin.articles.create') }}"
+               data-tour="admin-create-article-btn"
                class="px-5 py-2.5 bg-[#00081e] hover:bg-[#8b1528] text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
@@ -254,7 +255,7 @@
                         <td class="px-6 py-4 text-gray-600">
                             @if($article->user->role === 'author')
                                 <a href="{{ route('admin.authors.index') }}" class="text-[#8b1528] font-medium hover:underline">
-                                    {{ $article->user->preferred_name ?? $article->user->name }}
+                                    {{ $article->user->name ?? 'Unknown' }}
                                 </a>
                             @else
                                 {{ $article->user->name ?? 'Unknown' }}
