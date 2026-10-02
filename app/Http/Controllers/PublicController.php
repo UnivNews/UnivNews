@@ -12,59 +12,83 @@ class PublicController extends Controller
 {
     public function home()
     {
-        // 1. Fetch active boosted articles
-        $activeBoosts = \App\Models\Boost::with('article')
+        $today = now()->toDateString();
+
+        // 1. Proactively expire active boosts whose end_date has passed,
+        // and activate scheduled boosts whose start_date has arrived.
+        \App\Models\Boost::where('status', 'active')
+            ->where('end_date', '<', $today)
+            ->update(['status' => 'expired']);
+
+        \App\Models\Boost::where('status', 'scheduled')
+            ->where('start_date', '<=', $today)
+            ->where('end_date', '>=', $today)
+            ->update(['status' => 'active']);
+
+        // 2. Fetch active boosted articles (max 5)
+        $activeBoosts = \App\Models\Boost::with(['article.category', 'article.tags', 'article.user'])
             ->where('status', 'active')
+            ->where('start_date', '<=', $today)
+            ->where('end_date', '>=', $today)
+            ->whereHas('article', function ($q) {
+                $q->where('status', Article::STATUS_PUBLISHED)
+                  ->whereNotNull('published_at')
+                  ->where('published_at', '<=', now());
+            })
             ->orderBy('start_date', 'desc')
             ->limit(5)
             ->get();
 
-        $boostedArticles = $activeBoosts->map(fn($boost) => $boost->article);
+        $boostedArticles = $activeBoosts
+            ->map(fn($boost) => $boost->article)
+            ->filter()
+            ->unique('id')
+            ->values();
 
-        // 2. Jika ada boost aktif → hero hanya tampilkan artikel yang di-boost.
+        // 3. Jika ada boost aktif → hero hanya tampilkan artikel yang di-boost.
         //    Jika tidak ada boost sama sekali → fallback ke 5 artikel terbaru.
-        $latestArticles = collect();
-        if ($boostedArticles->isEmpty()) {
-            $latestArticles = Article::where('status', 'published')
+        if ($boostedArticles->isNotEmpty()) {
+            $featuredArticles = $boostedArticles;
+        } else {
+            $featuredArticles = Article::with(['category', 'tags', 'user'])
+                ->where('status', Article::STATUS_PUBLISHED)
                 ->whereNotNull('published_at')
                 ->where('published_at', '<=', now())
                 ->orderBy('published_at', 'desc')
                 ->limit(5)
                 ->get();
         }
-
-        $featuredArticles = $boostedArticles->isNotEmpty()
-            ? $boostedArticles
-            : $latestArticles;
         $featuredArticle = $featuredArticles->first();
 
-        // 3. Setup Marquee Text
+        // 4. Setup Marquee Text
         if ($boostedArticles->isNotEmpty()) {
             $marqueeArticles = $boostedArticles;
         } else {
-            // Skenario 1: Belum ada yang boost, ambil artikel terbaru
             $marqueeArticles = $featuredArticles->take(1);
         }
 
-        // 4. Recent News — 6 artikel terbaru (exclude hero artikel)
-        $recentArticles = Article::where('status', 'published')
+        // 5. Recent News — 6 artikel terbaru (exclude semua artikel di hero banner)
+        $featuredIds = $featuredArticles->pluck('id')->filter()->unique();
+
+        $recentArticles = Article::with(['category', 'tags', 'user'])
+            ->where('status', Article::STATUS_PUBLISHED)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
-            ->when($featuredArticle, fn($q) => $q->where('id', '!=', $featuredArticle->id))
+            ->whereNotIn('id', $featuredIds)
             ->orderBy('published_at', 'desc')
             ->limit(6)
             ->get();
 
-        // 5. Others — artikel ke-7 dst (exclude hero + recent 6), paginated
+        // 6. Others — artikel ke-7 dst (exclude semua artikel di hero + recent 6), paginated
         $excludeIds = $recentArticles->pluck('id')
-            ->when($featuredArticle, fn($c) => $c->push($featuredArticle->id))
-            ->filter()
+            ->concat($featuredIds)
             ->unique()
             ->values();
 
         $perPage = in_array((int) request('perPage'), [10, 20, 30]) ? (int) request('perPage') : 10;
 
-        $otherArticles = Article::where('status', 'published')
+        $otherArticles = Article::with(['category', 'tags', 'user'])
+            ->where('status', Article::STATUS_PUBLISHED)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->whereNotIn('id', $excludeIds)
@@ -72,8 +96,9 @@ class PublicController extends Controller
             ->paginate($perPage, ['*'], 'page')
             ->withQueryString();
 
-        // 6. Trending — top 5 dari semua kategori berdasarkan views_count
-        $trendingArticles = Article::where('status', 'published')
+        // 7. Trending — top 5 dari semua kategori berdasarkan views_count
+        $trendingArticles = Article::with(['category', 'tags', 'user'])
+            ->where('status', Article::STATUS_PUBLISHED)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->orderBy('views_count', 'desc')

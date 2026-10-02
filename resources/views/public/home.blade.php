@@ -37,93 +37,79 @@
             <span class="text-sm font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">BREAKING FOCUS</span>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Hero Slider (Left, wide) -->
-            <div class="lg:col-span-8" x-data="{ 
-                currentSlide: 0, 
-                totalSlides: {{ $featuredArticles->count() }},
-                autoplay: null,
-                startAutoplay() {
-                    clearInterval(this.autoplay);
-                    this.autoplay = setInterval(() => { this.nextSlide() }, 5000);
-                },
-                stopAutoplay() {
-                    clearInterval(this.autoplay);
-                    this.autoplay = null;
-                },
-                nextSlide() {
-                    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
-                },
-                prevSlide() {
-                    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
-                },
-                goToSlide(i) {
-                    this.currentSlide = i;
-                    this.startAutoplay();
-                }
-            }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
-                <div class="relative w-full h-[400px] lg:h-[500px] overflow-hidden">
-                    @foreach($featuredArticles as $index => $slide)
-                    <a href="{{ route('article', $slide->slug) }}" 
-                       class="absolute inset-0 block group transition-opacity duration-700 ease-in-out"
-                       :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
-                       @if($index !== 0) x-cloak @endif>
-                        @if($slide->featured_image_url)
-                            <img src="{{ $slide->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
-                        @else
-                            <img src="https://picsum.photos/seed/hero{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Featured">
-                        @endif
-                        
-                        <!-- Gradient Overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#00081E] via-[#00081E]/80 to-transparent"></div>
-                        
-                        <!-- Content -->
-                        <div class="absolute bottom-0 left-0 p-8 w-full max-w-3xl">
-                            <span class="text-sm font-bold uppercase tracking-widest text-crimson mb-3 block" style="font-family: 'Work Sans', sans-serif;">{{ $slide->tags->first() ? $slide->tags->first()->name : $slide->category->name }}</span>
-                            <h2 class="text-3xl lg:text-[32px] font-bold mb-4 text-white" style="font-family: Montserrat, sans-serif; line-height: 1.2;">
-                                {{ $slide->title }}
-                            </h2>
-                            <p class="text-[17px] text-[#7687B2] line-clamp-2" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                {{ $slide->excerpt }}
-                            </p>
-                        </div>
-                    </a>
-                    @endforeach
-
-                    <!-- Slide Indicators -->
-                    <div class="absolute bottom-4 right-4 z-20 flex items-center space-x-2">
-                        @foreach($featuredArticles as $index => $slide)
-                        <button @click="goToSlide({{ $index }})" 
-                                class="w-2.5 h-2.5 rounded-full transition-all duration-300 focus:outline-none"
-                                :class="currentSlide === {{ $index }} ? 'bg-crimson w-6' : 'bg-white/50 hover:bg-white/80'"></button>
-                        @endforeach
-                    </div>
-
-                    <!-- Navigation Arrows (Desktop only to prevent mobile text overlap) -->
-                    <button @click="prevSlide(); startAutoplay();" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-                    <button @click="nextSlide(); startAutoplay();" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Sidebar Articles (Right, narrow) -->
-            <div class="lg:col-span-4 flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-gray-700 pt-8 lg:pt-0 lg:pl-8">
-                @foreach($recentArticles->take(2) as $index => $article)
-                <div class="py-6 {{ $index === 0 ? 'border-b border-gray-700' : '' }}">
-                    <a href="{{ route('article', $article->slug) }}" class="block group">
-                        <span class="text-xs font-bold uppercase tracking-widest text-crimson mb-2 block" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
-                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-gray-200 transition-colors" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                            {{ $article->title }}
-                        </h3>
-                        <p class="text-sm text-[#7687B2] line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                            {{ $article->excerpt }}
+        <!-- Hero Slider (Full width) -->
+        <div class="w-full" x-data="{ 
+            currentSlide: 0, 
+            totalSlides: {{ $featuredArticles->count() }},
+            autoplay: null,
+            startAutoplay() {
+                if (this.totalSlides <= 1) return;
+                clearInterval(this.autoplay);
+                this.autoplay = setInterval(() => { this.nextSlide() }, 5000);
+            },
+            stopAutoplay() {
+                clearInterval(this.autoplay);
+                this.autoplay = null;
+            },
+            nextSlide() {
+                if (this.totalSlides <= 1) return;
+                this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+            },
+            prevSlide() {
+                if (this.totalSlides <= 1) return;
+                this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+            },
+            goToSlide(i) {
+                this.currentSlide = i;
+                this.startAutoplay();
+            }
+        }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
+            <div class="relative w-full h-[400px] lg:h-[500px] overflow-hidden">
+                @foreach($featuredArticles as $index => $slide)
+                <a href="{{ route('article', $slide->slug) }}" 
+                   class="absolute inset-0 block group transition-opacity duration-700 ease-in-out"
+                   :class="currentSlide === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0'"
+                   @if($index !== 0) x-cloak @endif>
+                    @if($slide->featured_image_url)
+                        <img src="{{ $slide->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="{{ $slide->title }}">
+                    @else
+                        <img src="https://picsum.photos/seed/hero{{ $slide->id }}/1280/720" class="w-full h-full object-cover transition-transform duration-[6000ms] ease-linear" :class="currentSlide === {{ $index }} ? 'scale-105' : 'scale-100'" alt="Featured">
+                    @endif
+                    
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#00081E] via-[#00081E]/80 to-transparent"></div>
+                    
+                    <!-- Content -->
+                    <div class="absolute bottom-0 left-0 p-8 w-full max-w-3xl">
+                        <span class="text-sm font-bold uppercase tracking-widest text-crimson mb-3 block" style="font-family: 'Work Sans', sans-serif;">{{ $slide->tags->first() ? $slide->tags->first()->name : $slide->category->name }}</span>
+                        <h2 class="text-3xl lg:text-[32px] font-bold mb-4 text-white" style="font-family: Montserrat, sans-serif; line-height: 1.2;">
+                            {{ $slide->title }}
+                        </h2>
+                        <p class="text-[17px] text-[#7687B2] line-clamp-2" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
+                            {{ $slide->excerpt }}
                         </p>
-                    </a>
-                </div>
+                    </div>
+                </a>
                 @endforeach
+
+                @if($featuredArticles->count() > 1)
+                <!-- Slide Indicators -->
+                <div class="absolute bottom-4 right-4 z-20 flex items-center space-x-2">
+                    @foreach($featuredArticles as $index => $slide)
+                    <button @click="goToSlide({{ $index }})" 
+                            class="w-2.5 h-2.5 rounded-full transition-all duration-300 focus:outline-none"
+                            :class="currentSlide === {{ $index }} ? 'bg-crimson w-6' : 'bg-white/50 hover:bg-white/80'"></button>
+                    @endforeach
+                </div>
+
+                <!-- Navigation Arrows (Desktop only to prevent mobile text overlap) -->
+                <button @click="prevSlide(); startAutoplay();" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button @click="nextSlide(); startAutoplay();" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-crimson text-white w-10 h-10 items-center justify-center transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100" style="opacity: 0.7;">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+                @endif
             </div>
         </div>
     </div>
@@ -159,85 +145,105 @@
     </div>
 </div>
 
-<!-- Recent News Section -->
+{{-- Recent News Section --}}
 <section class="py-20 bg-background">
     <div class="max-w-[1280px] w-full mx-auto px-6 md:px-10">
         
-        <div class="mb-8 border-b pb-4 border-[#C5C6CF]">
-            <h2 class="text-[32px] font-bold text-navy" style="font-family: Montserrat, sans-serif;">
-                Recent News
-            </h2>
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-12">
             <!-- Main Grid -->
             <div>
+                @if($otherArticles->onFirstPage())
+                <div class="mb-6 flex items-center gap-3">
+                    <span class="w-1.5 h-7 sm:h-8 bg-crimson rounded-full shrink-0"></span>
+                    <h2 class="text-[28px] sm:text-[32px] font-bold text-navy" style="font-family: Montserrat, sans-serif;">
+                        Recent News
+                    </h2>
+                </div>
+
                 <div class="mb-12">
-                    <!-- Recent News Grid -->
-                    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
+                    {{-- Recent News Uniform Card Grid --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         @foreach($recentArticles as $article)
-                        <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
-                            <!-- Thumbnail -->
-                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
+                        <a href="{{ route('article', $article->slug) }}" class="flex flex-col h-full bg-white border border-[#C5C6CF] hover:shadow-md transition-all duration-300 group">
+                            <!-- Thumbnail with uniform fixed aspect ratio -->
+                            <div class="w-full aspect-[16/10] bg-gray-100 border-b border-[#C5C6CF] overflow-hidden shrink-0">
                                 @if($article->featured_image_url)
-                                    <img src="{{ $article->featured_image_url }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    <img src="{{ $article->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                                 @else
-                                    <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
+                                    <img src="https://picsum.photos/seed/fallback{{ $article->id }}/800/500" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
                                 @endif
                             </div>
-                            
+
                             <!-- Content -->
-                            <div class="p-6">
-                                <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
-                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
+                            <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between">
+                                <div>
+                                    <div class="flex items-center space-x-2.5 mb-2.5">
+                                        <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">
+                                            {{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}
+                                        </span>
+                                        @if($article->published_at)
+                                        <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">
+                                            {{ $article->published_at->format('M d') }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                    <h3 class="text-[16px] sm:text-[17px] font-bold mb-2 text-navy group-hover:text-crimson transition-colors leading-snug line-clamp-2" style="font-family: Montserrat, sans-serif;">
+                                        {{ $article->title }}
+                                    </h3>
+                                    <p class="text-[13px] text-gray-600 line-clamp-3 leading-relaxed" style="font-family: 'Source Serif 4', serif;">
+                                        {{ $article->excerpt }}
+                                    </p>
                                 </div>
-                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                    {{ $article->title }}
-                                </h3>
-                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                    {{ $article->excerpt }}
-                                </p>
                             </div>
                         </a>
                         @endforeach
                     </div>
                 </div>
+                @endif
 
                 <!-- Others Section Header -->
-                <div class="mb-8 border-b pb-4 border-[#C5C6CF] mt-16">
-                    <h2 class="text-[32px] font-bold text-navy" style="font-family: Montserrat, sans-serif;">
+                <div class="mb-5 {{ $otherArticles->onFirstPage() ? 'mt-10' : '' }} flex items-center gap-3">
+                    <span class="w-1.5 h-7 sm:h-8 bg-crimson rounded-full shrink-0"></span>
+                    <h2 class="text-[28px] sm:text-[32px] font-bold text-navy" style="font-family: Montserrat, sans-serif;">
                         Others
                     </h2>
                 </div>
 
-                <div class="mb-12">
-                    <!-- Others Grid -->
+                <div class="mb-8">
+                    <!-- Others List -->
                     @if($otherArticles->isNotEmpty())
-                    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
+                    <div class="divide-y divide-[#C5C6CF] border-t border-b border-[#C5C6CF]">
                         @foreach($otherArticles as $article)
-                        <a href="{{ route('article', $article->slug) }}" class="block group bg-white border border-[#C5C6CF] hover:shadow-md transition-shadow break-inside-avoid mb-6">
-                            <!-- Thumbnail -->
-                            <div class="w-full bg-gray-100 border-b border-[#C5C6CF] overflow-hidden">
-                                @if($article->featured_image_url)
-                                    <img src="{{ $article->featured_image_url }}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
-                                @else
-                                    <img src="https://picsum.photos/seed/fallback/800/533" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" alt="Article">
-                                @endif
-                            </div>
-                            
-                            <!-- Content -->
-                            <div class="p-6">
-                                <div class="flex items-center space-x-3 mb-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">{{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}</span>
-                                    <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">{{ $article->published_at->format('M d') }}</span>
+                        <a href="{{ route('article', $article->slug) }}" class="block py-4 group">
+                            <div class="flex flex-col-reverse sm:flex-row items-start justify-between gap-5">
+                                <!-- Left: Text Content -->
+                                <div class="flex-1 min-w-0 pr-0 sm:pr-4">
+                                    <div class="flex items-center space-x-3 mb-1.5">
+                                        <span class="text-xs font-bold uppercase tracking-widest text-crimson" style="font-family: 'Work Sans', sans-serif;">
+                                            {{ $article->tags->first() ? $article->tags->first()->name : $article->category->name }}
+                                        </span>
+                                        @if($article->published_at)
+                                        <span class="text-xs text-gray-500 font-medium" style="font-family: 'Work Sans', sans-serif;">
+                                            {{ $article->published_at->format('M d') }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-bold mb-1.5 text-navy group-hover:text-crimson transition-colors leading-snug" style="font-family: Montserrat, sans-serif;">
+                                        {{ $article->title }}
+                                    </h3>
+                                    <p class="text-sm text-gray-600 line-clamp-2 leading-relaxed" style="font-family: 'Source Serif 4', serif;">
+                                        {{ $article->excerpt }}
+                                    </p>
                                 </div>
-                                <h3 class="text-[18px] font-bold mb-3 group-hover:text-crimson transition-colors text-navy" style="font-family: Montserrat, sans-serif; line-height: 1.3;">
-                                    {{ $article->title }}
-                                </h3>
-                                <p class="text-[14px] text-gray-600 line-clamp-3" style="font-family: 'Source Serif 4', serif; line-height: 1.6;">
-                                    {{ $article->excerpt }}
-                                </p>
+
+                                <!-- Right: Fixed Thumbnail -->
+                                <div class="w-full sm:w-[220px] md:w-[250px] aspect-[16/10] shrink-0 bg-gray-100 overflow-hidden border border-[#C5C6CF]">
+                                    @if($article->featured_image_url)
+                                        <img src="{{ $article->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @else
+                                        <img src="https://picsum.photos/seed/fallback{{ $article->id }}/800/500" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $article->title }}">
+                                    @endif
+                                </div>
                             </div>
                         </a>
                         @endforeach
